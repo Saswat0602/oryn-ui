@@ -2,6 +2,11 @@ import React, { useState } from 'react'
 import { 
   Alert, 
   Toast, 
+  ToastAction,
+  Toaster,
+  useToast,
+  toast,
+  Sonner,
   Spinner, 
   EmptyState, 
   Banner, 
@@ -84,64 +89,90 @@ export function AlertVariants() {
 
   sonner: [
     {
-      title: 'Basic Sonner',
-      description: 'A simple sonner toast component',
-      code: `import { Sonner } from 'mad-ui-components'
+      title: 'Interactive Sonner Toaster',
+      description: 'Stackable physics-driven notifications with action buttons, promise handlers, and rich colors',
+      code: `import { Sonner, toast, Button } from 'mad-ui-components'
 
 export function SonnerExample() {
-  const [toasts, setToasts] = useState([])
-  
-  const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'success') => {
-    const newToast = {
-      id: Date.now().toString(),
-      title: message,
-      type
-    }
-    setToasts(prev => [...prev, newToast])
-  }
-
-  const dismissToast = (id: string) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id))
-  }
-
   return (
-    <div>
-      <button onClick={() => showToast('Success message!', 'success')}>
-        Show Success
-      </button>
-      <Sonner toasts={toasts} onDismiss={dismissToast} />
+    <div className="flex flex-wrap gap-2">
+      <Button
+        variant="outline"
+        onClick={() => toast('Event created', { description: 'Scheduled for Monday at 9:00 AM' })}
+      >
+        Default
+      </Button>
+      <Button
+        variant="outline"
+        onClick={() => toast.success('Project deployed successfully', { description: 'Preview is now live' })}
+      >
+        Success
+      </Button>
+      <Button
+        variant="outline"
+        onClick={() => toast.error('Failed to sync repository', { description: 'Rate limit exceeded' })}
+      >
+        Error
+      </Button>
+      <Button
+        variant="outline"
+        onClick={() => toast('Changes saved', {
+          action: {
+            label: 'Undo',
+            onClick: () => toast.info('Action reverted')
+          }
+        })}
+      >
+        With Action
+      </Button>
+      <Sonner />
     </div>
   )
 }`,
-      preview: (
-        <div className="w-full max-w-sm">
-          <button 
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-md"
-            onClick={() => console.log('Show Success')}
-          >
-            Show Success
-          </button>
-        </div>
-      )
+      preview: <SonnerInteractiveDemo />
     }
   ],
 
   toast: [
     {
-      title: 'Basic Toast',
-      description: 'A simple toast component',
-      code: `import { Toast } from 'mad-ui-components'
+      title: 'Imperative Toast & Viewport',
+      description: 'Headless toast system powered by useToast and global dispatch',
+      code: `import { Toaster, useToast, Button, ToastAction } from 'mad-ui-components'
 
 export function ToastExample() {
+  const { toast } = useToast()
+
   return (
-    <Toast message="This is a toast message" type="success" />
+    <div className="flex flex-wrap gap-2">
+      <Button
+        variant="outline"
+        onClick={() => {
+          toast({
+            title: "Scheduled: Catch up",
+            description: "Friday, November 14, 2026 at 5:57 PM",
+          })
+        }}
+      >
+        Show Toast
+      </Button>
+      <Button
+        variant="outline"
+        onClick={() => {
+          toast({
+            variant: "destructive",
+            title: "Uh oh! Something went wrong.",
+            description: "There was a problem with your request.",
+            action: <ToastAction>Try again</ToastAction>,
+          })
+        }}
+      >
+        Destructive Toast
+      </Button>
+      <Toaster />
+    </div>
   )
 }`,
-      preview: (
-        <div className="w-full max-w-sm">
-          <Toast message="This is a toast message" type="success" />
-        </div>
-      )
+      preview: <ToastInteractiveDemo />
     }
   ],
 
@@ -403,4 +434,81 @@ export function ToolCallCardExample() {
       )
     }
   ]
+}
+
+function SonnerInteractiveDemo() {
+  return (
+    <div className="p-4 flex flex-wrap gap-2.5">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => toast('Event created', { description: 'Scheduled for Monday at 9:00 AM' })}
+      >
+        Default
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => toast.success('Project deployed successfully', { description: 'Preview is now live' })}
+      >
+        Success
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => toast.error('Failed to sync repository', { description: 'Rate limit exceeded' })}
+      >
+        Error
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => toast('Changes saved', {
+          action: {
+            label: 'Undo',
+            onClick: () => toast.info('Action reverted')
+          }
+        })}
+      >
+        With Action
+      </Button>
+      <Sonner />
+    </div>
+  )
+}
+
+function ToastInteractiveDemo() {
+  const { toast } = useToast()
+
+  return (
+    <div className="p-4 flex flex-wrap gap-2.5">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => {
+          toast({
+            title: "Scheduled: Catch up",
+            description: "Friday, November 14, 2026 at 5:57 PM",
+          })
+        }}
+      >
+        Show Toast
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => {
+          toast({
+            variant: "destructive",
+            title: "Uh oh! Something went wrong.",
+            description: "There was a problem with your request.",
+            action: <ToastAction onClick={() => {}}>Try again</ToastAction>,
+          })
+        }}
+      >
+        Destructive Toast
+      </Button>
+      <Toaster />
+    </div>
+  )
 }

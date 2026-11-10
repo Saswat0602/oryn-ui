@@ -11,6 +11,9 @@ import {
   BreadcrumbEllipsis,
   DateTimePicker, 
   InputOTP, 
+  InputOTPGroup,
+  InputOTPSlot,
+  InputOTPSeparator,
   RadioGroup, 
   RadioGroupItem, 
   Tabs, 
@@ -718,19 +721,58 @@ export function DateTimePickerDemo() {
 
   'input-otp': [
     {
-      title: 'Basic OTP Input',
-      description: 'A simple OTP input component',
-      code: `import { InputOTP } from 'mad-ui-components'
+      title: 'Grouped OTP with Separator',
+      description: 'A composable one-time password input with separated groups, active focus rings, and clipboard paste support',
+      code: `import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from 'mad-ui-components'
+import { useState } from 'react'
 
 export function InputOTPExample() {
   const [value, setValue] = useState('')
-  return <InputOTP value={value} onChange={setValue} length={6} />
+
+  return (
+    <div className="space-y-3">
+      <InputOTP maxLength={6} value={value} onChange={setValue}>
+        <InputOTPGroup>
+          <InputOTPSlot index={0} />
+          <InputOTPSlot index={1} />
+          <InputOTPSlot index={2} />
+        </InputOTPGroup>
+        <InputOTPSeparator />
+        <InputOTPGroup>
+          <InputOTPSlot index={3} />
+          <InputOTPSlot index={4} />
+          <InputOTPSlot index={5} />
+        </InputOTPGroup>
+      </InputOTP>
+      <p className="text-xs text-muted-foreground">
+        Entered Code: {value || 'None'}
+      </p>
+    </div>
+  )
 }`,
-      preview: (
-        <div className="w-full max-w-sm">
-          <InputOTP value="" onChange={() => {}} length={6} />
-        </div>
-      )
+      preview: <InputOTPDemo />
+    },
+    {
+      title: 'Masked Security Pin',
+      description: 'Masked input for 4-digit security PINs and credentials',
+      code: `import { InputOTP, InputOTPGroup, InputOTPSlot } from 'mad-ui-components'
+import { useState } from 'react'
+
+export function MaskedPINExample() {
+  const [pin, setPin] = useState('')
+
+  return (
+    <InputOTP maxLength={4} value={pin} onChange={setPin} mask type="number">
+      <InputOTPGroup>
+        <InputOTPSlot index={0} />
+        <InputOTPSlot index={1} />
+        <InputOTPSlot index={2} />
+        <InputOTPSlot index={3} />
+      </InputOTPGroup>
+    </InputOTP>
+  )
+}`,
+      preview: <MaskedPINDemo />
     }
   ],
 
@@ -1236,16 +1278,61 @@ export function PromptInputExample() {
   ]
 }
 
+function InputOTPDemo() {
+  const [value, setValue] = useState('482')
+
+  return (
+    <div className="w-full max-w-sm p-4 space-y-3">
+      <InputOTP maxLength={6} value={value} onChange={setValue}>
+        <InputOTPGroup>
+          <InputOTPSlot index={0} />
+          <InputOTPSlot index={1} />
+          <InputOTPSlot index={2} />
+        </InputOTPGroup>
+        <InputOTPSeparator />
+        <InputOTPGroup>
+          <InputOTPSlot index={3} />
+          <InputOTPSlot index={4} />
+          <InputOTPSlot index={5} />
+        </InputOTPGroup>
+      </InputOTP>
+      <p className="text-xs text-muted-foreground font-mono">
+        Value: {value ? value : '<empty>'}
+      </p>
+    </div>
+  )
+}
+
+function MaskedPINDemo() {
+  const [pin, setPin] = useState('12')
+
+  return (
+    <div className="w-full max-w-sm p-4 space-y-3">
+      <InputOTP maxLength={4} value={pin} onChange={setPin} mask type="number">
+        <InputOTPGroup>
+          <InputOTPSlot index={0} />
+          <InputOTPSlot index={1} />
+          <InputOTPSlot index={2} />
+          <InputOTPSlot index={3} />
+        </InputOTPGroup>
+      </InputOTP>
+      <p className="text-xs text-muted-foreground font-mono">
+        Pin length: {pin.length} / 4
+      </p>
+    </div>
+  )
+}
+
 function PasswordInputDemo() {
   const [password, setPassword] = useState('SecretKey123!')
   return (
     <div className="w-full max-w-sm p-4">
       <PasswordInput
-        placeholder="Enter master password"
+        placeholder="Enter password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         strengthMeter
-        strengthScore={3}
+        showRequirements
       />
     </div>
   )

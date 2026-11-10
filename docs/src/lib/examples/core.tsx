@@ -22,6 +22,7 @@ import {
   Radio,
   Label,
   ButtonGroup,
+  ButtonGroupItem,
   InputGroup,
   InputGroupAddon
 } from 'mad-ui-components'
@@ -409,40 +410,47 @@ export const coreExamples: Record<string, ComponentExample[]> = {
 
   rating: [
     {
-      title: 'Basic Rating',
-      description: 'Star rating component with value display.',
-      code: snippets.rating.basic,
-      preview: (
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <Rating value={4} />
-            <p className="text-xs text-muted-foreground">4 out of 5 stars</p>
-          </div>
-          <div className="space-y-2">
-            <Rating value={3.5} showValue label="Product Rating" />
-            <p className="text-xs text-muted-foreground">With label and value</p>
-          </div>
-        </div>
-      )
+      title: 'Interactive Half-Star Rating',
+      description: 'Interactive star rating with 0.5 precision, hover preview, and keyboard arrow controls',
+      code: `import { Rating } from 'mad-ui-components'
+import { useState } from 'react'
+
+export function RatingExample() {
+  const [rating, setRating] = useState(4.5)
+
+  return (
+    <div className="space-y-4">
+      <Rating
+        value={rating}
+        onChange={setRating}
+        precision={0.5}
+        showValue
+        label="Customer Review"
+      />
+    </div>
+  )
+}`,
+      preview: <InteractiveRatingDemo />
     },
     {
-      title: 'Rating Sizes',
-      description: 'Different star sizes.',
-      code: snippets.rating.sizes,
+      title: 'Rating Sizes & States',
+      description: 'Multiple scale sizes and read-only display states',
+      code: `import { Rating } from 'mad-ui-components'
+
+export function RatingSizesExample() {
+  return (
+    <div className="space-y-4">
+      <Rating value={5} size="sm" readOnly showValue label="Small (sm)" />
+      <Rating value={4} size="md" readOnly showValue label="Medium (md)" />
+      <Rating value={4.5} size="lg" precision={0.5} readOnly showValue label="Large (lg)" />
+    </div>
+  )
+}`,
       preview: (
-        <div className="space-y-6">
-          <div className="space-y-2">
-            <Rating value={5} size="sm" />
-            <p className="text-xs text-muted-foreground">Small (sm)</p>
-          </div>
-          <div className="space-y-2">
-            <Rating value={5} size="md" />
-            <p className="text-xs text-muted-foreground">Medium (md)</p>
-          </div>
-          <div className="space-y-2">
-            <Rating value={5} size="lg" />
-            <p className="text-xs text-muted-foreground">Large (lg)</p>
-          </div>
+        <div className="space-y-5 p-4">
+          <Rating value={5} size="sm" readOnly showValue label="Small (sm)" />
+          <Rating value={4} size="md" readOnly showValue label="Medium (md)" />
+          <Rating value={4.5} size="lg" precision={0.5} readOnly showValue label="Large (lg)" />
         </div>
       )
     }
@@ -576,41 +584,45 @@ export const coreExamples: Record<string, ComponentExample[]> = {
 
   'button-group': [
     {
-      title: 'Horizontal Attached Button Group',
-      description: 'Connected buttons with shared borders and focus ring hierarchy',
+      title: 'Segmented Control with Selection State',
+      description: 'Single-select segmented button group with active pill indicator and responsive keyboard navigation',
+      code: `import { ButtonGroup, ButtonGroupItem } from 'mad-ui-components'
+import { useState } from 'react'
+
+export function SegmentedControlExample() {
+  const [view, setView] = useState('month')
+
+  return (
+    <ButtonGroup segmented value={view} onValueChange={setView}>
+      <ButtonGroupItem value="day">Day</ButtonGroupItem>
+      <ButtonGroupItem value="week">Week</ButtonGroupItem>
+      <ButtonGroupItem value="month">Month</ButtonGroupItem>
+      <ButtonGroupItem value="year">Year</ButtonGroupItem>
+    </ButtonGroup>
+  )
+}`,
+      preview: <SegmentedButtonGroupDemo />
+    },
+    {
+      title: 'Attached Action Group',
+      description: 'Connected buttons with shared borders and seamless corner radius merging',
       code: `import { ButtonGroup, Button } from 'mad-ui-components'
 
-export function ButtonGroupExample() {
+export function AttachedGroupExample() {
   return (
-    <div className="flex flex-col gap-4">
-      <ButtonGroup orientation="horizontal" attached>
-        <Button variant="outline">Day</Button>
-        <Button variant="outline">Week</Button>
-        <Button variant="outline">Month</Button>
-        <Button variant="outline">Year</Button>
-      </ButtonGroup>
-
-      <ButtonGroup orientation="horizontal" attached>
-        <Button variant="secondary">Left</Button>
-        <Button variant="secondary">Center</Button>
-        <Button variant="secondary">Right</Button>
-      </ButtonGroup>
-    </div>
+    <ButtonGroup orientation="horizontal" attached>
+      <Button variant="outline">Copy</Button>
+      <Button variant="outline">Duplicate</Button>
+      <Button variant="outline">Archive</Button>
+    </ButtonGroup>
   )
 }`,
       preview: (
-        <div className="flex flex-col gap-4 p-4">
+        <div className="p-4 flex flex-col gap-4">
           <ButtonGroup orientation="horizontal" attached>
-            <Button variant="outline">Day</Button>
-            <Button variant="outline">Week</Button>
-            <Button variant="outline">Month</Button>
-            <Button variant="outline">Year</Button>
-          </ButtonGroup>
-
-          <ButtonGroup orientation="horizontal" attached>
-            <Button variant="secondary">Left</Button>
-            <Button variant="secondary">Center</Button>
-            <Button variant="secondary">Right</Button>
+            <Button variant="outline">Copy</Button>
+            <Button variant="outline">Duplicate</Button>
+            <Button variant="outline">Archive</Button>
           </ButtonGroup>
         </div>
       )
@@ -690,11 +702,44 @@ function InteractiveRangeSliderDemo() {
         value={range} 
         onChange={(v: any) => Array.isArray(v) && setRange([v[0] ?? 0, v[1] ?? 100])} 
         range 
-
-
         min={0} 
         max={100} 
       />
+    </div>
+  )
+}
+
+function InteractiveRatingDemo() {
+  const [rating, setRating] = React.useState(4.5)
+  return (
+    <div className="w-full max-w-sm p-4 space-y-4">
+      <Rating
+        value={rating}
+        onChange={setRating}
+        precision={0.5}
+        showValue
+        label="Rate Experience"
+      />
+      <p className="text-xs text-muted-foreground font-mono">
+        Current Rating: {rating} / 5.0
+      </p>
+    </div>
+  )
+}
+
+function SegmentedButtonGroupDemo() {
+  const [view, setView] = React.useState('month')
+  return (
+    <div className="p-4 space-y-3">
+      <ButtonGroup segmented value={view} onValueChange={setView}>
+        <ButtonGroupItem value="day">Day</ButtonGroupItem>
+        <ButtonGroupItem value="week">Week</ButtonGroupItem>
+        <ButtonGroupItem value="month">Month</ButtonGroupItem>
+        <ButtonGroupItem value="year">Year</ButtonGroupItem>
+      </ButtonGroup>
+      <p className="text-xs text-muted-foreground font-mono">
+        Active Segment: {view}
+      </p>
     </div>
   )
 }

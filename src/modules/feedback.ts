@@ -14,7 +14,10 @@ export {
   ToastAction, 
   ToastClose, 
   ToastViewport, 
-  ToastProvider 
+  ToastProvider,
+  Toaster,
+  useToast,
+  toast
 } from '../components/feedback/toast'
 
 // Feedback Types

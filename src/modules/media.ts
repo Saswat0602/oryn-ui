@@ -6,7 +6,9 @@ export {
   CarouselItem, 
   CarouselPrevious, 
   CarouselNext, 
-  CarouselIndicator 
+  CarouselIndicator,
+  CarouselIndicators,
+  useCarousel
 } from '../components/media/carousel'
 export { Avatar, AvatarImage, AvatarFallback, AvatarGroup } from '../components/media/avatar'
 export { Badge } from '../components/media/badge'

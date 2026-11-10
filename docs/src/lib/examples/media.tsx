@@ -1,5 +1,29 @@
 import React from 'react'
-import { Badge, Avatar, AspectRatio, Carousel, TypographyH1, TypographyH2, TypographyH3, TypographyH4, TypographyH5, TypographyH6, TypographyP, TypographyBlockquote, TypographyCode, TypographyLead, TypographyLarge, TypographySmall, TypographyMuted, Kbd } from 'mad-ui-components'
+import { 
+  Badge, 
+  Avatar, 
+  AspectRatio, 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselPrevious, 
+  CarouselNext, 
+  CarouselIndicators,
+  TypographyH1, 
+  TypographyH2, 
+  TypographyH3, 
+  TypographyH4, 
+  TypographyH5, 
+  TypographyH6, 
+  TypographyP, 
+  TypographyBlockquote, 
+  TypographyCode, 
+  TypographyLead, 
+  TypographyLarge, 
+  TypographySmall, 
+  TypographyMuted, 
+  Kbd 
+} from 'mad-ui-components'
 
 export interface ComponentExample {
   title: string
@@ -105,106 +129,149 @@ export function AspectRatioExample() {
 
   carousel: [
     {
-      title: 'Basic Carousel',
-      description: 'A simple carousel component',
-      code: `import { Carousel } from 'mad-ui-components'
+      title: 'Composable Feature Carousel',
+      description: 'Composable carousel with slides, navigation controls, indicators, and touch swipe gestures',
+      code: `import { 
+  Carousel, 
+  CarouselContent, 
+  CarouselItem, 
+  CarouselPrevious, 
+  CarouselNext, 
+  CarouselIndicators,
+  Badge 
+} from 'mad-ui-components'
 
 export function CarouselExample() {
+  const slides = [
+    {
+      title: 'Global Edge Network',
+      metric: '300+ Cities',
+      desc: 'Sub-10ms latency across 90 countries with automated routing and failover.',
+      badge: 'Infrastructure'
+    },
+    {
+      title: 'Serverless Compute',
+      metric: '0ms Cold Starts',
+      desc: 'Scale workloads dynamically without infrastructure management or provisioning.',
+      badge: 'Runtime'
+    },
+    {
+      title: 'Enterprise Security',
+      metric: 'SOC2 & HIPAA',
+      desc: 'End-to-end encryption, automated compliance, and real-time threat auditing.',
+      badge: 'Compliance'
+    }
+  ]
+
   return (
-    <Carousel>
-      <div>Slide 1</div>
-      <div>Slide 2</div>
-      <div>Slide 3</div>
+    <Carousel className="w-full max-w-lg">
+      <CarouselContent>
+        {slides.map((slide, i) => (
+          <CarouselItem key={i}>
+            <div className="p-6 rounded-xl border border-border bg-card text-card-foreground shadow-xs min-h-[180px] flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <Badge variant="outline">{slide.badge}</Badge>
+                  <span className="text-xs font-mono font-semibold text-primary">{slide.metric}</span>
+                </div>
+                <h4 className="text-base font-semibold">{slide.title}</h4>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{slide.desc}</p>
+              </div>
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious />
+      <CarouselNext />
+      <CarouselIndicators />
     </Carousel>
   )
 }`,
       preview: (
-        <div className="w-full max-w-md">
-          <Carousel>
-            <div>Slide 1</div>
-            <div>Slide 2</div>
-            <div>Slide 3</div>
+        <div className="w-full max-w-lg p-4">
+          <Carousel className="w-full">
+            <CarouselContent>
+              {[
+                {
+                  title: 'Global Edge Network',
+                  metric: '300+ Cities',
+                  desc: 'Sub-10ms latency across 90 countries with automated routing and zero-downtime failover.',
+                  badge: 'Infrastructure'
+                },
+                {
+                  title: 'Serverless Compute',
+                  metric: '0ms Cold Starts',
+                  desc: 'Scale workloads dynamically without infrastructure management or manual instance provisioning.',
+                  badge: 'Runtime'
+                },
+                {
+                  title: 'Enterprise Security',
+                  metric: 'SOC2 & HIPAA',
+                  desc: 'End-to-end encryption, automated compliance guardrails, and real-time threat telemetry.',
+                  badge: 'Compliance'
+                }
+              ].map((slide, i) => (
+                <CarouselItem key={i}>
+                  <div className="p-6 rounded-xl border border-border bg-card text-card-foreground shadow-xs min-h-[170px] flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <Badge variant="outline">{slide.badge}</Badge>
+                        <span className="text-xs font-mono font-semibold text-primary">{slide.metric}</span>
+                      </div>
+                      <h4 className="text-base font-semibold text-foreground">{slide.title}</h4>
+                      <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">{slide.desc}</p>
+                    </div>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+            <CarouselIndicators />
           </Carousel>
         </div>
       )
     },
     {
-      title: 'Enterprise Features',
-      description: 'Carousel with autoplay, analytics, and accessibility features',
-      code: `import { Carousel } from 'mad-ui-components'
+      title: 'Autoplay Multi-Slide Preview',
+      description: 'Continuous smooth autoplay loop with multi-item layout and keyboard navigation',
+      code: `import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, CarouselIndicators } from 'mad-ui-components'
 
-export function EnterpriseCarousel() {
-  const items = [
-    {
-      id: 'slide-1',
-      image: '/api/placeholder/400/300',
-      title: 'Welcome to Our Platform',
-      description: 'Discover amazing features and capabilities'
-    },
-    {
-      id: 'slide-2',
-      image: '/api/placeholder/400/300',
-      title: 'Advanced Analytics',
-      description: 'Get insights with our powerful analytics tools'
-    },
-    {
-      id: 'slide-3',
-      image: '/api/placeholder/400/300',
-      title: 'Enterprise Security',
-      description: 'Bank-grade security for your data and applications'
-    }
-  ]
-
+export function AutoplayCarouselExample() {
   return (
-    <Carousel
-      showDots={true}
-      showArrows={true}
-      autoPlay={true}
-      interval={4000}
-      aria-label="Hero carousel with platform features"
-    >
-      <div className="flex items-center justify-center h-64 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
-        <div className="text-center p-6">
-          <h3 className="text-lg font-semibold text-foreground">Welcome to Our Platform</h3>
-          <p className="text-sm text-muted-foreground mt-1">Discover amazing features and capabilities</p>
-        </div>
-      </div>
-      <div className="flex items-center justify-center h-64 bg-zinc-200 dark:bg-zinc-700 rounded-lg">
-        <div className="text-center p-6">
-          <h3 className="text-lg font-semibold text-foreground">Advanced Analytics</h3>
-          <p className="text-sm text-muted-foreground mt-1">Get insights with our powerful analytics tools</p>
-        </div>
-      </div>
+    <Carousel autoPlay interval={3000} loop className="w-full max-w-lg">
+      <CarouselContent>
+        {[1, 2, 3, 4].map((num) => (
+          <CarouselItem key={num} className="md:basis-1/2">
+            <div className="p-5 rounded-xl border border-border bg-muted/40 text-center">
+              <span className="text-2xl font-bold font-mono">0{num}</span>
+              <p className="text-xs text-muted-foreground mt-1 font-medium">Metric Module {num}</p>
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious />
+      <CarouselNext />
+      <CarouselIndicators />
     </Carousel>
   )
 }`,
       preview: (
-        <div className="w-full max-w-md">
-          <Carousel
-            showDots={true}
-            showArrows={true}
-            autoPlay={true}
-            interval={4000}
-            aria-label="Hero carousel with platform features"
-          >
-            <div className="flex items-center justify-center h-64 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
-              <div className="text-center p-6">
-                <h3 className="text-lg font-semibold text-foreground">Welcome to Our Platform</h3>
-                <p className="text-sm text-muted-foreground mt-1">Discover amazing features and capabilities</p>
-              </div>
-            </div>
-            <div className="flex items-center justify-center h-64 bg-zinc-200 dark:bg-zinc-700 rounded-lg">
-              <div className="text-center p-6">
-                <h3 className="text-lg font-semibold text-foreground">Advanced Analytics</h3>
-                <p className="text-sm text-muted-foreground mt-1">Get insights with our powerful analytics tools</p>
-              </div>
-            </div>
-            <div className="flex items-center justify-center h-64 bg-zinc-300 dark:bg-zinc-600 rounded-lg">
-              <div className="text-center p-6">
-                <h3 className="text-lg font-semibold text-foreground">Enterprise Security</h3>
-                <p className="text-sm text-muted-foreground mt-1">Bank-grade security for your data and applications</p>
-              </div>
-            </div>
+        <div className="w-full max-w-lg p-4">
+          <Carousel autoPlay interval={3000} loop className="w-full">
+            <CarouselContent>
+              {[1, 2, 3, 4].map((num) => (
+                <CarouselItem key={num} className="sm:basis-1/2 p-1">
+                  <div className="p-5 rounded-xl border border-border bg-muted/30 text-center flex flex-col items-center justify-center min-h-[120px]">
+                    <span className="text-2xl font-bold font-mono text-foreground">0{num}</span>
+                    <p className="text-xs text-muted-foreground mt-1 font-medium">Metric Module {num}</p>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+            <CarouselIndicators />
           </Carousel>
         </div>
       )

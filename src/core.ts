@@ -26,7 +26,7 @@ export { Slider } from './components/core/slider'
 export { Rating } from './components/core/rating'
 export { Skeleton } from './components/core/skeleton'
 export { Textarea } from './components/core/textarea'
-export { ButtonGroup } from './components/core/button-group'
+export { ButtonGroup, ButtonGroupItem } from './components/core/button-group'
 export { InputGroup, InputGroupAddon } from './components/core/input-group'
 
 // Core Types
@@ -52,7 +52,7 @@ export type { SliderProps } from './components/core/slider'
 export type { RatingProps } from './components/core/rating'
 export type { SkeletonProps } from './components/core/skeleton'
 export type { TextareaProps } from './components/core/textarea'
-export type { ButtonGroupProps } from './components/core/button-group'
+export type { ButtonGroupProps, ButtonGroupItemProps } from './components/core/button-group'
 export type { InputGroupProps, InputGroupAddonProps } from './components/core/input-group'
 
 // Utilities

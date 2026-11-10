@@ -1,289 +1,455 @@
 "use client"
 
-import React, { forwardRef, useState, useEffect } from 'react'
-import { cn } from '../../lib/utils'
-import { CheckCircle2, AlertCircle, AlertTriangle, Info, X } from '../../icons'
+import * as React from "react"
+import { cn } from "../../lib/utils"
+import { Portal } from "../../lib/portal"
+import { CheckCircle2, AlertCircle, AlertTriangle, Info, X } from "../../icons"
 
-export interface ToastProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onClose'> {
-  id?: string
-  title?: string
-  message?: string
-  type?: 'success' | 'error' | 'warning' | 'info' | 'default'
-  variant?: 'default' | 'filled' | 'outlined' | 'minimal'
-  size?: 'sm' | 'md' | 'lg'
-  position?: 'top-left' | 'top-right' | 'top-center' | 'bottom-left' | 'bottom-right' | 'bottom-center'
-  duration?: number
-  closable?: boolean
-  persistent?: boolean
+// --- Global Toast Store & State Machine ---
+
+const TOAST_LIMIT = 5
+const TOAST_REMOVE_DELAY = 1000
+
+export type ToastVariant = "default" | "destructive" | "success" | "warning" | "info"
+
+export interface ToastData {
+  id: string
+  title?: React.ReactNode
+  description?: React.ReactNode
+  message?: React.ReactNode
   action?: React.ReactNode
-  color?: string
-  backgroundColor?: string
-  borderColor?: string
-  borderRadius?: string | number
-  shadow?: 'none' | 'sm' | 'md' | 'lg' | 'xl'
+  variant?: ToastVariant
+  type?: "default" | "success" | "error" | "warning" | "info"
+  duration?: number
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  [key: string]: any
+}
+
+type Action =
+  | { type: "ADD_TOAST"; toast: ToastData }
+  | { type: "UPDATE_TOAST"; toast: Partial<ToastData> }
+  | { type: "DISMISS_TOAST"; toastId?: string }
+  | { type: "REMOVE_TOAST"; toastId?: string }
+
+interface State {
+  toasts: ToastData[]
+}
+
+const toastTimeouts = new Map<string, ReturnType<typeof setTimeout>>()
+
+const addToRemoveQueue = (toastId: string) => {
+  if (toastTimeouts.has(toastId)) return
+
+  const timeout = setTimeout(() => {
+    toastTimeouts.delete(toastId)
+    dispatch({
+      type: "REMOVE_TOAST",
+      toastId,
+    })
+  }, TOAST_REMOVE_DELAY)
+
+  toastTimeouts.set(toastId, timeout)
+}
+
+let count = 0
+function genId() {
+  count = (count + 1) % Number.MAX_SAFE_INTEGER
+  return `toast-${count}-${Date.now()}`
+}
+
+let memoryState: State = { toasts: [] }
+const listeners: Array<(state: State) => void> = []
+
+function dispatch(action: Action) {
+  memoryState = reducer(memoryState, action)
+  listeners.forEach((listener) => {
+    listener(memoryState)
+  })
+}
+
+function reducer(state: State, action: Action): State {
+  switch (action.type) {
+    case "ADD_TOAST":
+      return {
+        ...state,
+        toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
+      }
+
+    case "UPDATE_TOAST":
+      return {
+        ...state,
+        toasts: state.toasts.map((t) =>
+          t.id === action.toast.id ? { ...t, ...action.toast } : t
+        ),
+      }
+
+    case "DISMISS_TOAST": {
+      const { toastId } = action
+
+      if (toastId) {
+        addToRemoveQueue(toastId)
+      } else {
+        state.toasts.forEach((toast) => {
+          addToRemoveQueue(toast.id)
+        })
+      }
+
+      return {
+        ...state,
+        toasts: state.toasts.map((t) =>
+          t.id === toastId || toastId === undefined
+            ? { ...t, open: false }
+            : t
+        ),
+      }
+    }
+
+    case "REMOVE_TOAST":
+      if (action.toastId === undefined) {
+        return { ...state, toasts: [] }
+      }
+      return {
+        ...state,
+        toasts: state.toasts.filter((t) => t.id !== action.toastId),
+      }
+  }
+}
+
+export function useToast() {
+  const [state, setState] = React.useState<State>(memoryState)
+
+  React.useEffect(() => {
+    listeners.push(setState)
+    return () => {
+      const index = listeners.indexOf(setState)
+      if (index > -1) {
+        listeners.splice(index, 1)
+      }
+    }
+  }, [state])
+
+  return {
+    ...state,
+    toast,
+    dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
+  }
+}
+
+export interface ToastFn {
+  (
+    titleOrProps: React.ReactNode | (Omit<ToastData, "id"> & { id?: string }),
+    options?: Partial<Omit<ToastData, "id">>
+  ): {
+    id: string
+    dismiss: () => void
+    update: (updatedProps: Partial<ToastData>) => void
+  }
+  success: (title: React.ReactNode, options?: Partial<Omit<ToastData, "id">>) => { id: string; dismiss: () => void }
+  error: (title: React.ReactNode, options?: Partial<Omit<ToastData, "id">>) => { id: string; dismiss: () => void }
+  warning: (title: React.ReactNode, options?: Partial<Omit<ToastData, "id">>) => { id: string; dismiss: () => void }
+  info: (title: React.ReactNode, options?: Partial<Omit<ToastData, "id">>) => { id: string; dismiss: () => void }
+  dismiss: (toastId?: string) => void
+}
+
+function baseToast(
+  titleOrProps: React.ReactNode | (Omit<ToastData, "id"> & { id?: string }),
+  options?: Partial<Omit<ToastData, "id">>
+) {
+  let toastPayload: Omit<ToastData, "id"> & { id?: string }
+
+  if (
+    typeof titleOrProps === "object" &&
+    titleOrProps !== null &&
+    !React.isValidElement(titleOrProps) &&
+    !("props" in (titleOrProps as any))
+  ) {
+    toastPayload = { ...(titleOrProps as any), ...options }
+  } else {
+    toastPayload = { title: titleOrProps, ...options }
+  }
+
+  const id = toastPayload.id || genId()
+
+  const update = (updatedProps: Partial<ToastData>) =>
+    dispatch({
+      type: "UPDATE_TOAST",
+      toast: { ...updatedProps, id },
+    })
+
+  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
+
+  dispatch({
+    type: "ADD_TOAST",
+    toast: {
+      ...toastPayload,
+      id,
+      open: true,
+      onOpenChange: (open: boolean) => {
+        if (!open) dismiss()
+      },
+    },
+  })
+
+  return {
+    id,
+    dismiss,
+    update,
+  }
+}
+
+baseToast.success = (title: React.ReactNode, options?: Partial<Omit<ToastData, "id">>) =>
+  baseToast(title, { variant: "success", ...options })
+
+baseToast.error = (title: React.ReactNode, options?: Partial<Omit<ToastData, "id">>) =>
+  baseToast(title, { variant: "destructive", ...options })
+
+baseToast.warning = (title: React.ReactNode, options?: Partial<Omit<ToastData, "id">>) =>
+  baseToast(title, { variant: "warning", ...options })
+
+baseToast.info = (title: React.ReactNode, options?: Partial<Omit<ToastData, "id">>) =>
+  baseToast(title, { variant: "info", ...options })
+
+baseToast.dismiss = (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId })
+
+export const toast: ToastFn = baseToast as unknown as ToastFn
+
+// --- Component Implementations ---
+
+export interface ToastProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
+  id?: string
+  title?: React.ReactNode
+  message?: React.ReactNode
+  description?: React.ReactNode
+  variant?: ToastVariant
+  type?: "default" | "success" | "error" | "warning" | "info"
+  duration?: number
+  action?: React.ReactNode
+  closable?: boolean
   onClose?: (id?: string) => void
   open?: boolean
-  isVisible?: boolean
   onOpenChange?: (open: boolean) => void
 }
 
-const Toast = forwardRef<HTMLDivElement, ToastProps>(({
-  id,
-  title,
-  message,
-  type = 'default',
-  variant = 'default',
-  size = 'md',
-  position = 'top-right',
-  duration = 5000,
-  closable = true,
-  persistent = false,
-  action,
-  color,
-  backgroundColor,
-  borderColor,
-  borderRadius,
-  shadow = 'md',
-  onClose,
-  open: controlledOpen,
-  isVisible: isVisibleProp,
-  onOpenChange,
-  className,
-  children,
-  style,
-  ...props
-}, ref) => {
-  const [internalVisible, setInternalVisible] = useState(true)
-  const [isExiting, setIsExiting] = useState(false)
-  const isVisible = controlledOpen !== undefined ? controlledOpen : (isVisibleProp !== undefined ? isVisibleProp : internalVisible)
-
-  useEffect(() => {
-    if (isVisible) {
-      setIsExiting(false)
-    }
-  }, [isVisible])
-
-  useEffect(() => {
-    if (persistent || duration <= 0 || !isVisible) return
-
-    const timer = setTimeout(() => {
-      handleClose()
-    }, duration)
-
-    return () => clearTimeout(timer)
-  }, [duration, persistent, isVisible])
-
-  const handleClose = () => {
-    setIsExiting(true)
-    setTimeout(() => {
-      setInternalVisible(false)
-      setIsExiting(false)
-      onOpenChange?.(false)
-      onClose?.(id)
-    }, 200)
+export const ToastViewport = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & {
+    position?: "top-left" | "top-right" | "top-center" | "bottom-left" | "bottom-right" | "bottom-center"
   }
-
-  const sizeClasses = {
-    sm: 'p-3 text-xs',
-    md: 'p-4 text-sm',
-    lg: 'p-5 text-base'
-  }
-
-  const variantClasses = {
-    default: 'bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 shadow-lg',
-    filled: 'bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 shadow-lg',
-    outlined: 'bg-white/80 dark:bg-zinc-900/80 backdrop-blur-sm border-2 border-zinc-300 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100',
-    minimal: 'bg-zinc-50 dark:bg-zinc-900/50 border border-transparent text-zinc-800 dark:text-zinc-200'
-  }
-
-  const typeClasses = {
-    success: {
-      default: 'border-emerald-200 dark:border-emerald-900/60 bg-emerald-50/60 dark:bg-emerald-950/20 text-emerald-950 dark:text-emerald-100',
-      filled: 'bg-emerald-600 text-white',
-      outlined: 'border-emerald-500 text-emerald-700 dark:text-emerald-300',
-      minimal: 'text-emerald-700 dark:text-emerald-400'
-    },
-    error: {
-      default: 'border-rose-200 dark:border-rose-900/60 bg-rose-50/60 dark:bg-rose-950/20 text-rose-950 dark:text-rose-100',
-      filled: 'bg-rose-600 text-white',
-      outlined: 'border-rose-500 text-rose-700 dark:text-rose-300',
-      minimal: 'text-rose-700 dark:text-rose-400'
-    },
-    warning: {
-      default: 'border-amber-200 dark:border-amber-900/60 bg-amber-50/60 dark:bg-amber-950/20 text-amber-950 dark:text-amber-100',
-      filled: 'bg-amber-600 text-white',
-      outlined: 'border-amber-500 text-amber-700 dark:text-amber-300',
-      minimal: 'text-amber-700 dark:text-amber-400'
-    },
-    info: {
-      default: 'border-border bg-background text-foreground',
-      filled: 'bg-primary text-primary-foreground',
-      outlined: 'border-border text-foreground',
-      minimal: 'text-foreground'
-    },
-    default: {
-      default: 'border-border bg-background text-foreground',
-      filled: 'bg-primary text-primary-foreground',
-      outlined: 'border-border text-foreground',
-      minimal: 'text-foreground'
-    }
-  }
-
-  const shadowClasses = {
-    none: '',
-    sm: 'shadow-sm',
-    md: 'shadow-md',
-    lg: 'shadow-lg',
-    xl: 'shadow-xl'
-  }
-
+>(({ className, position = "bottom-right", ...props }, ref) => {
   const positionClasses = {
-    'top-left': 'top-4 left-4',
-    'top-right': 'top-4 right-4',
-    'top-center': 'top-4 left-1/2 -translate-x-1/2',
-    'bottom-left': 'bottom-4 left-4',
-    'bottom-right': 'bottom-4 right-4',
-    'bottom-center': 'bottom-4 left-1/2 -translate-x-1/2'
+    "top-left": "top-0 left-0",
+    "top-right": "top-0 right-0",
+    "top-center": "top-0 left-1/2 -translate-x-1/2",
+    "bottom-left": "bottom-0 left-0",
+    "bottom-right": "bottom-0 right-0",
+    "bottom-center": "bottom-0 left-1/2 -translate-x-1/2",
   }
-
-  const getIcon = () => {
-    const iconClasses = 'w-4 h-4 mt-0.5 shrink-0'
-    switch (type) {
-      case 'success':
-        return <CheckCircle2 className={cn(iconClasses, 'text-emerald-600 dark:text-emerald-400')} />
-      case 'error':
-        return <AlertCircle className={cn(iconClasses, 'text-rose-600 dark:text-rose-400')} />
-      case 'warning':
-        return <AlertTriangle className={cn(iconClasses, 'text-amber-600 dark:text-amber-400')} />
-      case 'info':
-        return <Info className={cn(iconClasses, 'text-foreground')} />
-      default:
-        return null
-    }
-  }
-
-  if (!isVisible) return null
 
   return (
     <div
       ref={ref}
-      role="status"
-      aria-live="polite"
+      tabIndex={-1}
       className={cn(
-        'fixed z-50 max-w-sm w-full transition-all duration-200 ease-out',
+        "fixed z-[100] flex max-h-screen w-full flex-col-reverse p-4 pointer-events-none sm:max-w-[420px] gap-2.5",
         positionClasses[position],
-        isExiting ? 'opacity-0 scale-95 translate-y-2' : 'opacity-100 scale-100 translate-y-0',
         className
       )}
-      style={{
-        color,
-        backgroundColor,
-        borderColor,
-        borderRadius: typeof borderRadius === 'number' ? `${borderRadius}px` : borderRadius,
-        ...style
-      }}
       {...props}
-    >
-      <div className={cn(
-        'rounded-xl',
-        sizeClasses[size],
-        variantClasses[variant],
-        typeClasses[type][variant],
-        shadowClasses[shadow],
-        'flex items-start gap-3 backdrop-blur-sm'
-      )}>
-        {getIcon()}
+    />
+  )
+})
+ToastViewport.displayName = "ToastViewport"
 
-        <div className="flex-1 min-w-0">
-          {title && (
-            <h5 className="font-semibold text-xs tracking-tight mb-0.5">{title}</h5>
+export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
+  (
+    {
+      className,
+      variant: variantProp,
+      type = "default",
+      title,
+      description,
+      message,
+      action,
+      closable = true,
+      duration = 5000,
+      open = true,
+      onClose,
+      onOpenChange,
+      children,
+      id,
+      ...props
+    },
+    ref
+  ) => {
+    const variant: ToastVariant =
+      variantProp || (type === "error" ? "destructive" : (type as ToastVariant)) || "default"
+
+    React.useEffect(() => {
+      if (duration && duration > 0 && open) {
+        const timer = setTimeout(() => {
+          onOpenChange?.(false)
+          onClose?.(id)
+        }, duration)
+        return () => clearTimeout(timer)
+      }
+    }, [duration, open, onOpenChange, onClose, id])
+
+    if (!open) return null
+
+    const variantStyles = {
+      default: "border-border bg-background text-foreground shadow-lg",
+      destructive: "border-destructive/30 bg-destructive/10 text-destructive shadow-lg",
+      success: "border-emerald-500/30 bg-emerald-500/10 text-emerald-950 dark:text-emerald-100 shadow-lg",
+      warning: "border-amber-500/30 bg-amber-500/10 text-amber-950 dark:text-amber-100 shadow-lg",
+      info: "border-primary/30 bg-primary/10 text-foreground shadow-lg",
+    }
+
+    const renderIcon = () => {
+      switch (variant) {
+        case "success":
+          return <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+        case "destructive":
+          return <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+        case "warning":
+          return <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+        case "info":
+          return <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+        default:
+          return null
+      }
+    }
+
+    const handleClose = () => {
+      onOpenChange?.(false)
+      onClose?.(id)
+    }
+
+    return (
+      <div
+        ref={ref}
+        role="status"
+        aria-live="polite"
+        className={cn(
+          "pointer-events-auto relative flex w-full items-start gap-3 overflow-hidden rounded-xl border p-4 shadow-md transition-all duration-200 animate-in fade-in-0 slide-in-from-bottom-2",
+          variantStyles[variant],
+          className
+        )}
+        {...props}
+      >
+        {renderIcon()}
+
+        <div className="flex-1 min-w-0 pr-4">
+          {title && <ToastTitle>{title}</ToastTitle>}
+          {(description || message) && (
+            <ToastDescription>{description || message}</ToastDescription>
           )}
-          {message && <p className="text-xs opacity-90 leading-relaxed">{message}</p>}
           {children}
           {action && <div className="mt-2.5">{action}</div>}
         </div>
 
         {closable && (
           <button
+            type="button"
             onClick={handleClose}
-            aria-label="Close notification"
-            className="shrink-0 p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors focus:outline-none focus:ring-2 focus:ring-ring"
+            aria-label="Close"
+            className="shrink-0 -mr-1 -mt-1 p-1 text-muted-foreground hover:text-foreground rounded-md transition-colors cursor-pointer"
           >
-            <X className="w-3.5 h-3.5" />
+            <X className="h-3.5 w-3.5" />
           </button>
         )}
       </div>
-    </div>
-  )
-})
-
+    )
+  }
+)
 Toast.displayName = "Toast"
 
-export const ToastTitle = forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
-  ({ className, ...props }, ref) => (
-    <h5 ref={ref} className={cn("text-xs font-semibold tracking-tight text-zinc-900 dark:text-zinc-100", className)} {...props} />
-  )
-)
+export const ToastTitle = React.forwardRef<
+  HTMLHeadingElement,
+  React.HTMLAttributes<HTMLHeadingElement>
+>(({ className, ...props }, ref) => (
+  <h5
+    ref={ref}
+    className={cn("text-xs font-semibold tracking-tight text-foreground", className)}
+    {...props}
+  />
+))
 ToastTitle.displayName = "ToastTitle"
 
-export const ToastDescription = forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
-  ({ className, ...props }, ref) => (
-    <p ref={ref} className={cn("text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed mt-0.5", className)} {...props} />
-  )
-)
+export const ToastDescription = React.forwardRef<
+  HTMLParagraphElement,
+  React.HTMLAttributes<HTMLParagraphElement>
+>(({ className, ...props }, ref) => (
+  <p
+    ref={ref}
+    className={cn("text-xs text-muted-foreground leading-relaxed mt-0.5", className)}
+    {...props}
+  />
+))
 ToastDescription.displayName = "ToastDescription"
 
-export const ToastAction = forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
-  ({ className, ...props }, ref) => (
-    <button
-      ref={ref}
-      className={cn(
-        "inline-flex h-7 items-center justify-center rounded-md border border-zinc-200 dark:border-zinc-700 bg-transparent px-2.5 text-xs font-medium transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-400",
-        className
-      )}
-      {...props}
-    />
-  )
-)
+export const ToastAction = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ className, ...props }, ref) => (
+  <button
+    ref={ref}
+    className={cn(
+      "inline-flex h-7 items-center justify-center rounded-md border border-input bg-transparent px-2.5 text-xs font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer",
+      className
+    )}
+    {...props}
+  />
+))
 ToastAction.displayName = "ToastAction"
 
-export const ToastClose = forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
-  ({ className, ...props }, ref) => (
-    <button
-      ref={ref}
-      className={cn(
-        "absolute right-2 top-2 rounded-md p-1 text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100 opacity-70 hover:opacity-100 transition-opacity",
-        className
-      )}
-      {...props}
-    >
-      <X className="h-3.5 w-3.5" />
-    </button>
-  )
-)
+export const ToastClose = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ className, ...props }, ref) => (
+  <button
+    ref={ref}
+    aria-label="Close"
+    className={cn(
+      "absolute right-2 top-2 rounded-md p-1 text-muted-foreground hover:text-foreground opacity-70 hover:opacity-100 transition-opacity cursor-pointer",
+      className
+    )}
+    {...props}
+  >
+    <X className="h-3.5 w-3.5" />
+  </button>
+))
 ToastClose.displayName = "ToastClose"
 
-export const ToastViewport = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
-        className
-      )}
-      {...props}
-    />
-  )
-)
-ToastViewport.displayName = "ToastViewport"
-
 export interface ToastProviderProps {
-  children: React.ReactNode
+  children?: React.ReactNode
 }
 
 export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   return <>{children}</>
 }
 
-export { Toast }
+export const Toaster: React.FC<{
+  position?: "top-left" | "top-right" | "top-center" | "bottom-left" | "bottom-right" | "bottom-center"
+}> = ({ position = "bottom-right" }) => {
+  const { toasts, dismiss } = useToast()
 
+  return (
+    <Portal>
+      <ToastViewport position={position}>
+        {toasts.map(({ id, title, description, action, variant, ...toastProps }) => (
+          <Toast
+            key={id}
+            id={id}
+            variant={variant}
+            title={title}
+            description={description}
+            action={action}
+            onClose={() => dismiss(id)}
+            {...toastProps}
+          />
+        ))}
+      </ToastViewport>
+    </Portal>
+  )
+}

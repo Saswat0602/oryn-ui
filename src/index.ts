@@ -26,7 +26,7 @@ export { Slider } from './components/core/slider'
 export { Rating } from './components/core/rating'
 export { Skeleton } from './components/core/skeleton'
 export { Textarea } from './components/core/textarea'
-export { ButtonGroup } from './components/core/button-group'
+export { ButtonGroup, ButtonGroupItem } from './components/core/button-group'
 export { InputGroup, InputGroupAddon } from './components/core/input-group'
 
 // Form Components
@@ -41,7 +41,7 @@ export { DateRangePicker } from './components/forms/date-range-picker'
 export { TimePicker } from './components/forms/time-picker'
 export { FileUpload, formatBytes } from './components/forms/file-upload'
 export { PromptInput } from './components/forms/prompt-input'
-export { InputOTP, InputOTPGroup, InputOTPSlot } from './components/forms/input-otp'
+export { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from './components/forms/input-otp'
 export {
   Breadcrumbs,
   Breadcrumb,
@@ -203,7 +203,10 @@ export {
   ToastAction, 
   ToastClose, 
   ToastViewport, 
-  ToastProvider 
+  ToastProvider,
+  Toaster,
+  useToast,
+  toast
 } from './components/feedback/toast'
 
 
@@ -253,7 +256,9 @@ export {
   CarouselItem, 
   CarouselPrevious, 
   CarouselNext, 
-  CarouselIndicator 
+  CarouselIndicator,
+  CarouselIndicators,
+  useCarousel
 } from './components/media/carousel'
 
 export { 
@@ -295,7 +300,7 @@ export type { SliderProps } from './components/core/slider'
 export type { RatingProps } from './components/core/rating'
 export type { SkeletonProps } from './components/core/skeleton'
 export type { TextareaProps } from './components/core/textarea'
-export type { ButtonGroupProps } from './components/core/button-group'
+export type { ButtonGroupProps, ButtonGroupItemProps } from './components/core/button-group'
 export type { InputGroupProps, InputGroupAddonProps } from './components/core/input-group'
 
 export type { RadioGroupProps, RadioGroupItemProps } from './components/forms/radio-group'
@@ -309,7 +314,7 @@ export type { DateRangePickerProps, DateRange, DateRangePreset } from './compone
 export type { TimePickerProps } from './components/forms/time-picker'
 export type { FileUploadProps } from './components/forms/file-upload'
 export type { PromptInputProps } from './components/forms/prompt-input'
-export type { InputOTPProps, InputOTPGroupProps, InputOTPSlotProps } from './components/forms/input-otp'
+export type { InputOTPProps, InputOTPGroupProps, InputOTPSlotProps, InputOTPSeparatorProps } from './components/forms/input-otp'
 export type { BreadcrumbsProps, BreadcrumbItemData, BreadcrumbsItem } from './components/forms/breadcrumbs'
 export type { TabsProps, TabItem, TabsListProps, TabsTriggerProps, TabsContentProps } from './components/forms/tabs'
 export type { 
