@@ -40,7 +40,7 @@ export function useFloatingPosition(
       : { width: triggerRect.width, height: 200 }
 
     let nextSide = side
-    let nextAlign = align
+    const nextAlign = align
 
     // Collision check for vertical axis
     if (side === 'bottom') {

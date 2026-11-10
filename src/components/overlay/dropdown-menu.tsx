@@ -262,7 +262,7 @@ export interface DropdownMenuItemProps extends React.HTMLAttributes<HTMLDivEleme
 
 export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuItemProps>(
   ({ className, inset, disabled = false, asChild = false, onSelect, onClick, ...props }, ref) => {
-    const { setOpen } = useDropdownMenuContext()
+    const { setOpen, triggerRef } = useDropdownMenuContext()
 
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
       if (disabled) return

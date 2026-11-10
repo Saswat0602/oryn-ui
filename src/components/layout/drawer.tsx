@@ -7,7 +7,7 @@ import { Portal } from "../../lib/portal"
 import { Presence } from "../../primitives/presence"
 import { useFocusTrap } from "../../lib/focus"
 
-export interface DrawerProps {
+export interface DrawerProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Whether the drawer is open */
   isOpen?: boolean
   /** Callback when drawer should close */
@@ -34,8 +34,6 @@ export interface DrawerProps {
   overlayClassName?: string
   /** Drawer content */
   children: React.ReactNode
-  /** Additional props */
-  [key: string]: any
 }
 
 const positionVariants = {
@@ -112,7 +110,7 @@ export const Drawer = React.forwardRef<HTMLDivElement, DrawerProps>(
       lg: position === "left" || position === "right" ? "w-[32rem]" : "h-[32rem]",
       full: position === "left" || position === "right" ? "w-full" : "h-full",
     }
-    return { className: sizeClasses[size] }
+    return { className: sizeClasses[size as keyof typeof sizeClasses] || sizeClasses.md }
   }
 
   const sizeProps = getSizeClasses()
@@ -144,7 +142,7 @@ export const Drawer = React.forwardRef<HTMLDivElement, DrawerProps>(
           data-state={isOpen ? "open" : "closed"}
           className={cn(
             "fixed z-[60] bg-background text-foreground border-border shadow-2xl flex flex-col transition ease-in-out duration-300",
-            positionVariants[position],
+            positionVariants[position as keyof typeof positionVariants] || positionVariants.right,
             sizeProps.className,
             className
           )}
