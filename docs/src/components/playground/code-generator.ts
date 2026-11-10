@@ -7,7 +7,7 @@ export function generateComponentCode(config: PlaygroundConfig, currentProps: Re
   }
 
   const componentName = config.componentName || config.title.replace(/[\s-]/g, '')
-  const importName = config.importStatement || `import { ${componentName} } from '@oryn/ui'`
+  const importName = config.importStatement || `import { ${componentName} } from 'oryn-ui'`
 
   const activePropEntries: string[] = []
   let childrenContent: string | null = null

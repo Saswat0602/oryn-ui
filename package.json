@@ -1,17 +1,20 @@
 {
-  "name": "mad-ui-components",
+  "name": "oryn-ui",
   "version": "3.2.1",
-  "description": "A comprehensive UI component library built with React and Tailwind CSS",
+  "description": "A modern component library for building beautiful, accessible interfaces.",
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.mts",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Saswat0602/mad-ui.git"
+    "url": "git+https://github.com/Saswat0602/oryn-ui.git"
   },
-  "homepage": "https://mad-ui.vercel.app/",
+  "homepage": "https://oryn-ui.vercel.app/",
   "bugs": {
-    "url": "https://github.com/Saswat0602/mad-ui/issues"
+    "url": "https://github.com/Saswat0602/oryn-ui/issues"
   },
   "engines": {
     "node": ">=20.0.0"
@@ -510,7 +513,8 @@
     "vitest-axe": "0.1.0"
   },
   "bin": {
-    "mad-ui-components": "scripts/copy-component.js"
+    "oryn": "scripts/copy-component.js",
+    "oryn-ui": "scripts/copy-component.js"
   },
   "scripts": {
     "build": "tsup && node scripts/build-css.js",

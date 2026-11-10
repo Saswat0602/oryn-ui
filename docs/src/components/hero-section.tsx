@@ -1,9 +1,9 @@
 "use client"
 
 import React from 'react'
-import { Button } from '@oryn/ui/button'
-import { Card, CardContent } from '@oryn/ui/card'
-import { Badge } from '@oryn/ui/badge'
+import { Button } from 'oryn-ui/button'
+import { Card, CardContent } from 'oryn-ui/card'
+import { Badge } from 'oryn-ui/badge'
 import { 
   ArrowRight, 
   Package, 

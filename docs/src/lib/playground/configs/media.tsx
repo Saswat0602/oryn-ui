@@ -17,7 +17,7 @@ import {
   TypographyP,
   TypographyLead,
   TypographyMuted
-} from '@oryn/ui'
+} from 'oryn-ui'
 import { PlaygroundConfig } from '@/components/playground/types'
 
 export const mediaPlaygrounds: Record<string, PlaygroundConfig> = {

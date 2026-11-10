@@ -16,7 +16,7 @@ We take the security of ORYN UI seriously. If you believe you have discovered a 
 ### How to report:
 1. Use GitHub Private Vulnerability Reporting on the [ORYN UI Security tab](https://github.com/Saswat0602/oryn-ui/security).
 2. Alternatively, email the maintainer at `saswatranjan0602@gmail.com` with the subject line:  
-   `[SECURITY] Vulnerability report in @oryn/ui`.
+   `[SECURITY] Vulnerability report in oryn-ui`.
 
 ### What to include in your report:
 - A clear description of the vulnerability and its potential impact.

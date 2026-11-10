@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: false,
   },
   outputFileTracingRoot: path.resolve(__dirname, ".."),
-  transpilePackages: ["mad-ui-components"],
+  transpilePackages: ["oryn-ui"],
 };
 
 const withMDX = createMDX({

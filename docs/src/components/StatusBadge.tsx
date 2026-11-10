@@ -1,5 +1,5 @@
 import React from 'react'
-import { Badge } from '@oryn/ui'
+import { Badge } from 'oryn-ui'
 
 interface StatusBadgeProps {
   status: 'stable' | 'beta' | 'alpha' | 'deprecated'

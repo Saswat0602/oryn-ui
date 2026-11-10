@@ -23,7 +23,7 @@ import {
   Stepper,
   Timeline,
   TreeView
-} from '@oryn/ui'
+} from 'oryn-ui'
 import { PlaygroundConfig } from '@/components/playground/types'
 
 export const navigationPlaygrounds: Record<string, PlaygroundConfig> = {

@@ -27,7 +27,7 @@ import {
   HoverCard, 
   Separator, 
   Toggle 
-} from '@oryn/ui'
+} from 'oryn-ui'
 
 export interface ComponentExample {
   title: string
@@ -41,7 +41,7 @@ export const overlayExamples: Record<string, ComponentExample[]> = {
     {
       title: 'Interactive Alert Dialog',
       description: 'A modal dialog for confirming sensitive or destructive actions',
-      code: `import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from '@oryn/ui'
+      code: `import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogFooter, AlertDialogTitle, AlertDialogDescription, AlertDialogAction, AlertDialogCancel } from 'oryn-ui'
 import { useState } from 'react'
 
 export function AlertDialogExample() {
@@ -81,7 +81,7 @@ export function AlertDialogExample() {
     {
       title: 'Basic Collapsible',
       description: 'A simple collapsible component',
-      code: `import { Collapsible } from '@oryn/ui'
+      code: `import { Collapsible } from 'oryn-ui'
 
 export function CollapsibleExample() {
   return (
@@ -106,7 +106,7 @@ export function CollapsibleExample() {
     {
       title: 'Basic Context Menu',
       description: 'A simple context menu component',
-      code: `import { ContextMenu } from '@oryn/ui'
+      code: `import { ContextMenu } from 'oryn-ui'
 
 export function ContextMenuExample() {
   return (
@@ -129,7 +129,7 @@ export function ContextMenuExample() {
     {
       title: 'Interactive Dialog',
       description: 'A modal window overlay for user interactions and forms',
-      code: `import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from '@oryn/ui'
+      code: `import { Dialog, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogDescription } from 'oryn-ui'
 import { useState } from 'react'
 
 export function DialogExample() {
@@ -184,7 +184,7 @@ export function DialogExample() {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuGroup
-} from '@oryn/ui'
+} from 'oryn-ui'
 
 export function DropdownMenuExample() {
   return (
@@ -233,7 +233,7 @@ export function DropdownMenuExample() {
   DropdownMenuCheckboxItem,
   DropdownMenuLabel,
   DropdownMenuSeparator
-} from '@oryn/ui'
+} from 'oryn-ui'
 
 export function DropdownMenuCheckboxes() {
   const [showStatusBar, setShowStatusBar] = useState(true)
@@ -310,7 +310,7 @@ export function DropdownMenuCheckboxes() {
     {
       title: 'Basic Hover Card',
       description: 'A simple hover card component',
-      code: `import { HoverCard } from '@oryn/ui'
+      code: `import { HoverCard } from 'oryn-ui'
 
 export function HoverCardExample() {
   return (
@@ -341,7 +341,7 @@ export function HoverCardExample() {
     {
       title: 'Basic Separator',
       description: 'A simple separator component',
-      code: `import { Separator } from '@oryn/ui'
+      code: `import { Separator } from 'oryn-ui'
 
 export function SeparatorExample() {
   return (
@@ -366,7 +366,7 @@ export function SeparatorExample() {
     {
       title: 'Basic Toggle',
       description: 'A simple toggle component',
-      code: `import { Toggle } from '@oryn/ui'
+      code: `import { Toggle } from 'oryn-ui'
 
 export function ToggleExample() {
   return <Toggle>Toggle</Toggle>

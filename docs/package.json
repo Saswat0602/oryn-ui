@@ -23,7 +23,7 @@
     "framer-motion": "^12.23.12",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.577.0",
-    "@oryn/ui": "file:..",
+    "oryn-ui": "file:..",
     "next": "^16.4.3",
     "prismjs": "^1.30.0",
     "react": "^19.3.1",

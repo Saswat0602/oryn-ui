@@ -55,7 +55,7 @@ export function getComponentExamples(slug: string): ComponentExample[] {
     {
       title: 'Basic Example',
       description: 'A basic example of the component',
-      code: `import { ${slug.charAt(0).toUpperCase() + slug.slice(1)} } from '@oryn/ui'
+      code: `import { ${slug.charAt(0).toUpperCase() + slug.slice(1)} } from 'oryn-ui'
 
 export function Example() {
   return <${slug.charAt(0).toUpperCase() + slug.slice(1)} />

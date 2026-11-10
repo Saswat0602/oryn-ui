@@ -16,7 +16,7 @@ import {
   Progress, 
   Slider,
   Avatar
-} from '@oryn/ui'
+} from 'oryn-ui'
 import { 
   ArrowRight, 
   Copy, 

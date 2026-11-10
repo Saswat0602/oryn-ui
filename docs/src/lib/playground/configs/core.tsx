@@ -27,7 +27,7 @@ import {
   Slider, 
   Switch, 
   Textarea 
-} from '@oryn/ui'
+} from 'oryn-ui'
 import { PlaygroundConfig } from '@/components/playground/types'
 
 export const corePlaygrounds: Record<string, PlaygroundConfig> = {

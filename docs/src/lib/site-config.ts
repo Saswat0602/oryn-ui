@@ -5,7 +5,7 @@ export const siteConfig = {
   fullName: "ORYN UI",
   tagline: "Crafting clarity into every interface.",
   description: "A modern component library for building beautiful, accessible interfaces.",
-  packageName: packageJson.name as string, // "@oryn/ui"
+  packageName: packageJson.name as string, // "oryn-ui"
   version: `v${packageJson.version}`,
   rawVersion: packageJson.version,
   totalComponents: "75+",

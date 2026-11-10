@@ -2,7 +2,7 @@
 // Extracted to keep example TSX components clean, scannable, and maintainable.
 
 export const button = {
-  variants: `import { Button } from '@oryn/ui'
+  variants: `import { Button } from 'oryn-ui'
 
 export function ButtonVariants() {
   return (
@@ -17,7 +17,7 @@ export function ButtonVariants() {
   )
 }`,
 
-  sizes: `import { Button } from '@oryn/ui'
+  sizes: `import { Button } from 'oryn-ui'
 import { Search } from 'lucide-react'
 
 export function ButtonSizes() {
@@ -31,7 +31,7 @@ export function ButtonSizes() {
   )
 }`,
 
-  withIcons: `import { Button } from '@oryn/ui'
+  withIcons: `import { Button } from 'oryn-ui'
 import { Download, Upload, ArrowRight, Heart, ShoppingCart } from 'lucide-react'
 
 export function ButtonWithIcons() {
@@ -46,7 +46,7 @@ export function ButtonWithIcons() {
   )
 }`,
 
-  loading: `import { Button } from '@oryn/ui'
+  loading: `import { Button } from 'oryn-ui'
 
 export function ButtonLoading() {
   return (
@@ -58,7 +58,7 @@ export function ButtonLoading() {
   )
 }`,
 
-  fullWidth: `import { Button } from '@oryn/ui'
+  fullWidth: `import { Button } from 'oryn-ui'
 import { Check } from 'lucide-react'
 
 export function ButtonFullWidth() {
@@ -71,7 +71,7 @@ export function ButtonFullWidth() {
 }
 
 export const input = {
-  basic: `import { Input } from '@oryn/ui'
+  basic: `import { Input } from 'oryn-ui'
 
 export function InputBasic() {
   return (
@@ -83,7 +83,7 @@ export function InputBasic() {
   )
 }`,
 
-  withIcons: `import { Input } from '@oryn/ui'
+  withIcons: `import { Input } from 'oryn-ui'
 import { Mail, Search, User, Lock } from 'lucide-react'
 
 export function InputWithIcons() {
@@ -110,7 +110,7 @@ export function InputWithIcons() {
   )
 }`,
 
-  states: `import { Input, Label } from '@oryn/ui'
+  states: `import { Input, Label } from 'oryn-ui'
 
 export function InputStates() {
   return (
@@ -144,7 +144,7 @@ export function InputStates() {
 }
 
 export const card = {
-  variants: `import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@oryn/ui'
+  variants: `import { Card, CardHeader, CardTitle, CardDescription, CardContent } from 'oryn-ui'
 
 export function CardVariants() {
   return (
@@ -192,7 +192,7 @@ export function CardVariants() {
   )
 }`,
 
-  interactive: `import { Card, CardHeader, CardTitle, CardContent } from '@oryn/ui'
+  interactive: `import { Card, CardHeader, CardTitle, CardContent } from 'oryn-ui'
 
 export function InteractiveCards() {
   return (
@@ -220,7 +220,7 @@ export function InteractiveCards() {
 }
 
 export const checkbox = {
-  basic: `import { Checkbox } from '@oryn/ui'
+  basic: `import { Checkbox } from 'oryn-ui'
 
 export function CheckboxBasic() {
   return (
@@ -234,7 +234,7 @@ export function CheckboxBasic() {
   )
 }`,
 
-  sizes: `import { Checkbox } from '@oryn/ui'
+  sizes: `import { Checkbox } from 'oryn-ui'
 
 export function CheckboxSizes() {
   return (
@@ -246,7 +246,7 @@ export function CheckboxSizes() {
   )
 }`,
 
-  indeterminate: `import { Checkbox } from '@oryn/ui'
+  indeterminate: `import { Checkbox } from 'oryn-ui'
 
 export function CheckboxIndeterminate() {
   return (
@@ -256,7 +256,7 @@ export function CheckboxIndeterminate() {
 }
 
 export const radio = {
-  group: `import { Radio } from '@oryn/ui'
+  group: `import { Radio } from 'oryn-ui'
 
 export function RadioGroup() {
   return (
@@ -268,7 +268,7 @@ export function RadioGroup() {
   )
 }`,
 
-  sizes: `import { Radio } from '@oryn/ui'
+  sizes: `import { Radio } from 'oryn-ui'
 
 export function RadioSizes() {
   return (
@@ -282,7 +282,7 @@ export function RadioSizes() {
 }
 
 export const switches = {
-  basic: `import { Switch } from '@oryn/ui'
+  basic: `import { Switch } from 'oryn-ui'
 
 export function SwitchBasic() {
   return (
@@ -296,7 +296,7 @@ export function SwitchBasic() {
   )
 }`,
 
-  sizes: `import { Switch } from '@oryn/ui'
+  sizes: `import { Switch } from 'oryn-ui'
 
 export function SwitchSizes() {
   return (
@@ -310,7 +310,7 @@ export function SwitchSizes() {
 }
 
 export const progress = {
-  variants: `import { Progress } from '@oryn/ui'
+  variants: `import { Progress } from 'oryn-ui'
 
 export function ProgressVariants() {
   return (
@@ -323,7 +323,7 @@ export function ProgressVariants() {
   )
 }`,
 
-  sizes: `import { Progress } from '@oryn/ui'
+  sizes: `import { Progress } from 'oryn-ui'
 
 export function ProgressSizes() {
   return (
@@ -337,7 +337,7 @@ export function ProgressSizes() {
 }
 
 export const rating = {
-  basic: `import { Rating } from '@oryn/ui'
+  basic: `import { Rating } from 'oryn-ui'
 
 export function RatingBasic() {
   return (
@@ -348,7 +348,7 @@ export function RatingBasic() {
   )
 }`,
 
-  sizes: `import { Rating } from '@oryn/ui'
+  sizes: `import { Rating } from 'oryn-ui'
 
 export function RatingSizes() {
   return (
@@ -362,7 +362,7 @@ export function RatingSizes() {
 }
 
 export const skeleton = {
-  variants: `import { Skeleton } from '@oryn/ui'
+  variants: `import { Skeleton } from 'oryn-ui'
 
 export function SkeletonVariants() {
   return (
@@ -375,7 +375,7 @@ export function SkeletonVariants() {
   )
 }`,
 
-  multiLine: `import { Skeleton } from '@oryn/ui'
+  multiLine: `import { Skeleton } from 'oryn-ui'
 
 export function SkeletonMultiLine() {
   return <Skeleton lines={3} />
@@ -383,13 +383,13 @@ export function SkeletonMultiLine() {
 }
 
 export const textarea = {
-  basic: `import { Textarea } from '@oryn/ui'
+  basic: `import { Textarea } from 'oryn-ui'
 
 export function TextareaBasic() {
   return <Textarea placeholder="Enter your message..." />
 }`,
 
-  withLabel: `import { Textarea, Label } from '@oryn/ui'
+  withLabel: `import { Textarea, Label } from 'oryn-ui'
 
 export function TextareaWithLabel() {
   return (
@@ -403,7 +403,7 @@ export function TextareaWithLabel() {
 }
 
 export const label = {
-  basic: `import { Label, Input } from '@oryn/ui'
+  basic: `import { Label, Input } from 'oryn-ui'
 
 export function LabelBasic() {
   return (
@@ -414,7 +414,7 @@ export function LabelBasic() {
   )
 }`,
 
-  required: `import { Label, Input } from '@oryn/ui'
+  required: `import { Label, Input } from 'oryn-ui'
 
 export function LabelRequired() {
   return (
@@ -427,7 +427,7 @@ export function LabelRequired() {
 }
 
 export const select = {
-  basic: `import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@oryn/ui'
+  basic: `import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from 'oryn-ui'
 
 export function SelectBasic() {
   return (
@@ -446,7 +446,7 @@ export function SelectBasic() {
 }
 
 export const slider = {
-  basic: `import { Slider } from '@oryn/ui'
+  basic: `import { Slider } from 'oryn-ui'
 import { useState } from 'react'
 
 export function SliderExample() {
@@ -469,7 +469,7 @@ export function SliderExample() {
   )
 }`,
 
-  range: `import { Slider } from '@oryn/ui'
+  range: `import { Slider } from 'oryn-ui'
 import { useState } from 'react'
 
 export function RangeSliderExample() {

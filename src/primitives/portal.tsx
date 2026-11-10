@@ -32,7 +32,7 @@ export function usePortal(id?: string) {
   const [container, setContainer] = React.useState<HTMLElement | null>(null)
 
   React.useEffect(() => {
-    const portalId = id || 'mad-ui-portal'
+    const portalId = id || 'oryn-ui-portal'
     let element = document.getElementById(portalId)
 
     if (!element) {

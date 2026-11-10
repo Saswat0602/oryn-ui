@@ -8,7 +8,7 @@ let count = 0
  */
 export function useId(providedId?: string): string {
   const reactId = React.useId ? React.useId() : undefined
-  const [fallbackId] = React.useState(() => `mad-ui-${++count}`)
+  const [fallbackId] = React.useState(() => `oryn-ui-${++count}`)
   return providedId || reactId || fallbackId
 }
 

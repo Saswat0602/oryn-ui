@@ -178,7 +178,9 @@
 }
 
 @layer base {
+  .oryn-ui-base,
   .mad-ui-base,
+  body[data-oryn-ui-theme],
   body[data-mad-ui-theme] {
     @apply bg-background text-foreground;
   }

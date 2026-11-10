@@ -29,7 +29,7 @@ import {
   PaginationEllipsis,
   Stepper,
   Button
-} from '@oryn/ui'
+} from 'oryn-ui'
 import { Search, Settings, User, CreditCard, HelpCircle, FileText, Layout, BarChart, Shield, Zap, Sparkles, BookOpen, Layers } from 'lucide-react'
 
 export interface ComponentExample {
@@ -44,7 +44,7 @@ export const navigationExamples: Record<string, ComponentExample[]> = {
     {
       title: 'Basic Combobox',
       description: 'A searchable dropdown select component with keyboard navigation',
-      code: `import { Combobox } from '@oryn/ui'
+      code: `import { Combobox } from 'oryn-ui'
 
 export function ComboboxExample() {
   const options = [
@@ -88,7 +88,7 @@ export function ComboboxExample() {
   CommandGroup, 
   CommandItem, 
   CommandSeparator 
-} from '@oryn/ui'
+} from 'oryn-ui'
 import { Search, Settings, User, CreditCard, HelpCircle } from 'lucide-react'
 
 export function CommandExample() {
@@ -167,7 +167,7 @@ export function CommandExample() {
   MenubarContent, 
   MenubarItem, 
   MenubarSeparator 
-} from '@oryn/ui'
+} from 'oryn-ui'
 
 export function MenubarExample() {
   return (
@@ -251,7 +251,7 @@ export function MenubarExample() {
   NavigationMenuTrigger, 
   NavigationMenuContent, 
   NavigationMenuLink 
-} from '@oryn/ui'
+} from 'oryn-ui'
 import { BarChart, Shield, Zap, Sparkles, BookOpen, Layers } from 'lucide-react'
 
 export function NavigationMenuExample() {
@@ -395,7 +395,7 @@ export function NavigationMenuExample() {
     {
       title: 'Controlled Pagination',
       description: 'Standard pagination controller with direct page selection and previous/next actions',
-      code: `import { Pagination } from '@oryn/ui'
+      code: `import { Pagination } from 'oryn-ui'
 import { useState } from 'react'
 
 export function PaginationExample() {
@@ -430,7 +430,7 @@ export function PaginationExample() {
   PaginationPrevious, 
   PaginationNext, 
   PaginationEllipsis 
-} from '@oryn/ui'
+} from 'oryn-ui'
 
 export function CompoundPaginationExample() {
   return (
@@ -497,7 +497,7 @@ export function CompoundPaginationExample() {
     {
       title: 'Workflow Stepper Wizard',
       description: 'Horizontal step tracker with active state highlighting, step completion icons, and interactive navigation',
-      code: `import { Stepper, Button } from '@oryn/ui'
+      code: `import { Stepper, Button } from 'oryn-ui'
 import { useState } from 'react'
 
 const STEPS = [

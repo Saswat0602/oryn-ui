@@ -8,9 +8,9 @@ const distDir = path.join(rootDir, 'dist');
 const indexMjs = path.join(distDir, 'index.mjs');
 const stylesCss = path.join(distDir, 'styles.css');
 
-console.log('[build-package] Checking @oryn/ui dist status...');
+console.log('[build-package] Checking oryn-ui dist status...');
 
-const isInstalledPackage = fs.existsSync(path.join(docsDir, 'node_modules', '@oryn', 'ui', 'package.json'));
+const isInstalledPackage = fs.existsSync(path.join(docsDir, 'node_modules', 'oryn-ui', 'package.json'));
 
 function isDistStale() {
   if (!fs.existsSync(indexMjs) || !fs.existsSync(stylesCss)) {
@@ -53,9 +53,9 @@ function isDistStale() {
 if (!isDistStale()) {
   console.log('[build-package] Local dist/ is up to date.');
 } else if (isInstalledPackage && !fs.existsSync(path.join(rootDir, 'src'))) {
-  console.log('[build-package] Using installed @oryn/ui package from npm.');
+  console.log('[build-package] Using installed oryn-ui package from npm.');
 } else {
-  console.log('[build-package] dist/ incomplete, missing, or outdated. Building @oryn/ui from source...');
+  console.log('[build-package] dist/ incomplete, missing, or outdated. Building oryn-ui from source...');
   
   // Ensure root node_modules exists (link to docs/node_modules if absent)
   const rootNodeModules = path.join(rootDir, 'node_modules');
@@ -118,7 +118,7 @@ if (!isDistStale()) {
   }
 
   if (buildSuccess) {
-    console.log('[build-package] @oryn/ui built successfully from source!');
+    console.log('[build-package] oryn-ui built successfully from source!');
   } else {
     console.error('[build-package] ERROR: Failed to produce dist/index.mjs.');
     process.exit(1);

@@ -20,7 +20,7 @@ import {
   TabsTrigger,
   TabsContent,
   Alert
-} from '@oryn/ui'
+} from 'oryn-ui'
 import { 
   Palette, 
   Check, 

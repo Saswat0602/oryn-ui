@@ -3,9 +3,9 @@
 /**
  * ORYN Smart Component Distributor CLI
  * Usage:
- *   npx @oryn/ui add <component-name> [--path <dir>] [--overwrite] [--dry-run]
- *   npx @oryn/ui list
- *   npx @oryn/ui add --all
+ *   npx oryn-ui add <component-name> [--path <dir>] [--overwrite] [--dry-run]
+ *   npx oryn-ui list
+ *   npx oryn-ui add --all
  */
 
 const fs = require('fs');
@@ -198,13 +198,13 @@ function parseArgs() {
 
 function printHelp() {
   console.log(`
-ORYN Component CLI (@oryn/ui)
+ORYN Component CLI (oryn-ui)
 
 Commands:
-  npx @oryn/ui init                   Initialize project with styles and utils
-  npx @oryn/ui list                   List all 75 components by category
-  npx @oryn/ui add <component>       Copy component and its dependencies
-  npx @oryn/ui add --all             Copy all 75 components
+  npx oryn-ui init                   Initialize project with styles and utils
+  npx oryn-ui list                   List all 75 components by category
+  npx oryn-ui add <component>       Copy component and its dependencies
+  npx oryn-ui add --all             Copy all 75 components
 
 Options:
   --copy              Explicitly copy source code into project (default behavior)
@@ -348,11 +348,11 @@ function initProject(options, rootDir) {
   console.log('\n🎉 ORYN initialized successfully!');
   console.log('\nNext steps:');
   console.log('  1. Add theme styles to your globals.css:');
-  console.log('     @import "@oryn/ui/theme.css";');
+  console.log('     @import "oryn-ui/theme.css";');
   console.log('  2. For Tailwind v4, add to your CSS:');
-  console.log('     @source "../node_modules/@oryn/ui/dist";');
+  console.log('     @source "../node_modules/oryn-ui/dist";');
   console.log('  3. Add components to your project:');
-  console.log('     npx @oryn/ui add button\n');
+  console.log('     npx oryn-ui add button\n');
 }
 
 function main() {
@@ -396,7 +396,7 @@ function main() {
   const normalized = normalizeName(options.targetComponent);
   if (!normalized) {
     console.error(`\n❌ Component "${options.targetComponent}" not found.`);
-    console.log(`Run "npx @oryn/ui list" to view all available components.\n`);
+    console.log(`Run "npx oryn-ui list" to view all available components.\n`);
     process.exit(1);
   }
 

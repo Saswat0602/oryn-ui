@@ -11,13 +11,13 @@ import {
   CardDescription, 
   CardContent, 
   Badge 
-} from '@oryn/ui'
+} from 'oryn-ui'
 import { 
   useClipboard, 
   useHotkeys, 
   useDebounce, 
   useLocalStorage 
-} from '@oryn/ui/hooks'
+} from 'oryn-ui/hooks'
 import { 
   Copy, 
   Check, 
@@ -36,7 +36,7 @@ import { CodeBlock } from '@/components/CodeBlock'
 export default function HooksPage() {
   // 1. useClipboard Interactive State
   const { copied, copy } = useClipboard({ timeout: 2000 })
-  const [copyText, setCopyText] = useState('npm install @oryn/ui')
+  const [copyText, setCopyText] = useState('npm install oryn-ui')
 
   // 2. useHotkeys Interactive State
   const [hotkeyCount, setHotkeyCount] = useState(0)
@@ -64,13 +64,13 @@ export default function HooksPage() {
       category: 'Utility',
       signature: 'useClipboard({ timeout?: number }): { copied: boolean, copy: (text: string) => Promise<boolean> }',
       description: 'Provides accessible copy-to-clipboard functionality with automatic success timeout indicator and fallback support.',
-      code: `import { useClipboard } from '@oryn/ui/hooks'
+      code: `import { useClipboard } from 'oryn-ui/hooks'
 
 export function CopySnippet() {
   const { copied, copy } = useClipboard({ timeout: 2000 })
 
   return (
-    <button onClick={() => copy('npm install @oryn/ui')}>
+    <button onClick={() => copy('npm install oryn-ui')}>
       {copied ? 'Copied to clipboard!' : 'Copy installation command'}
     </button>
   )
@@ -81,7 +81,7 @@ export function CopySnippet() {
       category: 'Keyboard & Accessibility',
       signature: 'useHotkeys(hotkey: string, callback: (e: KeyboardEvent) => void, options?: HotkeyOptions): void',
       description: 'Declarative keyboard shortcut listener supporting modifier combinations (mod, ctrl, meta, shift, alt) and input-prevention controls.',
-      code: `import { useHotkeys } from '@oryn/ui/hooks'
+      code: `import { useHotkeys } from 'oryn-ui/hooks'
 import { useState } from 'react'
 
 export function QuickSearchModal() {
@@ -101,7 +101,7 @@ export function QuickSearchModal() {
       category: 'Performance',
       signature: 'useDebounce<T>(value: T, delayMs?: number): T',
       description: 'Delays updating state values until a specified idle duration has passed. Essential for real-time search inputs and API throttles.',
-      code: `import { useDebounce } from '@oryn/ui/hooks'
+      code: `import { useDebounce } from 'oryn-ui/hooks'
 import { useState, useEffect } from 'react'
 
 export function SearchUsers() {
@@ -123,7 +123,7 @@ export function SearchUsers() {
       category: 'Persistence',
       signature: 'useLocalStorage<T>(key: string, initialValue: T): [T, (val: T | ((prev: T) => T)) => void, () => void]',
       description: 'Type-safe, SSR-hydrated local storage synchronization that listens across browser tabs and avoids React hydration mismatches.',
-      code: `import { useLocalStorage } from '@oryn/ui/hooks'
+      code: `import { useLocalStorage } from 'oryn-ui/hooks'
 
 export function UserPreferences() {
   const [preferences, setPreferences, removePreferences] = useLocalStorage('app-settings', {
@@ -143,7 +143,7 @@ export function UserPreferences() {
       category: 'Headless State',
       signature: 'useControllableState<T>({ prop?: T, defaultProp?: T, onChange?: (val: T) => void }): [T, (val: T) => void]',
       description: 'Coordinates controlled and uncontrolled component state patterns seamlessly, allowing consumer overrides while maintaining internal defaults.',
-      code: `import { useControllableState } from '@oryn/ui/hooks'
+      code: `import { useControllableState } from 'oryn-ui/hooks'
 
 export function ToggleGroup({ value: valueProp, defaultValue, onChange }) {
   const [value, setValue] = useControllableState({
@@ -160,7 +160,7 @@ export function ToggleGroup({ value: valueProp, defaultValue, onChange }) {
       category: 'Overlay & Dom',
       signature: 'useClickOutside(ref: RefObject<HTMLElement>, handler: (e: MouseEvent) => void, enabled?: boolean): void',
       description: 'Detects pointer interactions outside a target element, used by Dropdowns, Popovers, and Dialogs for clean dismissals.',
-      code: `import { useClickOutside } from '@oryn/ui/hooks'
+      code: `import { useClickOutside } from 'oryn-ui/hooks'
 import { useRef, useState } from 'react'
 
 export function Popover() {
@@ -177,7 +177,7 @@ export function Popover() {
       category: 'Keyboard & Accessibility',
       signature: 'useEscapeKey(handler: (e: KeyboardEvent) => void, enabled?: boolean): void',
       description: 'Accessible listener for Escape keydown events, adhering to WAI-ARIA modal dismiss guidelines.',
-      code: `import { useEscapeKey } from '@oryn/ui/hooks'
+      code: `import { useEscapeKey } from 'oryn-ui/hooks'
 
 export function Modal({ isOpen, onClose }) {
   useEscapeKey(onClose, isOpen)
@@ -189,7 +189,7 @@ export function Modal({ isOpen, onClose }) {
       category: 'Accessibility',
       signature: 'useId(prefix?: string): string',
       description: 'Deterministic SSR-safe accessibility ID generation for connecting labels, inputs, and aria-describedby hints.',
-      code: `import { useId } from '@oryn/ui/hooks'
+      code: `import { useId } from 'oryn-ui/hooks'
 
 export function FormField() {
   const id = useId('input-field')
@@ -206,7 +206,7 @@ export function FormField() {
       category: 'Accessibility',
       signature: 'useFocusTrap(containerRef: RefObject<HTMLElement>, active?: boolean): void',
       description: 'Traps keyboard Tab focus within an overlay container, preventing background focus leakage for accessible dialogs and modals.',
-      code: `import { useFocusTrap } from '@oryn/ui/hooks'
+      code: `import { useFocusTrap } from 'oryn-ui/hooks'
 import { useRef } from 'react'
 
 export function AccessibleModal({ active }) {
@@ -221,7 +221,7 @@ export function AccessibleModal({ active }) {
       category: 'Responsive',
       signature: 'useMediaQuery(query: string): boolean',
       description: 'Reactive CSS media query listener for building responsive components that adjust between mobile and desktop layouts in JavaScript.',
-      code: `import { useMediaQuery } from '@oryn/ui/hooks'
+      code: `import { useMediaQuery } from 'oryn-ui/hooks'
 
 export function ResponsiveView() {
   const isDesktop = useMediaQuery('(min-width: 768px)')
@@ -258,7 +258,7 @@ export function ResponsiveView() {
             <span className="text-primary font-bold">import</span>
             <span>&#123; useClipboard, useHotkeys, useDebounce &#125;</span>
             <span className="text-primary font-bold">from</span>
-            <span className="text-foreground">&apos;@oryn/ui/hooks&apos;</span>
+            <span className="text-foreground">&apos;oryn-ui/hooks&apos;</span>
           </div>
         </div>
       </div>

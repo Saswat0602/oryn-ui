@@ -1,8 +1,8 @@
 "use client"
 
 import React from 'react'
-import { Badge } from '@oryn/ui/badge'
-import { Tabs } from '@oryn/ui/tabs'
+import { Badge } from 'oryn-ui/badge'
+import { Tabs } from 'oryn-ui/tabs'
 import { CodeBlock } from '@/components/CodeBlock'
 import { siteConfig } from '@/lib/site-config'
 

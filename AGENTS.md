@@ -6,11 +6,11 @@ Welcome to the **ORYN UI** repository. This document provides a comprehensive gu
 
 ## 1. Project Overview & Architectural Standards
 
-**ORYN UI** (`@oryn/ui`) is an enterprise-grade React UI component library built with **TypeScript** and **Tailwind CSS**, featuring 57+ components and subpath modules with extensive customization, animations, accessibility, and theme support.
+**ORYN UI** (`oryn-ui`) is an enterprise-grade React UI component library built with **TypeScript** and **Tailwind CSS**, featuring 57+ components and subpath modules with extensive customization, animations, accessibility, and theme support.
 
 ### Monorepo Structure:
-1. **Root (`/`)**: The published npm package (`@oryn/ui`), bundled with `tsup` into ESM and `.d.mts` files in `dist/`.
-2. **Documentation (`/docs`)**: A Next.js 16.4.3+ showcase and documentation application built with App Router (Turbopack), React 19, and Tailwind CSS v4. It consumes the root package directly via `"@oryn/ui": "file:.."`.
+1. **Root (`/`)**: The published npm package (`oryn-ui`), bundled with `tsup` into ESM and `.d.mts` files in `dist/`.
+2. **Documentation (`/docs`)**: A Next.js 16.4.3+ showcase and documentation application built with App Router (Turbopack), React 19, and Tailwind CSS v4. It consumes the root package directly via `"oryn-ui": "file:.."`.
 
 ---
 
@@ -23,7 +23,7 @@ mad-ui/
 ├── CHANGELOG.md               # Version changelog
 ├── LICENSE                    # MIT License
 ├── README.md                  # Root repository overview and npm instructions
-├── package.json               # Root package.json (@oryn/ui)
+├── package.json               # Root package.json (oryn-ui)
 ├── tsup.config.ts             # Multi-entry build configuration for library
 ├── tsconfig.json              # Root TypeScript config
 ├── tailwind.config.js         # Library Tailwind configuration
@@ -93,7 +93,7 @@ All UI contributions must reflect senior-level engineering quality:
    - Navigation tabs, buttons, and badges must use clean, semantic Lucide vector icons (`Eye`, `Code2`, `Terminal`, `BookOpen`), NEVER raw emojis (`🎨`, `📝`, `⚡`, `💡`).
 4. **Header & Navigation Layout**:
    - Header must be sleek (`h-14` / 56px), with sticky positioning, backdrop-blur, and crisp bottom border.
-   - Header must feature direct links to the official GitHub repository (`https://github.com/Saswat0602/oryn-ui`) and npm package (`https://www.npmjs.com/package/@oryn/ui`).
+   - Header must feature direct links to the official GitHub repository (`https://github.com/Saswat0602/oryn-ui`) and npm package (`https://www.npmjs.com/package/oryn-ui`).
    - Documentation must always feature a persistent, sticky left sidebar (`w-64`) with category grouping and instant component search.
 
 ---
@@ -174,19 +174,19 @@ When adding a new component to the library, follow this strict checklist:
 
 1. **Zero Redundant Package Installs**:
    - `clsx`, `tailwind-merge`, and `lucide-react` are declared as direct `dependencies` in root `package.json`.
-   - **RULE**: NEVER instruct consumers to install `npm install @oryn/ui lucide-react clsx tailwind-merge`.
+   - **RULE**: NEVER instruct consumers to install `npm install oryn-ui lucide-react clsx tailwind-merge`.
    - Consumers only need:
      ```bash
-     npm install @oryn/ui
+     npm install oryn-ui
      ```
-   - Documentation, quickstart guides, and README must only mention installing `@oryn/ui`.
+   - Documentation, quickstart guides, and README must only mention installing `oryn-ui`.
 
 ---
 
 ## 9. Next.js Dev Server & Bundler Stability
 
 1. **`clean: false` in `tsup.config.ts`**:
-   - `tsup.config.ts` must maintain `clean: false`. Enabling `clean: true` deletes `dist/` on every rebuild, which breaks file-handle watches in Next.js Turbopack and triggers an infinite recompilation loop (`Module not found: Can't resolve '@oryn/ui'`).
+   - `tsup.config.ts` must maintain `clean: false`. Enabling `clean: true` deletes `dist/` on every rebuild, which breaks file-handle watches in Next.js Turbopack and triggers an infinite recompilation loop (`Module not found: Can't resolve 'oryn-ui'`).
 2. **Subpath `"default"` Export Fallback**:
    - Every subpath export in root `package.json` must include `"default": "./dist/<name>.mjs"`:
      ```json
@@ -198,7 +198,7 @@ When adding a new component to the library, follow this strict checklist:
      ```
    - This prevents Node/Next.js SSR from throwing `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 3. **No Direct Symlinks to `src/` in Docs `tsconfig.json`**:
-   - Do NOT alias `@oryn/ui` directly to `../src` in `docs/tsconfig.json`. React 19's typing for `cloneElement` conflicts with React 18 component definitions in `src/`. `docs` must consume the pre-bundled ESM/DTS in `dist/`.
+   - Do NOT alias `oryn-ui` directly to `../src` in `docs/tsconfig.json`. React 19's typing for `cloneElement` conflicts with React 18 component definitions in `src/`. `docs` must consume the pre-bundled ESM/DTS in `dist/`.
 
 ---
 
@@ -211,7 +211,7 @@ When adding a new component to the library, follow this strict checklist:
 3. **Interactive 2FA Web Authorization**:
    - When 2FA is active on the npm account, npm CLI 11 prompts with an authentication URL:
      `Authenticate your account at: https://www.npmjs.com/auth/cli/<uuid>`
-   - The user authorizes the request in their logged-in browser, after which npm immediately completes the upload and outputs `+ @oryn/ui@<version>`.
+   - The user authorizes the request in their logged-in browser, after which npm immediately completes the upload and outputs `+ oryn-ui@<version>`.
 
 ---
 

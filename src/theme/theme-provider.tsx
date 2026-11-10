@@ -29,8 +29,8 @@ export function ThemeProvider({
   children,
   defaultTheme = 'system',
   defaultStyle = 'monochrome',
-  storageKey = 'mad-ui-theme',
-  styleStorageKey = 'mad-ui-style',
+  storageKey = 'oryn-ui-theme',
+  styleStorageKey = 'oryn-ui-style',
   attribute = 'class',
   enableSystem = true,
 }: ThemeProviderProps) {

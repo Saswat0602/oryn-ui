@@ -39,7 +39,7 @@ import {
   type DateRange,
   type MultiSelectOption,
   Calendar as MadCalendar 
-} from '@oryn/ui'
+} from 'oryn-ui'
 import { Calendar as CalendarIcon, Clock, Sliders, Palette, CalendarDays, Zap, User, Shield, Bell, Home as HomeIcon, Folder, FileText, Layers, Slash } from 'lucide-react'
 
 // Breadcrumb Designs Demo Component
@@ -236,7 +236,7 @@ export const formsExamples: Record<string, ComponentExample[]> = {
     {
       title: 'Basic Accordion',
       description: 'A simple accordion component with smooth animations',
-      code: `import { Accordion } from '@oryn/ui'
+      code: `import { Accordion } from 'oryn-ui'
 
 export function AccordionExample() {
   const items = [
@@ -276,7 +276,7 @@ export function AccordionExample() {
     {
       title: 'Multiple Open Accordion',
       description: 'Accordion that allows multiple items to be open simultaneously',
-      code: `import { Accordion } from '@oryn/ui'
+      code: `import { Accordion } from 'oryn-ui'
 
 export function MultipleAccordion() {
   const items = [
@@ -327,7 +327,7 @@ export function MultipleAccordion() {
     {
       title: 'Custom Icon Position',
       description: 'Accordion with icon positioned on the left side',
-      code: `import { Accordion } from '@oryn/ui'
+      code: `import { Accordion } from 'oryn-ui'
 import { ChevronRight } from 'lucide-react'
 
 export function CustomIconAccordion() {
@@ -375,7 +375,7 @@ export function CustomIconAccordion() {
     {
       title: 'Rich Content',
       description: 'Accordion with complex content including lists and formatting',
-      code: `import { Accordion } from '@oryn/ui'
+      code: `import { Accordion } from 'oryn-ui'
 
 export function EnterpriseAccordion() {
   const items = [
@@ -437,7 +437,7 @@ export function EnterpriseAccordion() {
     {
       title: 'Minimal & Chevron Styles',
       description: 'Clean minimalist breadcrumb paths with configurable separators such as forward slashes or chevrons',
-      code: `import { Breadcrumbs } from '@oryn/ui'
+      code: `import { Breadcrumbs } from 'oryn-ui'
 
 export function BreadcrumbsSeparatorDemo() {
   const items = [
@@ -492,7 +492,7 @@ export function BreadcrumbsSeparatorDemo() {
     {
       title: 'Pill & Outlined Badge Styles with Icons',
       description: 'Card-backed, pill, and bordered badge breadcrumbs equipped with Lucide vector icons',
-      code: `import { Breadcrumbs } from '@oryn/ui'
+      code: `import { Breadcrumbs } from 'oryn-ui'
 import { Home, Folder, Layers, FileText } from 'lucide-react'
 
 export function BreadcrumbsBadgesDemo() {
@@ -560,7 +560,7 @@ export function BreadcrumbsBadgesDemo() {
     {
       title: 'Collapsed Path with Ellipsis',
       description: 'Compact breadcrumb for deeply nested routes that collapses intermediate segments into an ellipsis',
-      code: `import { Breadcrumbs } from '@oryn/ui'
+      code: `import { Breadcrumbs } from 'oryn-ui'
 
 export function CollapsedBreadcrumbsDemo() {
   const deepItems = [
@@ -610,7 +610,7 @@ export function CollapsedBreadcrumbsDemo() {
   BreadcrumbSeparator, 
   BreadcrumbPage,
   BreadcrumbEllipsis 
-} from '@oryn/ui'
+} from 'oryn-ui'
 
 export function CompoundBreadcrumbDemo() {
   return (
@@ -665,7 +665,7 @@ export function CompoundBreadcrumbDemo() {
     {
       title: 'Modern Date & Time Picker',
       description: 'Beautiful, modern date and time picker with horizontal time selection and custom Select components - choose date, time, or both together',
-      code: `import { DateTimePicker } from '@oryn/ui'
+      code: `import { DateTimePicker } from 'oryn-ui'
 import { useState } from 'react'
 
 export function DateTimePickerDemo() {
@@ -723,7 +723,7 @@ export function DateTimePickerDemo() {
     {
       title: 'Grouped OTP with Separator',
       description: 'A composable one-time password input with separated groups, active focus rings, and clipboard paste support',
-      code: `import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from '@oryn/ui'
+      code: `import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from 'oryn-ui'
 import { useState } from 'react'
 
 export function InputOTPExample() {
@@ -755,7 +755,7 @@ export function InputOTPExample() {
     {
       title: 'Masked Security Pin',
       description: 'Masked input for 4-digit security PINs and credentials',
-      code: `import { InputOTP, InputOTPGroup, InputOTPSlot } from '@oryn/ui'
+      code: `import { InputOTP, InputOTPGroup, InputOTPSlot } from 'oryn-ui'
 import { useState } from 'react'
 
 export function MaskedPINExample() {
@@ -780,7 +780,7 @@ export function MaskedPINExample() {
     {
       title: 'Basic Radio Group',
       description: 'A simple radio group component',
-      code: `import { RadioGroup } from '@oryn/ui'
+      code: `import { RadioGroup } from 'oryn-ui'
 
 export function RadioGroupExample() {
   return (
@@ -807,7 +807,7 @@ export function RadioGroupExample() {
     {
       title: 'Compound Tabs (Radix / shadcn Style)',
       description: 'Composable tabs with accessible keyboard roving focus, TabPanels, and form cards',
-      code: `import { Tabs, TabsList, TabsTrigger, TabsContent, Input, Button } from '@oryn/ui'
+      code: `import { Tabs, TabsList, TabsTrigger, TabsContent, Input, Button } from 'oryn-ui'
 
 export function AccountTabsDemo() {
   return (
@@ -901,7 +901,7 @@ export function AccountTabsDemo() {
     {
       title: 'Underline Tabs with Icons',
       description: 'Header style tabs with semantic Lucide vector icons and active border indicator',
-      code: `import { Tabs } from '@oryn/ui'
+      code: `import { Tabs } from 'oryn-ui'
 import { User, Shield, Bell } from 'lucide-react'
 
 export function UnderlineTabsDemo() {
@@ -961,7 +961,7 @@ export function UnderlineTabsDemo() {
     {
       title: 'Pills Tabs with Badges',
       description: 'Rounded pill triggers with active primary accent and counter badges',
-      code: `import { Tabs } from '@oryn/ui'
+      code: `import { Tabs } from 'oryn-ui'
 
 export function PillsTabsDemo() {
   const items = [
@@ -1001,7 +1001,7 @@ export function PillsTabsDemo() {
   FormMessage, 
   Input, 
   Button 
-} from '@oryn/ui'
+} from 'oryn-ui'
 import { useState } from 'react'
 
 export function ProfileForm() {
@@ -1053,7 +1053,7 @@ export function ProfileForm() {
     {
       title: 'Interactive Calendar',
       description: 'A responsive calendar with month navigation and date selection',
-      code: `import { Calendar } from '@oryn/ui'
+      code: `import { Calendar } from 'oryn-ui'
 import { useState } from 'react'
 
 export function CalendarExample() {
@@ -1076,7 +1076,7 @@ export function CalendarExample() {
     {
       title: 'Password with Reveal & Strength Meter',
       description: 'Security password input with visibility toggle button and score meter',
-      code: `import { PasswordInput } from '@oryn/ui'
+      code: `import { PasswordInput } from 'oryn-ui'
 import { useState } from 'react'
 
 export function PasswordInputExample() {
@@ -1101,7 +1101,7 @@ export function PasswordInputExample() {
     {
       title: 'Number Stepper with Clamp Bounds',
       description: 'Numeric stepper with step buttons, keyboard arrow controls, and clamp validation',
-      code: `import { NumberInput } from '@oryn/ui'
+      code: `import { NumberInput } from 'oryn-ui'
 import { useState } from 'react'
 
 export function NumberInputExample() {
@@ -1127,7 +1127,7 @@ export function NumberInputExample() {
     {
       title: 'Searchable Tag Multi-Select',
       description: 'Multi-value option selection with inline pill removal, search query filter, and max item badges',
-      code: `import { MultiSelect } from '@oryn/ui'
+      code: `import { MultiSelect } from 'oryn-ui'
 import { useState } from 'react'
 
 const ROLES = [
@@ -1161,7 +1161,7 @@ export function MultiSelectExample() {
     {
       title: 'Date Range with Preset Shortcuts',
       description: 'Dual-calendar range selector with fast preset buttons for common billing intervals',
-      code: `import { DateRangePicker, DateRange } from '@oryn/ui'
+      code: `import { DateRangePicker, DateRange } from 'oryn-ui'
 import { useState } from 'react'
 
 export function DateRangePickerExample() {
@@ -1188,7 +1188,7 @@ export function DateRangePickerExample() {
     {
       title: 'Segmented Time Selector',
       description: 'Time picker supporting 12-hour AM/PM and 24-hour modes with minute stepper controls',
-      code: `import { TimePicker } from '@oryn/ui'
+      code: `import { TimePicker } from 'oryn-ui'
 import { useState } from 'react'
 
 export function TimePickerExample() {
@@ -1213,7 +1213,7 @@ export function TimePickerExample() {
     {
       title: 'Drag & Drop File Upload Zone',
       description: 'Dropzone with drag feedback, file size limits, removal triggers, and thumbnail previews',
-      code: `import { FileUpload } from '@oryn/ui'
+      code: `import { FileUpload } from 'oryn-ui'
 import { useState } from 'react'
 
 export function FileUploadExample() {
@@ -1242,7 +1242,7 @@ export function FileUploadExample() {
     {
       title: 'AI Prompt Input Box',
       description: 'Auto-expanding multi-line textarea with submit and stop actions, loading states, and keyboard Enter shortcuts',
-      code: `import { PromptInput } from '@oryn/ui'
+      code: `import { PromptInput } from 'oryn-ui'
 import { useState } from 'react'
 
 export function PromptInputExample() {

@@ -23,7 +23,7 @@ import {
   TypographySmall, 
   TypographyMuted, 
   Kbd 
-} from '@oryn/ui'
+} from 'oryn-ui'
 
 export interface ComponentExample {
   title: string
@@ -37,7 +37,7 @@ export const mediaExamples: Record<string, ComponentExample[]> = {
     {
       title: 'Basic Badge',
       description: 'A simple badge component',
-      code: `import { Badge } from '@oryn/ui'
+      code: `import { Badge } from 'oryn-ui'
 
 export function BadgeExample() {
   return <Badge>Badge</Badge>
@@ -47,7 +47,7 @@ export function BadgeExample() {
     {
       title: 'Badge Variants',
       description: 'Different badge variants',
-      code: `import { Badge } from '@oryn/ui'
+      code: `import { Badge } from 'oryn-ui'
 
 export function BadgeVariants() {
   return (
@@ -74,7 +74,7 @@ export function BadgeVariants() {
     {
       title: 'Basic Avatar',
       description: 'A simple avatar component',
-      code: `import { Avatar } from '@oryn/ui'
+      code: `import { Avatar } from 'oryn-ui'
 
 export function AvatarExample() {
   return <Avatar />
@@ -84,7 +84,7 @@ export function AvatarExample() {
     {
       title: 'Avatar with Image',
       description: 'Avatar with a profile image',
-      code: `import { Avatar } from '@oryn/ui'
+      code: `import { Avatar } from 'oryn-ui'
 
 export function AvatarWithImage() {
   return <Avatar src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=32&h=32&fit=crop&crop=face" alt="User" />
@@ -99,7 +99,7 @@ export function AvatarWithImage() {
     {
       title: 'Basic Aspect Ratio',
       description: 'A simple aspect ratio component',
-      code: `import { AspectRatio } from '@oryn/ui'
+      code: `import { AspectRatio } from 'oryn-ui'
 
 export function AspectRatioExample() {
   return (
@@ -139,7 +139,7 @@ export function AspectRatioExample() {
   CarouselNext, 
   CarouselIndicators,
   Badge 
-} from '@oryn/ui'
+} from 'oryn-ui'
 
 export function CarouselExample() {
   const slides = [
@@ -235,7 +235,7 @@ export function CarouselExample() {
     {
       title: 'Autoplay Multi-Slide Preview',
       description: 'Continuous smooth autoplay loop with multi-item layout and keyboard navigation',
-      code: `import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, CarouselIndicators } from '@oryn/ui'
+      code: `import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext, CarouselIndicators } from 'oryn-ui'
 
 export function AutoplayCarouselExample() {
   return (
@@ -282,7 +282,7 @@ export function AutoplayCarouselExample() {
     {
       title: 'Typography Headings',
       description: 'Different typography heading components',
-      code: `import { TypographyH1, TypographyH2, TypographyH3, TypographyH4, TypographyH5, TypographyH6 } from '@oryn/ui'
+      code: `import { TypographyH1, TypographyH2, TypographyH3, TypographyH4, TypographyH5, TypographyH6 } from 'oryn-ui'
 
 export function TypographyHeadings() {
   return (
@@ -310,7 +310,7 @@ export function TypographyHeadings() {
     {
       title: 'Typography Text',
       description: 'Different typography text components',
-      code: `import { TypographyP, TypographyLead, TypographyLarge, TypographySmall, TypographyMuted } from '@oryn/ui'
+      code: `import { TypographyP, TypographyLead, TypographyLarge, TypographySmall, TypographyMuted } from 'oryn-ui'
 
 export function TypographyText() {
   return (
@@ -336,7 +336,7 @@ export function TypographyText() {
     {
       title: 'Typography Special',
       description: 'Special typography components',
-      code: `import { TypographyBlockquote, TypographyCode } from '@oryn/ui'
+      code: `import { TypographyBlockquote, TypographyCode } from 'oryn-ui'
 
 export function TypographySpecial() {
   return (
@@ -363,7 +363,7 @@ export function TypographySpecial() {
     {
       title: 'Keyboard Shortcuts',
       description: 'Platform-aware shortcut badges with modifier normalization',
-      code: `import { Kbd } from '@oryn/ui'
+      code: `import { Kbd } from 'oryn-ui'
 
 export function KbdExample() {
   return (

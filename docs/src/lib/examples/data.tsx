@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Table, DataTable, Chart, Badge, StatCard, Timeline, TreeView } from '@oryn/ui'
+import { Table, DataTable, Chart, Badge, StatCard, Timeline, TreeView } from 'oryn-ui'
 import { Users, DollarSign, Activity } from 'lucide-react'
 
 export interface ComponentExample {
@@ -14,7 +14,7 @@ export const dataExamples: Record<string, ComponentExample[]> = {
     {
       title: 'Basic Table',
       description: 'A clean, responsive table with sortable columns',
-      code: `import { Table } from '@oryn/ui'
+      code: `import { Table } from 'oryn-ui'
 
 export function BasicTable() {
   const columns = [
@@ -66,7 +66,7 @@ export function BasicTable() {
     {
       title: 'Advanced Table with Selection',
       description: 'Table with row selection, striped rows, and custom rendering',
-      code: `import { Table, Badge } from '@oryn/ui'
+      code: `import { Table, Badge } from 'oryn-ui'
 import { useState } from 'react'
 
 export function AdvancedTable() {
@@ -149,7 +149,7 @@ export function AdvancedTable() {
     {
       title: 'Interactive Table',
       description: 'Editable table with add/delete functionality',
-      code: `import { Table } from '@oryn/ui'
+      code: `import { Table } from 'oryn-ui'
 import { useState } from 'react'
 
 export function InteractiveTable() {
@@ -231,7 +231,7 @@ export function InteractiveTable() {
     {
       title: 'Advanced Data Table',
       description: 'Feature-rich table with global search, column header sorting, checkbox row selection, and pagination',
-      code: `import { DataTable, Badge } from '@oryn/ui'
+      code: `import { DataTable, Badge } from 'oryn-ui'
 
 export function DataTableExample() {
   const columns = [
@@ -282,7 +282,7 @@ export function DataTableExample() {
     {
       title: 'Basic Chart',
       description: 'A simple chart component',
-      code: `import { Chart } from '@oryn/ui'
+      code: `import { Chart } from 'oryn-ui'
 
 export function ChartExample() {
   const data = [
@@ -314,7 +314,7 @@ export function ChartExample() {
     {
       title: 'Metrics & KPI Stat Cards',
       description: 'Overview metric cards with trend indicators, direction badges, and icon adornments',
-      code: `import { StatCard } from '@oryn/ui'
+      code: `import { StatCard } from 'oryn-ui'
 import { DollarSign, Users, Activity } from 'lucide-react'
 
 export function StatCardExample() {
@@ -352,7 +352,7 @@ export function StatCardExample() {
     {
       title: 'Deployment & Activity Timeline',
       description: 'Vertical chronological activity stream with status nodes, timestamps, and connecting tracks',
-      code: `import { Timeline } from '@oryn/ui'
+      code: `import { Timeline } from 'oryn-ui'
 
 const EVENTS = [
   {
@@ -390,7 +390,7 @@ export function TimelineExample() {
     {
       title: 'File Explorer Tree View',
       description: 'Collapsible hierarchical folder tree with keyboard arrow navigation and branch expansion',
-      code: `import { TreeView, TreeNode } from '@oryn/ui'
+      code: `import { TreeView, TreeNode } from 'oryn-ui'
 import { useState } from 'react'
 
 const FILE_TREE: TreeNode[] = [

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { Drawer, Accordion, Card, Badge, Button } from '@oryn/ui'
+import { Drawer, Accordion, Card, Badge, Button } from 'oryn-ui'
 import { Menu, Layers, ChevronRight, Check } from 'lucide-react'
 import { CodeBlock } from '@/components/CodeBlock'
 import { drawerUsageCode, accordionUsageCode } from '@/data/components-demo-snippets'

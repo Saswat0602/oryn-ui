@@ -27,7 +27,7 @@ import {
   MessageBubble,
   ReasoningDisclosure,
   ToolCallCard
-} from '@oryn/ui'
+} from 'oryn-ui'
 import { 
   Copy, 
   Check, 
@@ -483,7 +483,7 @@ export default function ExamplesPage() {
   MessageBubble, 
   ReasoningDisclosure, 
   ToolCallCard 
-} from '@oryn/ui'
+} from 'oryn-ui'
 import { useState } from 'react'
 
 export function AIAssistantPattern() {
