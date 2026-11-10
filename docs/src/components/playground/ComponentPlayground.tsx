@@ -241,12 +241,12 @@ export function ComponentPlayground({ config, className = '' }: ComponentPlaygro
         </div>
       </div>
 
-      {/* Main Split Grid: Stage (8 cols) & Controls Panel (4 cols) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[440px]">
+      {/* Main Split Grid: Stage (7 cols) & Controls Panel (5 cols) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 min-h-[460px]">
         {/* Left/Top: Live Stage / Code Stage */}
-        <div className="lg:col-span-8 border-b lg:border-b-0 lg:border-r border-border/60 flex flex-col justify-between">
+        <div className="lg:col-span-7 xl:col-span-7 border-b lg:border-b-0 lg:border-r border-border/60 flex flex-col justify-between">
           {activeView === 'preview' ? (
-            <div className="relative p-6 sm:p-10 flex-1 flex flex-col items-center justify-center bg-zinc-50/80 dark:bg-[#0c0d12] bg-[radial-gradient(#d4d4d8_1px,transparent_1px)] dark:bg-[radial-gradient(#27272a_1px,transparent_1px)] [background-size:20px_20px] transition-colors overflow-x-auto min-h-[340px]">
+            <div className="relative p-6 sm:p-10 md:p-12 flex-1 flex flex-col items-center justify-center bg-zinc-50/50 dark:bg-zinc-950/40 bg-[radial-gradient(#e4e4e7_1px,transparent_1px)] dark:bg-[radial-gradient(#27272a_1px,transparent_1px)] [background-size:24px_24px] transition-colors overflow-x-auto min-h-[380px]">
               {/* Event Toast / Notification Chip */}
               {lastEvent && (
                 <div className="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-[11px] font-mono animate-in fade-in slide-in-from-top-2">
@@ -259,9 +259,9 @@ export function ComponentPlayground({ config, className = '' }: ComponentPlaygro
               <div 
                 className={`flex items-center justify-center py-4 transition-all duration-300 ${
                   viewport === 'mobile' 
-                    ? 'w-full max-w-[375px] border border-dashed border-border/80 rounded-xl p-4 bg-background/50 shadow-2xs relative' 
+                    ? 'w-full max-w-[375px] border border-border/80 rounded-2xl p-4 sm:p-6 bg-card/60 shadow-md relative' 
                     : viewport === 'tablet' 
-                    ? 'w-full max-w-[768px] border border-dashed border-border/80 rounded-xl p-6 bg-background/50 shadow-2xs relative' 
+                    ? 'w-full max-w-[768px] border border-border/80 rounded-2xl p-6 sm:p-8 bg-card/60 shadow-md relative' 
                     : 'w-full'
                 }`}
               >
@@ -322,18 +322,18 @@ export function ComponentPlayground({ config, className = '' }: ComponentPlaygro
         </div>
 
         {/* Right/Bottom: Property Configuration Panel */}
-        <div className="lg:col-span-4 bg-card/60 backdrop-blur-sm p-4 sm:p-5 flex flex-col justify-between max-h-[520px] overflow-y-auto scrollbar-thin">
+        <div className="lg:col-span-5 xl:col-span-5 bg-card/60 backdrop-blur-sm p-5 sm:p-6 flex flex-col justify-between max-h-[580px] overflow-y-auto scrollbar-thin">
           <div className="space-y-5">
             {/* Controls Panel Header */}
-            <div className="flex items-center justify-between border-b border-border/40 pb-2.5">
-              <div className="flex items-center gap-1.5">
-                <SlidersHorizontal className="w-3.5 h-3.5 text-muted-foreground" />
-                <span className="text-xs font-semibold text-foreground uppercase tracking-wider">
+            <div className="flex items-center justify-between border-b border-border/40 pb-3">
+              <div className="flex items-center gap-2">
+                <SlidersHorizontal className="w-3.5 h-3.5 text-primary" />
+                <span className="text-xs font-semibold text-foreground tracking-wide">
                   Props Configurator
                 </span>
               </div>
-              <span className="text-[10px] font-mono text-muted-foreground bg-muted/60 px-1.5 py-0.5 rounded border border-border/40">
-                {config.controls.length} props
+              <span className="text-[10px] font-mono font-medium text-muted-foreground bg-muted px-2 py-0.5 rounded-full border border-border/50">
+                {config.controls.length} properties
               </span>
             </div>
 
@@ -342,12 +342,17 @@ export function ComponentPlayground({ config, className = '' }: ComponentPlaygro
               if (controls.length === 0) return null
 
               return (
-                <div key={categoryName} className="space-y-3">
-                  <h4 className="text-[11px] font-semibold text-muted-foreground tracking-wider uppercase">
-                    {categoryName}
-                  </h4>
+                <div key={categoryName} className="space-y-3.5 pt-4 first:pt-0 border-t border-border/40 first:border-t-0">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-[11px] font-semibold text-muted-foreground tracking-wider uppercase">
+                      {categoryName}
+                    </h4>
+                    <span className="text-[10px] font-mono text-muted-foreground/60">
+                      {controls.length} {controls.length === 1 ? 'prop' : 'props'}
+                    </span>
+                  </div>
 
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {controls.map((control) => {
                       const val = currentProps[control.name]
 

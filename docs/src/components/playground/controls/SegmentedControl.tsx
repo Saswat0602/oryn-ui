@@ -17,17 +17,24 @@ export function SegmentedControl({ control, value, onChange }: SegmentedControlP
     return { label: String(opt), value: opt }
   })
 
+  const isShortDefault = 
+    control.defaultValue !== undefined && 
+    String(control.defaultValue).length <= 10 &&
+    typeof control.defaultValue !== 'object'
+
   return (
     <div className="space-y-1.5 w-full">
       <div className="flex items-center justify-between gap-2">
-        <label className="text-xs font-medium text-foreground flex items-center gap-1.5">
-          <code className="font-mono text-primary bg-primary/10 px-1 py-0.5 rounded text-[11px] font-semibold">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <code className="font-mono text-primary bg-primary/10 px-1.5 py-0.5 rounded text-[11px] font-semibold shrink-0">
             {control.name}
           </code>
-          <span className="text-[11px] text-muted-foreground">{control.label}</span>
-        </label>
-        {control.defaultValue !== undefined && (
-          <span className="text-[10px] font-mono text-muted-foreground/60" title="Default value">
+          <span className="text-xs font-medium text-foreground truncate">
+            {control.label}
+          </span>
+        </div>
+        {isShortDefault && (
+          <span className="text-[10px] font-mono text-muted-foreground/60 shrink-0" title="Default value">
             def: {String(control.defaultValue)}
           </span>
         )}
@@ -64,7 +71,7 @@ export function SegmentedControl({ control, value, onChange }: SegmentedControlP
       </div>
 
       {control.description && (
-        <p className="text-[11px] text-muted-foreground leading-tight">
+        <p className="text-[11px] text-muted-foreground leading-normal">
           {control.description}
         </p>
       )}

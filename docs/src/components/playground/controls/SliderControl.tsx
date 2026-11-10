@@ -18,16 +18,13 @@ export function SliderControl({ control, value, onChange }: SliderControlProps) 
   return (
     <div className="space-y-1.5 w-full">
       <div className="flex items-center justify-between gap-2">
-        <label 
-          htmlFor={`slider-${control.name}`} 
-          className="text-xs font-medium text-foreground flex items-center gap-1.5"
-        >
-          <code className="font-mono text-primary bg-primary/10 px-1 py-0.5 rounded text-[11px] font-semibold">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <code className="font-mono text-primary bg-primary/10 px-1.5 py-0.5 rounded text-[11px] font-semibold shrink-0">
             {control.name}
           </code>
-          <span className="text-[11px] text-muted-foreground">{control.label}</span>
-        </label>
-        <span className="text-xs font-mono font-semibold text-foreground px-1.5 py-0.5 rounded bg-muted/60 border border-border/40">
+          <span className="text-xs font-medium text-foreground truncate">{control.label}</span>
+        </div>
+        <span className="text-xs font-mono font-semibold text-foreground px-2 py-0.5 rounded-md bg-muted border border-border/50 shrink-0">
           {numericValue}
         </span>
       </div>
@@ -44,7 +41,7 @@ export function SliderControl({ control, value, onChange }: SliderControlProps) 
       />
 
       {control.description && (
-        <p className="text-[11px] text-muted-foreground leading-tight">
+        <p className="text-[11px] text-muted-foreground leading-normal">
           {control.description}
         </p>
       )}

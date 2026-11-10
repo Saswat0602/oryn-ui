@@ -2,7 +2,13 @@
 
 import React from 'react'
 import { PlaygroundControlDef, PlaygroundControlOption } from '../types'
-import { ChevronDown } from 'lucide-react'
+import { 
+  Select, 
+  SelectTrigger, 
+  SelectValue, 
+  SelectContent, 
+  SelectItem 
+} from 'oryn-ui'
 
 interface SelectControlProps {
   control: PlaygroundControlDef
@@ -18,48 +24,59 @@ export function SelectControl({ control, value, onChange }: SelectControlProps) 
     return { label: String(opt), value: opt }
   })
 
+  // Only display default value if it's very concise so it never crowds or squeezes the label
+  const isShortDefault = 
+    control.defaultValue !== undefined && 
+    String(control.defaultValue).length <= 10 &&
+    typeof control.defaultValue !== 'object'
+
+  const stringValue = value !== undefined && value !== null ? String(value) : String(control.defaultValue ?? '')
+
   return (
     <div className="space-y-1.5 w-full">
+      {/* Clean Header: Label + Prop Code Tag + Short Default Indicator */}
       <div className="flex items-center justify-between gap-2">
-        <label 
-          htmlFor={`select-${control.name}`} 
-          className="text-xs font-medium text-foreground flex items-center gap-1.5"
-        >
-          <code className="font-mono text-primary bg-primary/10 px-1 py-0.5 rounded text-[11px] font-semibold">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <code className="font-mono text-primary bg-primary/10 px-1.5 py-0.5 rounded text-[11px] font-semibold shrink-0">
             {control.name}
           </code>
-          <span className="text-[11px] text-muted-foreground">{control.label}</span>
-        </label>
-        {control.defaultValue !== undefined && (
-          <span className="text-[10px] font-mono text-muted-foreground/60" title="Default value">
+          <span className="text-xs font-medium text-foreground truncate">
+            {control.label}
+          </span>
+        </div>
+        {isShortDefault && (
+          <span className="text-[10px] font-mono text-muted-foreground/60 shrink-0" title="Default value">
             def: {String(control.defaultValue)}
           </span>
         )}
       </div>
 
-      <div className="relative">
-        <select
-          id={`select-${control.name}`}
-          value={String(value)}
-          onChange={(e) => {
-            const rawVal = e.target.value
-            // Try to find the matching option to preserve type (boolean, number, etc.)
-            const match = options.find((opt) => String(opt.value) === rawVal)
-            onChange(match ? match.value : rawVal)
-          }}
-          className="w-full appearance-none rounded-lg border border-border/70 bg-background px-3 py-1.5 pr-8 text-xs font-medium text-foreground shadow-2xs transition-colors focus:border-primary focus:outline-hidden focus:ring-1 focus:ring-primary/40 cursor-pointer"
-        >
+      {/* Library's Own Floating Dropdown Select */}
+      <Select
+        value={stringValue}
+        onValueChange={(val) => {
+          const match = options.find((opt) => String(opt.value) === val)
+          onChange(match ? match.value : val)
+        }}
+      >
+        <SelectTrigger className="w-full h-9 rounded-lg border-border/70 bg-background/90 hover:bg-muted/40 text-xs font-medium px-3 shadow-2xs transition-colors">
+          <SelectValue placeholder={`Select ${control.label.toLowerCase()}...`} />
+        </SelectTrigger>
+        <SelectContent className="max-h-60 rounded-xl border-border/80 bg-popover/95 backdrop-blur-md shadow-xl p-1 z-[80]">
           {options.map((option) => (
-            <option key={String(option.value)} value={String(option.value)}>
+            <SelectItem 
+              key={String(option.value)} 
+              value={String(option.value)}
+              className="text-xs py-2 px-2.5 rounded-lg font-medium cursor-pointer"
+            >
               {option.label}
-            </option>
+            </SelectItem>
           ))}
-        </select>
-        <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground opacity-70" />
-      </div>
+        </SelectContent>
+      </Select>
 
       {control.description && (
-        <p className="text-[11px] text-muted-foreground leading-tight">
+        <p className="text-[11px] text-muted-foreground leading-normal">
           {control.description}
         </p>
       )}

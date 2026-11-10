@@ -162,9 +162,9 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
         <ComponentPlayground config={playgroundConfig} />
       </section>
 
-      {/* Sleek Segmented Navigation Tabs (Edge-to-edge swipe on mobile) */}
-      <div className="w-full overflow-x-auto pb-1 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0 pt-4">
-        <div className="inline-flex items-center p-1 rounded-xl bg-muted/50 border border-border/40 text-xs sm:text-sm min-w-max">
+      {/* Sleek Segmented Navigation Tabs */}
+      <div className="w-full overflow-x-auto pb-1 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0 pt-6">
+        <div className="inline-flex items-center gap-1.5 p-1 rounded-xl bg-muted/40 border border-border/50 text-xs sm:text-sm min-w-max">
           {[
             { id: 'examples', label: 'All Variants & Examples', icon: Layers },
             { id: 'props', label: 'API Reference', icon: Code2 },
@@ -177,10 +177,10 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as 'examples' | 'props' | 'usage' | 'guide')}
-                className={`flex items-center gap-2 py-2 px-3.5 rounded-lg font-medium text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer ${
+                className={`flex items-center gap-2 py-1.5 px-3.5 rounded-lg font-medium text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer ${
                   isActive
                     ? 'bg-background text-foreground shadow-2xs font-semibold'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/40'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}
               >
                 <Icon className={`h-4 w-4 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
@@ -192,19 +192,19 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
       </div>
 
       {/* Tab Content */}
-      <div className="pt-2">
+      <div className="pt-4">
         <AnimatePresence mode="wait">
           {activeTab === 'examples' && (
-            <div key="examples" className="space-y-12">
+            <div key="examples" className="space-y-12 sm:space-y-14">
               {examples.length > 0 ? (
                 examples.map((example, index) => (
-                  <section key={index} className="space-y-4 pt-4 first:pt-0">
-                    <div className="flex flex-col gap-1 pb-1">
-                      <h2 className="text-base sm:text-lg font-semibold tracking-tight text-foreground">
+                  <section key={index} className="space-y-3.5 pt-4 first:pt-0">
+                    <div className="flex flex-col gap-1.5 pb-1">
+                      <h2 className="text-base sm:text-lg font-bold tracking-tight text-foreground">
                         {example.title}
                       </h2>
                       {example.description && (
-                        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-2xl">
                           {example.description}
                         </p>
                       )}
