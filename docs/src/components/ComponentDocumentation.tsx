@@ -4,13 +4,15 @@ import React, { useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import { ComponentCategory } from '@/types/component'
 import { ComponentPreview } from './ComponentPreview'
+import { ComponentPlayground } from './playground'
 import { PropsTable } from './PropsTable'
 import { CodeBlock } from './CodeBlock'
 import Link from 'next/link'
-import { Copy, Check, Eye, Code2, Terminal, BookOpen, ExternalLink, Github, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Copy, Check, Eye, Code2, Terminal, BookOpen, ExternalLink, Github, ChevronLeft, ChevronRight, Sparkles, Layers } from 'lucide-react'
 import { getComponentExamples } from '@/lib/component-examples'
 import { getComponentProps } from '@/lib/component-props'
 import { getComponentBySlug, getAllComponents } from '@/lib/component-registry'
+import { getPlaygroundConfig } from '@/lib/playground'
 import { UsageGuide } from './UsageGuide'
 
 interface ComponentDocumentationProps {
@@ -33,6 +35,7 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
   // Get component examples and props based on slug
   const examples = getComponentExamples(slug)
   const props = getComponentProps(slug)
+  const playgroundConfig = getPlaygroundConfig(slug)
 
   // Previous & Next navigation
   const allComponents = getAllComponents()
@@ -144,14 +147,19 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
         </div>
       </div>
 
+      {/* Hero Interactive Component Playground */}
+      <section className="space-y-3">
+        <ComponentPlayground config={playgroundConfig} />
+      </section>
+
       {/* Sleek Segmented Navigation Tabs (Edge-to-edge swipe on mobile) */}
-      <div className="w-full overflow-x-auto pb-1 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
+      <div className="w-full overflow-x-auto pb-1 scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0 pt-4">
         <div className="inline-flex items-center p-1 rounded-xl bg-muted/50 border border-border/40 text-xs sm:text-sm min-w-max">
           {[
-            { id: 'examples', label: 'Live Preview', icon: Eye },
+            { id: 'examples', label: 'All Variants & Examples', icon: Layers },
             { id: 'props', label: 'API Reference', icon: Code2 },
             { id: 'usage', label: 'Installation & Import', icon: Terminal },
-            { id: 'guide', label: 'Guidelines', icon: BookOpen }
+            { id: 'guide', label: 'Accessibility & Guidelines', icon: BookOpen }
           ].map((tab) => {
             const Icon = tab.icon
             const isActive = activeTab === tab.id
