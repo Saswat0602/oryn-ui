@@ -68,24 +68,30 @@ export const COMPONENT_PROPS: Record<string, ComponentProp[]> = {
   card: [
     {
       name: 'variant',
-      type: "'default' | 'elevated' | 'glass' | 'interactive' | 'bordered'",
+      type: "'default' | 'elevated' | 'outlined' | 'ghost'",
       required: false,
       default: 'default',
-      description: 'Visual elevation and background styling of the card container'
+      description: 'Visual elevation and border styling of the card container'
     },
     {
-      name: 'padding',
-      type: "'none' | 'sm' | 'md' | 'lg'",
-      required: false,
-      default: 'md',
-      description: 'Internal content padding around the card body'
-    },
-    {
-      name: 'asChild',
+      name: 'hoverable',
       type: 'boolean',
       required: false,
       default: false,
-      description: 'Passes props to child element using Slot'
+      description: 'Applies smooth elevation and upward translation when hovered'
+    },
+    {
+      name: 'clickable',
+      type: 'boolean',
+      required: false,
+      default: false,
+      description: 'Enables active click scaling and pointer cursor'
+    },
+    {
+      name: 'className',
+      type: 'string',
+      required: false,
+      description: 'Custom Tailwind CSS utility classes'
     }
   ],
 

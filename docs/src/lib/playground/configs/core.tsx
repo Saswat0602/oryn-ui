@@ -1,4 +1,5 @@
 import React from 'react'
+import { Sparkles, Search, Lock } from 'lucide-react'
 import { 
   Button, 
   ButtonGroup, 
@@ -36,7 +37,8 @@ export const corePlaygrounds: Record<string, PlaygroundConfig> = {
     componentName: 'Button',
     defaultProps: {
       variant: 'default',
-      size: 'md',
+      size: 'default',
+      iconPlacement: 'none',
       disabled: false,
       loading: false,
       fullWidth: false,
@@ -50,13 +52,11 @@ export const corePlaygrounds: Record<string, PlaygroundConfig> = {
         defaultValue: 'default',
         options: [
           { label: 'Default', value: 'default' },
-          { label: 'Primary', value: 'primary' },
-          { label: 'Secondary', value: 'secondary' },
-          { label: 'Outline', value: 'outline' },
-          { label: 'Ghost', value: 'ghost' },
           { label: 'Destructive', value: 'destructive' },
-          { label: 'Link', value: 'link' },
-          { label: 'Subtle', value: 'subtle' }
+          { label: 'Outline', value: 'outline' },
+          { label: 'Secondary', value: 'secondary' },
+          { label: 'Ghost', value: 'ghost' },
+          { label: 'Link', value: 'link' }
         ],
         category: 'appearance',
         description: 'Visual treatment and color emphasis'
@@ -65,10 +65,28 @@ export const corePlaygrounds: Record<string, PlaygroundConfig> = {
         name: 'size',
         label: 'Button Size',
         type: 'segmented',
-        defaultValue: 'md',
-        options: ['xs', 'sm', 'md', 'lg', 'xl'],
+        defaultValue: 'default',
+        options: [
+          { label: 'SM', value: 'sm' },
+          { label: 'Default', value: 'default' },
+          { label: 'LG', value: 'lg' },
+          { label: 'Icon', value: 'icon' }
+        ],
         category: 'size',
         description: 'Height and horizontal padding dimensions'
+      },
+      {
+        name: 'iconPlacement',
+        label: 'Icon Placement',
+        type: 'segmented',
+        defaultValue: 'none',
+        options: [
+          { label: 'None', value: 'none' },
+          { label: 'Left', value: 'left' },
+          { label: 'Right', value: 'right' }
+        ],
+        category: 'appearance',
+        description: 'Places a decorative vector icon alongside label'
       },
       {
         name: 'children',
@@ -103,18 +121,23 @@ export const corePlaygrounds: Record<string, PlaygroundConfig> = {
         description: 'Expands button to fill 100% of container width'
       }
     ],
-    render: (props, context) => (
-      <Button
-        variant={props.variant}
-        size={props.size}
-        disabled={props.disabled}
-        loading={props.loading}
-        fullWidth={props.fullWidth}
-        onClick={() => context.onEvent('onClick', { timestamp: Date.now() })}
-      >
-        {props.children}
-      </Button>
-    )
+    render: (props, context) => {
+      const icon = <Sparkles className="w-4 h-4" />
+      return (
+        <Button
+          variant={props.variant}
+          size={props.size}
+          disabled={props.disabled}
+          loading={props.loading}
+          fullWidth={props.fullWidth}
+          leftIcon={props.iconPlacement === 'left' ? icon : undefined}
+          rightIcon={props.iconPlacement === 'right' ? icon : undefined}
+          onClick={() => context.onEvent('onClick', { timestamp: Date.now() })}
+        >
+          {props.size === 'icon' ? <Sparkles className="w-4 h-4" /> : props.children}
+        </Button>
+      )
+    }
   },
 
   'button-group': {
@@ -185,6 +208,8 @@ export const corePlaygrounds: Record<string, PlaygroundConfig> = {
     componentName: 'Card',
     defaultProps: {
       variant: 'default',
+      hoverable: false,
+      clickable: false,
       title: 'Security Preferences',
       description: 'Manage two-factor authentication and session controls.'
     },
@@ -196,12 +221,28 @@ export const corePlaygrounds: Record<string, PlaygroundConfig> = {
         defaultValue: 'default',
         options: [
           { label: 'Default', value: 'default' },
-          { label: 'Bordered', value: 'bordered' },
           { label: 'Elevated', value: 'elevated' },
+          { label: 'Outlined', value: 'outlined' },
           { label: 'Ghost', value: 'ghost' }
         ],
         category: 'appearance',
         description: 'Surface styling and border treatment'
+      },
+      {
+        name: 'hoverable',
+        label: 'Hover Physics',
+        type: 'boolean',
+        defaultValue: false,
+        category: 'options',
+        description: 'Applies smooth elevation and upward translation on hover'
+      },
+      {
+        name: 'clickable',
+        label: 'Clickable State',
+        type: 'boolean',
+        defaultValue: false,
+        category: 'options',
+        description: 'Enables active click scale and cursor pointer'
       },
       {
         name: 'title',
@@ -220,8 +261,14 @@ export const corePlaygrounds: Record<string, PlaygroundConfig> = {
         description: 'Header subtitle text'
       }
     ],
-    render: (props) => (
-      <Card variant={props.variant} className="w-full max-w-sm">
+    render: (props, context) => (
+      <Card 
+        variant={props.variant} 
+        hoverable={props.hoverable} 
+        clickable={props.clickable}
+        className="w-full max-w-sm"
+        onClick={props.clickable ? () => context.onEvent('onClick', { card: 'clicked' }) : undefined}
+      >
         <CardHeader>
           <CardTitle>{props.title}</CardTitle>
           <CardDescription>{props.description}</CardDescription>
@@ -291,21 +338,28 @@ export const corePlaygrounds: Record<string, PlaygroundConfig> = {
     title: 'Input',
     componentName: 'Input',
     defaultProps: {
-      size: 'md',
-      disabled: false,
-      error: false,
+      type: 'text',
       placeholder: 'Enter API access token...',
-      defaultValue: ''
+      error: false,
+      success: false,
+      disabled: false,
+      iconPlacement: 'none',
+      fullWidth: true
     },
     controls: [
       {
-        name: 'size',
-        label: 'Input Size',
-        type: 'segmented',
-        defaultValue: 'md',
-        options: ['sm', 'md', 'lg'],
-        category: 'size',
-        description: 'Controls field height and font dimensions'
+        name: 'type',
+        label: 'Input Type',
+        type: 'select',
+        defaultValue: 'text',
+        options: [
+          { label: 'Text', value: 'text' },
+          { label: 'Email', value: 'email' },
+          { label: 'Password', value: 'password' },
+          { label: 'Number', value: 'number' }
+        ],
+        category: 'appearance',
+        description: 'Standard HTML input type'
       },
       {
         name: 'placeholder',
@@ -316,12 +370,34 @@ export const corePlaygrounds: Record<string, PlaygroundConfig> = {
         description: 'Watermark hint shown when input is empty'
       },
       {
+        name: 'iconPlacement',
+        label: 'Icons',
+        type: 'segmented',
+        defaultValue: 'none',
+        options: [
+          { label: 'None', value: 'none' },
+          { label: 'Left', value: 'left' },
+          { label: 'Right', value: 'right' },
+          { label: 'Both', value: 'both' }
+        ],
+        category: 'appearance',
+        description: 'Displays search or lock icon inside input edge'
+      },
+      {
         name: 'error',
         label: 'Error State',
         type: 'boolean',
         defaultValue: false,
         category: 'state',
         description: 'Highlights border in destructive red for validation error'
+      },
+      {
+        name: 'success',
+        label: 'Success State',
+        type: 'boolean',
+        defaultValue: false,
+        category: 'state',
+        description: 'Highlights border in emerald green for valid input'
       },
       {
         name: 'disabled',
@@ -335,10 +411,14 @@ export const corePlaygrounds: Record<string, PlaygroundConfig> = {
     render: (props, context) => (
       <div className="w-full max-w-sm">
         <Input
-          size={props.size}
-          disabled={props.disabled}
-          error={props.error}
+          type={props.type}
           placeholder={props.placeholder}
+          error={props.error}
+          success={props.success}
+          disabled={props.disabled}
+          fullWidth={props.fullWidth}
+          leftIcon={props.iconPlacement === 'left' || props.iconPlacement === 'both' ? <Search className="w-4 h-4" /> : undefined}
+          rightIcon={props.iconPlacement === 'right' || props.iconPlacement === 'both' ? <Lock className="w-4 h-4" /> : undefined}
           onChange={(e) => context.onEvent('onChange', e.target.value)}
         />
       </div>

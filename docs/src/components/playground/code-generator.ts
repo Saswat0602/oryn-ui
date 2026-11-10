@@ -11,6 +11,7 @@ export function generateComponentCode(config: PlaygroundConfig, currentProps: Re
 
   const activePropEntries: string[] = []
   let childrenContent: string | null = null
+  const extraImports: string[] = []
 
   for (const control of config.controls) {
     const val = currentProps[control.name]
@@ -23,6 +24,21 @@ export function generateComponentCode(config: PlaygroundConfig, currentProps: Re
 
     if (control.name === 'children') {
       childrenContent = String(val)
+      continue
+    }
+
+    if (control.name === 'iconPlacement') {
+      if (val === 'left') {
+        activePropEntries.push('leftIcon={<Sparkles className="w-4 h-4" />}')
+        extraImports.push('Sparkles')
+      } else if (val === 'right') {
+        activePropEntries.push('rightIcon={<Sparkles className="w-4 h-4" />}')
+        extraImports.push('Sparkles')
+      } else if (val === 'both') {
+        activePropEntries.push('leftIcon={<Search className="w-4 h-4" />}')
+        activePropEntries.push('rightIcon={<Lock className="w-4 h-4" />}')
+        extraImports.push('Search', 'Lock')
+      }
       continue
     }
 
@@ -66,5 +82,9 @@ export function generateComponentCode(config: PlaygroundConfig, currentProps: Re
     }
   }
 
-  return `${importName}\n\nexport default function Example() {\n  return (\n    ${jsx.split('\n').join('\n    ')}\n  )\n}`
+  const iconImport = extraImports.length > 0 
+    ? `import { ${Array.from(new Set(extraImports)).join(', ')} } from 'lucide-react'\n` 
+    : ''
+
+  return `${importName}\n${iconImport}\nexport default function Example() {\n  return (\n    ${jsx.split('\n').join('\n    ')}\n  )\n}`
 }

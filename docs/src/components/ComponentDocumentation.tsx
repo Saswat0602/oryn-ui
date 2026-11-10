@@ -43,6 +43,15 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
   const prevComponent = currentIndex > 0 ? allComponents[currentIndex - 1] : null
   const nextComponent = currentIndex < allComponents.length - 1 ? allComponents[currentIndex + 1] : null
 
+  // Related Components
+  const relatedSlugs = RELATED_MAP[slug] || allComponents
+    .filter((c) => c.category === component.category && c.slug !== slug)
+    .slice(0, 3)
+    .map((c) => c.slug)
+  const relatedComponents = relatedSlugs
+    .map((s) => getComponentBySlug(s))
+    .filter(Boolean) as (typeof allComponents[0])[]
+
   const exportName = (component as any).exportName || component.title.replace(/\s+/g, '')
   const defaultImport = `import { ${exportName} } from 'mad-ui-components'`
 
@@ -321,6 +330,48 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
         </AnimatePresence>
       </div>
 
+      {/* Related Components Section */}
+      {relatedComponents.length > 0 && (
+        <section className="space-y-4 pt-6 border-t border-border/40">
+          <div>
+            <h3 className="text-base sm:text-lg font-semibold tracking-tight text-foreground">
+              Related Components
+            </h3>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Complementary components commonly used alongside {component.title}.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {relatedComponents.map((rel) => (
+              <Link
+                key={rel.slug}
+                href={`/docs/components/${rel.slug}`}
+                className="group flex flex-col justify-between p-4 rounded-xl border border-border/50 bg-card/60 hover:bg-muted/40 hover:border-primary/50 transition-all shadow-2xs hover:shadow-xs"
+              >
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <span className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
+                      {rel.title}
+                    </span>
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border/40">
+                      {rel.category}
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                    {rel.description}
+                  </p>
+                </div>
+                <div className="pt-3 flex items-center gap-1 text-[11px] font-medium text-primary opacity-80 group-hover:opacity-100 transition-opacity">
+                  <span>Explore component</span>
+                  <ChevronRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Bottom Component Pagination (< Previous | Next >) */}
       <div className="pt-8 sm:pt-10 border-t border-border/40 flex items-center justify-between gap-3 sm:gap-4">
         {prevComponent ? (
@@ -498,4 +549,96 @@ function getUsageExamples(slug: string) {
     ]
   }
   return examples[slug] || []
+}
+
+const RELATED_MAP: Record<string, string[]> = {
+  // Core
+  button: ['button-group', 'toggle', 'badge'],
+  'button-group': ['button', 'toggle', 'radio-group'],
+  card: ['stat-card', 'hover-card', 'layout-shell'],
+  input: ['input-group', 'password-input', 'prompt-input', 'textarea'],
+  'input-group': ['input', 'button', 'select'],
+  label: ['input', 'checkbox', 'switch'],
+  progress: ['slider', 'spinner', 'stat-card'],
+  radio: ['radio-group', 'checkbox', 'switch'],
+  rating: ['slider', 'badge', 'button'],
+  select: ['multi-select', 'combobox', 'dropdown-menu'],
+  skeleton: ['card', 'spinner', 'progress'],
+  slider: ['number-input', 'progress', 'rating'],
+  switch: ['checkbox', 'toggle', 'radio'],
+  textarea: ['input', 'prompt-input', 'form'],
+
+  // Forms
+  accordion: ['collapsible', 'tabs', 'tree-view'],
+  breadcrumbs: ['pagination', 'navbar', 'stepper'],
+  calendar: ['date-range-picker', 'datetime-picker', 'time-picker'],
+  'date-range-picker': ['calendar', 'datetime-picker', 'time-picker'],
+  'datetime-picker': ['time-picker', 'calendar', 'date-range-picker'],
+  'time-picker': ['datetime-picker', 'calendar', 'date-range-picker'],
+  'file-upload': ['form', 'input', 'button'],
+  form: ['input', 'select', 'checkbox', 'button'],
+  'input-otp': ['input', 'password-input', 'button'],
+  'multi-select': ['select', 'combobox', 'badge'],
+  'number-input': ['input', 'slider', 'input-group'],
+  'password-input': ['input', 'input-otp', 'input-group'],
+  'prompt-input': ['textarea', 'input', 'button'],
+  'radio-group': ['radio', 'button-group', 'switch'],
+  tabs: ['accordion', 'button-group', 'collapsible'],
+
+  // Overlay
+  dialog: ['alert-dialog', 'modal', 'sheet'],
+  'alert-dialog': ['dialog', 'modal', 'alert'],
+  drawer: ['sheet', 'modal', 'dialog'],
+  modal: ['dialog', 'alert-dialog', 'sheet'],
+  sheet: ['drawer', 'dialog', 'modal'],
+  popover: ['tooltip', 'dropdown-menu', 'hover-card'],
+  tooltip: ['popover', 'hover-card', 'badge'],
+  'dropdown-menu': ['context-menu', 'menubar', 'navigation-menu'],
+  'context-menu': ['dropdown-menu', 'menubar', 'popover'],
+  'hover-card': ['tooltip', 'popover', 'card'],
+
+  // Layout
+  collapsible: ['accordion', 'sidebar', 'toggle'],
+  'layout-shell': ['sidebar', 'navbar', 'scroll-area'],
+  navbar: ['sidebar', 'navigation-menu', 'breadcrumbs'],
+  resizable: ['scroll-area', 'sidebar', 'layout-shell'],
+  'scroll-area': ['resizable', 'layout-shell', 'table'],
+  separator: ['card', 'sidebar', 'navbar'],
+  sidebar: ['navbar', 'layout-shell', 'sheet'],
+  toggle: ['button', 'switch', 'button-group'],
+
+  // Navigation
+  combobox: ['select', 'command', 'multi-select'],
+  command: ['combobox', 'dropdown-menu', 'kbd'],
+  menubar: ['navigation-menu', 'dropdown-menu', 'context-menu'],
+  'navigation-menu': ['menubar', 'navbar', 'dropdown-menu'],
+  pagination: ['breadcrumbs', 'data-table', 'table'],
+  stepper: ['timeline', 'breadcrumbs', 'progress'],
+  timeline: ['stepper', 'tree-view', 'badge'],
+  'tree-view': ['timeline', 'accordion', 'sidebar'],
+
+  // Data
+  chart: ['stat-card', 'data-table', 'table'],
+  'data-table': ['table', 'pagination', 'stat-card'],
+  'stat-card': ['chart', 'card', 'badge'],
+  table: ['data-table', 'scroll-area', 'pagination'],
+
+  // Media
+  'aspect-ratio': ['avatar', 'carousel', 'card'],
+  avatar: ['badge', 'aspect-ratio', 'empty-state'],
+  badge: ['avatar', 'kbd'],
+  carousel: ['aspect-ratio', 'card', 'pagination'],
+  kbd: ['command', 'badge', 'tooltip'],
+  typography: ['label', 'card', 'empty-state'],
+
+  // Feedback
+  alert: ['banner', 'toast', 'sonner'],
+  banner: ['alert', 'toast', 'message-bubble'],
+  'empty-state': ['button', 'card', 'typography'],
+  'message-bubble': ['prompt-input', 'tool-call-card', 'avatar'],
+  'reasoning-disclosure': ['collapsible', 'tool-call-card', 'accordion'],
+  sonner: ['toast', 'alert', 'banner'],
+  spinner: ['skeleton', 'progress', 'button'],
+  toast: ['sonner', 'alert', 'banner'],
+  'tool-call-card': ['reasoning-disclosure', 'card', 'message-bubble']
 }

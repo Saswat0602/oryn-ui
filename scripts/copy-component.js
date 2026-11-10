@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 /**
- * Mad UI Smart Component Distributor CLI
+ * ORYN Smart Component Distributor CLI
  * Usage:
- *   npx mad-ui-components add <component-name> [--path <dir>] [--overwrite] [--dry-run]
- *   npx mad-ui-components list
- *   npx mad-ui-components add --all
+ *   npx @oryn/ui add <component-name> [--path <dir>] [--overwrite] [--dry-run]
+ *   npx @oryn/ui list
+ *   npx @oryn/ui add --all
  */
 
 const fs = require('fs');
@@ -155,7 +155,7 @@ function parseArgs() {
   const options = {
     command: null,
     targetComponent: null,
-    targetDir: path.join(process.cwd(), 'components', 'ui', 'mad-ui'),
+    targetDir: path.join(process.cwd(), 'components', 'ui', 'oryn'),
     all: false,
     dryRun: false,
     overwrite: false
@@ -198,17 +198,17 @@ function parseArgs() {
 
 function printHelp() {
   console.log(`
-Mad UI Component CLI (mad-ui-components)
+ORYN Component CLI (@oryn/ui)
 
 Commands:
-  npx mad-ui-components init                   Initialize project with styles and utils
-  npx mad-ui-components list                   List all 75 components by category
-  npx mad-ui-components add <component>       Copy component and its dependencies
-  npx mad-ui-components add --all             Copy all 75 components
+  npx @oryn/ui init                   Initialize project with styles and utils
+  npx @oryn/ui list                   List all 75 components by category
+  npx @oryn/ui add <component>       Copy component and its dependencies
+  npx @oryn/ui add --all             Copy all 75 components
 
 Options:
   --copy              Explicitly copy source code into project (default behavior)
-  --path, -p <dir>    Custom destination directory (default: components/ui/mad-ui)
+  --path, -p <dir>    Custom destination directory (default: components/ui/oryn)
   --overwrite         Overwrite files if they already exist
   --dry-run           Preview which files would be copied without writing to disk
 `);

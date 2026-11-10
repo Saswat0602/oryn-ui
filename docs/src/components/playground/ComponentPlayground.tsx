@@ -7,12 +7,25 @@ import {
   SelectControl, 
   SwitchControl, 
   SliderControl, 
-  TextControl 
+  TextControl,
+  ColorControl
 } from './controls'
 import { generateComponentCode } from './code-generator'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import { Eye, Code2, Copy, Check, RotateCcw, SlidersHorizontal, Sparkles, Activity } from 'lucide-react'
+import { 
+  Eye, 
+  Code2, 
+  Copy, 
+  Check, 
+  RotateCcw, 
+  SlidersHorizontal, 
+  Sparkles, 
+  Activity,
+  Monitor,
+  Tablet,
+  Smartphone
+} from 'lucide-react'
 
 interface ComponentPlaygroundProps {
   config: PlaygroundConfig
@@ -27,6 +40,7 @@ export function ComponentPlayground({ config, className = '' }: ComponentPlaygro
 
   // View state: Preview vs Generated Code
   const [activeView, setActiveView] = useState<'preview' | 'code'>('preview')
+  const [viewport, setViewport] = useState<'desktop' | 'tablet' | 'mobile'>('desktop')
   const [copied, setCopied] = useState(false)
 
   // Interactive event listener state
@@ -150,6 +164,48 @@ export function ComponentPlayground({ config, className = '' }: ComponentPlaygro
               <span>Code</span>
             </button>
           </div>
+
+          {/* Responsive Breakpoint Switcher */}
+          {activeView === 'preview' && (
+            <div className="hidden sm:inline-flex items-center p-0.5 rounded-lg bg-muted border border-border/50 text-xs">
+              <button
+                type="button"
+                onClick={() => setViewport('desktop')}
+                className={`p-1 rounded font-medium transition-all cursor-pointer ${
+                  viewport === 'desktop'
+                    ? 'bg-background text-foreground shadow-2xs font-semibold'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+                title="Desktop View (100%)"
+              >
+                <Monitor className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewport('tablet')}
+                className={`p-1 rounded font-medium transition-all cursor-pointer ${
+                  viewport === 'tablet'
+                    ? 'bg-background text-foreground shadow-2xs font-semibold'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+                title="Tablet View (768px)"
+              >
+                <Tablet className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewport('mobile')}
+                className={`p-1 rounded font-medium transition-all cursor-pointer ${
+                  viewport === 'mobile'
+                    ? 'bg-background text-foreground shadow-2xs font-semibold'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+                title="Mobile View (375px)"
+              >
+                <Smartphone className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Right: Reset & Copy Actions */}
@@ -199,19 +255,34 @@ export function ComponentPlayground({ config, className = '' }: ComponentPlaygro
                 </div>
               )}
 
-              {/* Live Rendered Component */}
-              <div className="w-full flex items-center justify-center py-4">
-                {(() => {
-                  try {
-                    return config.render(currentProps, renderContext)
-                  } catch (err: any) {
-                    return (
-                      <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs">
-                        Error rendering preview: {err?.message || 'Unknown error'}
-                      </div>
-                    )
-                  }
-                })()}
+              {/* Live Rendered Component with Responsive Viewport Wrapper */}
+              <div 
+                className={`flex items-center justify-center py-4 transition-all duration-300 ${
+                  viewport === 'mobile' 
+                    ? 'w-full max-w-[375px] border border-dashed border-border/80 rounded-xl p-4 bg-background/50 shadow-2xs relative' 
+                    : viewport === 'tablet' 
+                    ? 'w-full max-w-[768px] border border-dashed border-border/80 rounded-xl p-6 bg-background/50 shadow-2xs relative' 
+                    : 'w-full'
+                }`}
+              >
+                {viewport !== 'desktop' && (
+                  <span className="absolute -top-2.5 right-3 px-1.5 py-0.5 rounded text-[10px] font-mono bg-muted text-muted-foreground border border-border/60 shadow-2xs">
+                    {viewport === 'mobile' ? '375px (Mobile)' : '768px (Tablet)'}
+                  </span>
+                )}
+                <div className="w-full flex items-center justify-center">
+                  {(() => {
+                    try {
+                      return config.render(currentProps, renderContext)
+                    } catch (err: any) {
+                      return (
+                        <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-xs">
+                          Error rendering preview: {err?.message || 'Unknown error'}
+                        </div>
+                      )
+                    }
+                  })()}
+                </div>
               </div>
 
               {/* Informational Sub-label */}
@@ -324,6 +395,16 @@ export function ComponentPlayground({ config, className = '' }: ComponentPlaygro
                         case 'text':
                           return (
                             <TextControl
+                              key={control.name}
+                              control={control}
+                              value={val}
+                              onChange={(newVal) => handlePropChange(control.name, newVal)}
+                            />
+                          )
+
+                        case 'color':
+                          return (
+                            <ColorControl
                               key={control.name}
                               control={control}
                               value={val}
