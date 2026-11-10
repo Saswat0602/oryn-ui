@@ -2,7 +2,7 @@
 // Extracted to keep the page component clean, declarative, and maintainable.
 
 export const auth = `import React, { useState } from 'react'
-import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Input, Label, Checkbox } from 'mad-ui-components'
+import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Input, Label, Checkbox } from '@oryn/ui'
 import { Mail, Lock, Eye, EyeOff, Github, Globe } from 'lucide-react'
 
 export function AuthenticationCard() {
@@ -101,7 +101,7 @@ export function AuthenticationCard() {
 }`
 
 export const settings = `import React, { useState } from 'react'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Switch, Slider, Progress, Rating, Button, Badge } from 'mad-ui-components'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Switch, Slider, Progress, Rating, Button, Badge } from '@oryn/ui'
 import { ShieldCheck, Bell, Clock } from 'lucide-react'
 
 export function WorkspaceSettings() {
@@ -184,7 +184,7 @@ export function WorkspaceSettings() {
 }`
 
 export const billing = `import React, { useState } from 'react'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Input, Label, Switch, Button, Badge } from 'mad-ui-components'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, Input, Label, Switch, Button, Badge } from '@oryn/ui'
 import { CreditCard, CheckCircle2 } from 'lucide-react'
 
 export function BillingPortal() {
@@ -257,7 +257,7 @@ export function BillingPortal() {
 }`
 
 export const team = `import React, { useState } from 'react'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, Input, Button, Badge, Avatar } from 'mad-ui-components'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, Input, Button, Badge, Avatar } from '@oryn/ui'
 import { Users, Mail } from 'lucide-react'
 
 export function TeamAccessPanel() {
@@ -313,7 +313,7 @@ export function TeamAccessPanel() {
 }`
 
 export const dashboard = `import React from 'react'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, Badge, DataTable, DataTableColumn } from 'mad-ui-components'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, Badge, DataTable, DataTableColumn } from '@oryn/ui'
 
 interface ServiceRecord {
   id: string

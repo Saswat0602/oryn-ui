@@ -1,21 +1,18 @@
 // Framework installation commands and configuration snippets
 // Extracted to keep the installation page clean, declarative, and maintainable.
 
-export const pkgCommands = {
-  npm: "npm install mad-ui-components",
-  pnpm: "pnpm add mad-ui-components",
-  yarn: "yarn add mad-ui-components",
-  bun: "bun add mad-ui-components"
-}
+import { siteConfig } from '@/lib/site-config'
+
+export const pkgCommands = siteConfig.installCommands
 
 export const nextjs = {
   createApp: "npx create-next-app@latest my-app --typescript --tailwind --eslint --app",
-  install: "npm install mad-ui-components",
+  install: siteConfig.installCommands.npm,
   methodCss: `// app/layout.tsx (Method 1: Zero-config precompiled CSS)
-import "mad-ui-components/styles.css"`,
+import "${siteConfig.packageName}/styles.css"`,
   methodTailwindV4: `/* app/globals.css (Method 2: Tailwind CSS v4) */
 @import "tailwindcss";
-@source "../node_modules/mad-ui-components/dist";`,
+@source "../node_modules/${siteConfig.packageName}/dist";`,
   tailwindConfig: `// tailwind.config.js (Method 3: Tailwind v3 Monorepo-Safe)
 const path = require("path")
 
@@ -27,7 +24,7 @@ module.exports = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     // Monorepo-safe path: resolves accurately in Turborepo, pnpm workspaces, and standard apps
-    path.dirname(require.resolve("mad-ui-components/package.json")) + "/dist/**/*.{mjs,js}"
+    path.dirname(require.resolve("${siteConfig.packageName}/package.json")) + "/dist/**/*.{mjs,js}"
   ],
   theme: {
     extend: {},
@@ -36,13 +33,13 @@ module.exports = {
 }`,
   pageUsage: `'use client'
 
-import { Button, Card, Input } from 'mad-ui-components'
+import { Button, Card, Input } from '${siteConfig.packageName}'
 
 export default function Home() {
   return (
     <main className="p-8 max-w-md mx-auto space-y-4">
       <Card className="p-6 space-y-4">
-        <h1 className="text-xl font-bold">Welcome to Mad UI</h1>
+        <h1 className="text-xl font-bold">Welcome to ${siteConfig.fullName}</h1>
         <Input placeholder="Enter your email" />
         <Button className="w-full">Get Started</Button>
       </Card>
@@ -53,7 +50,7 @@ export default function Home() {
 
 export const vite = {
   createApp: "npm create vite@latest my-app -- --template react-ts",
-  install: "npm install -D tailwindcss postcss autoprefixer\nnpx tailwindcss init -p\nnpm install mad-ui-components",
+  install: `npm install -D tailwindcss postcss autoprefixer\nnpx tailwindcss init -p\n${siteConfig.installCommands.npm}`,
   tailwindConfig: `// tailwind.config.js (Monorepo & Vite safe)
 import path from "path"
 import { createRequire } from "module"
@@ -65,14 +62,14 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    path.dirname(require.resolve("mad-ui-components/package.json")) + "/dist/**/*.{mjs,js}"
+    path.dirname(require.resolve("${siteConfig.packageName}/package.json")) + "/dist/**/*.{mjs,js}"
   ],
   theme: {
     extend: {},
   },
   plugins: [],
 }`,
-  appUsage: `import { Button, Card, Badge } from 'mad-ui-components'
+  appUsage: `import { Button, Card, Badge } from '${siteConfig.packageName}'
 
 function App() {
   return (
@@ -90,7 +87,7 @@ export default App`
 }
 
 export const manual = {
-  install: "npm install react react-dom mad-ui-components",
+  install: `npm install react react-dom ${siteConfig.packageName}`,
   css: `@tailwind base;\n@tailwind components;\n@tailwind utilities;`
 }
 
@@ -142,5 +139,5 @@ export const themeVariables = `/* HSL Channel Tokens (enables Tailwind opacity m
 }`
 
 export const cli = {
-  copyCommand: "npx mad-ui-components copy button card input"
+  copyCommand: `${siteConfig.cli.command} add button card input`
 }

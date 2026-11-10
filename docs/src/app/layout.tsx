@@ -4,6 +4,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/ThemeProvider"
 import { Header } from "@/components/header"
 import Link from "next/link"
+import { siteConfig } from "@/lib/site-config"
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -18,24 +19,24 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Mad UI - Beautiful React Components",
-  description: "A comprehensive, modern UI component library built with React and Tailwind CSS. Beautiful, accessible, and customizable components for your next project.",
-  keywords: ["React", "Components", "UI Library", "Tailwind CSS", "TypeScript", "Modern UI"],
-  authors: [{ name: "Mad UI Team" }],
-  creator: "Mad UI",
-  metadataBase: new URL("https://mad-ui.dev"),
+  title: `${siteConfig.name} — ${siteConfig.tagline}`,
+  description: `${siteConfig.description} Precision-engineered components built with React and Tailwind CSS.`,
+  keywords: ["React", "Components", "UI Library", "Tailwind CSS", "TypeScript", "Modern UI", "ORYN", "ORYN UI"],
+  authors: [{ name: `${siteConfig.name} Team` }],
+  creator: siteConfig.name,
+  metadataBase: new URL(siteConfig.url),
   openGraph: {
-    title: "Mad UI - Beautiful React Components",
-    description: "A comprehensive, modern UI component library built with React and Tailwind CSS.",
-    url: "https://mad-ui.dev",
-    siteName: "Mad UI",
+    title: `${siteConfig.name} — ${siteConfig.tagline}`,
+    description: siteConfig.description,
+    url: siteConfig.url,
+    siteName: siteConfig.fullName,
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Mad UI - Beautiful React Components",
-    description: "A comprehensive, modern UI component library built with React and Tailwind CSS.",
+    title: `${siteConfig.name} — ${siteConfig.tagline}`,
+    description: siteConfig.description,
   },
   robots: {
     index: true,
@@ -86,14 +87,14 @@ export default function RootLayout({
                   <div className="md:col-span-1 space-y-4">
                     <div className="flex items-center space-x-2.5">
                       <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-xs">
-                        M
+                        O
                       </div>
                       <span className="font-semibold text-lg tracking-tight text-foreground">
-                        Mad UI
+                        {siteConfig.fullName}
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
-                      An enterprise-grade, accessible React UI component library built with TypeScript and Tailwind CSS.
+                      {siteConfig.description}
                     </p>
                   </div>
                   
@@ -112,10 +113,10 @@ export default function RootLayout({
                   <div>
                     <h3 className="font-medium text-sm mb-4 text-foreground">Ecosystem</h3>
                     <ul className="space-y-2.5 text-sm">
-                      <li><a href="https://github.com/Saswat0602/mad-ui" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">GitHub Repository</a></li>
-                      <li><a href="https://www.npmjs.com/package/mad-ui-components" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">npm Package</a></li>
-                      <li><a href="https://github.com/Saswat0602/mad-ui/issues" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">Issues & Feedback</a></li>
-                      <li><a href="https://github.com/Saswat0602/mad-ui/releases" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">Releases</a></li>
+                      <li><a href={siteConfig.links.github} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">GitHub Repository</a></li>
+                      <li><a href={siteConfig.links.npm} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">npm Package</a></li>
+                      <li><a href={siteConfig.links.issues} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">Issues &amp; Feedback</a></li>
+                      <li><a href={siteConfig.links.releases} target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground transition-colors">Releases</a></li>
                     </ul>
                   </div>
                 </div>
@@ -126,8 +127,8 @@ export default function RootLayout({
                       Built with React, TypeScript &amp; Tailwind CSS. Released under the MIT License.
                     </p>
                     <div className="flex items-center gap-6">
-                      <a href="https://github.com/Saswat0602/mad-ui" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
-                      <a href="https://www.npmjs.com/package/mad-ui-components" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">npm</a>
+                      <a href={siteConfig.links.github} target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">GitHub</a>
+                      <a href={siteConfig.links.npm} target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">npm</a>
                     </div>
                   </div>
                 </div>

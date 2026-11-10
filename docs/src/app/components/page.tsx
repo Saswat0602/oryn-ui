@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { Drawer, Accordion, Card, Badge, Button } from 'mad-ui-components'
+import { Drawer, Accordion, Card, Badge, Button } from '@oryn/ui'
 import { Menu, Layers, ChevronRight, Check } from 'lucide-react'
 import { CodeBlock } from '@/components/CodeBlock'
 import { drawerUsageCode, accordionUsageCode } from '@/data/components-demo-snippets'
@@ -52,7 +52,7 @@ export default function ComponentsDemo() {
             Drawer & Accordion Primitives
           </h1>
           <p className="text-base text-muted-foreground max-w-2xl mx-auto">
-            Experience smooth transitions, accessible keyboard interactions, and responsive layouts built with Mad UI.
+            Experience smooth transitions, accessible keyboard interactions, and responsive layouts built with ORYN UI.
           </p>
           <div className="pt-1 flex justify-center">
             <Link 

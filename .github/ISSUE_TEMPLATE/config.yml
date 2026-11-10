@@ -1,9 +1,9 @@
 blank_issues_enabled: false
 contact_links:
   - name: 💬 Mad UI Discussions
-    url: https://github.com/Saswat0602/mad-ui/discussions
+    url: https://github.com/Saswat0602/oryn-ui/discussions
     about: Ask questions, share ideas, and connect with other Mad UI developers.
   - name: 📖 Documentation
-    url: https://mad-ui.vercel.app/docs
+    url: https://oryn-ui.vercel.app/docs
     about: Read the official documentation and component API references.
 

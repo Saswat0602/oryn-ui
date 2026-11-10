@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @source "../../../dist";
-@source "../../../node_modules/mad-ui-components/dist";
+@source "../../../node_modules/@oryn/ui/dist";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

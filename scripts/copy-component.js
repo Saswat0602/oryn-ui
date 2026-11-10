@@ -345,14 +345,14 @@ function initProject(options, rootDir) {
     console.log('  ✓ Created components/ui directory');
   }
 
-  console.log('\n🎉 Mad UI initialized successfully!');
+  console.log('\n🎉 ORYN initialized successfully!');
   console.log('\nNext steps:');
   console.log('  1. Add theme styles to your globals.css:');
-  console.log('     @import "mad-ui-components/theme.css";');
+  console.log('     @import "@oryn/ui/theme.css";');
   console.log('  2. For Tailwind v4, add to your CSS:');
-  console.log('     @source "../node_modules/mad-ui-components/dist";');
+  console.log('     @source "../node_modules/@oryn/ui/dist";');
   console.log('  3. Add components to your project:');
-  console.log('     npx mad-ui-components add button\n');
+  console.log('     npx @oryn/ui add button\n');
 }
 
 function main() {
@@ -396,7 +396,7 @@ function main() {
   const normalized = normalizeName(options.targetComponent);
   if (!normalized) {
     console.error(`\n❌ Component "${options.targetComponent}" not found.`);
-    console.log(`Run "npx mad-ui-components list" to view all available components.\n`);
+    console.log(`Run "npx @oryn/ui list" to view all available components.\n`);
     process.exit(1);
   }
 

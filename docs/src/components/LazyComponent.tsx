@@ -1,7 +1,7 @@
 'use client'
 
 import React, { ComponentType } from 'react'
-import { Skeleton } from 'mad-ui-components'
+import { Skeleton } from '@oryn/ui'
 
 interface LazyComponentProps {
   componentName: string
@@ -19,7 +19,7 @@ const loadComponent = async (componentName: string) => {
 
   try {
     // Import the component dynamically from the built package
-    const componentModule = await import(`mad-ui-components`)
+    const componentModule = await import(`@oryn/ui`)
     const Component = (componentModule as unknown as Record<string, ComponentType<unknown>>)[componentName]
     
     if (Component) {

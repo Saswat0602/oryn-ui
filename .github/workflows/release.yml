@@ -54,10 +54,11 @@ jobs:
       - name: Publish to npm
         if: steps.check-token.outputs.has_token == 'true'
         run: |
+          PKG_NAME=$(node -p "require('./package.json').name")
           CURRENT_VERSION=$(node -p "require('./package.json').version")
-          PUBLISHED_VERSION=$(npm view mad-ui-components version 2>/dev/null || echo "")
+          PUBLISHED_VERSION=$(npm view "$PKG_NAME" version 2>/dev/null || echo "")
           if [ "$CURRENT_VERSION" = "$PUBLISHED_VERSION" ]; then
-            echo "Version $CURRENT_VERSION is already published to npm. Skipping publish."
+            echo "Version $CURRENT_VERSION of $PKG_NAME is already published to npm. Skipping publish."
           else
             npm publish --access public
           fi

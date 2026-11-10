@@ -26,7 +26,7 @@ import {
   Tooltip,
   Button,
   Input
-} from 'mad-ui-components'
+} from '@oryn/ui'
 import { 
   Home, 
   BarChart, 
@@ -197,7 +197,7 @@ function InteractiveModalDemo() {
           </p>
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-foreground">Repository Name</label>
-            <Input defaultValue="mad-ui-components" />
+            <Input defaultValue="@oryn/ui" />
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-foreground">Production Branch</label>
@@ -298,7 +298,7 @@ function InteractiveSheetDemo() {
             </div>
             <div className="space-y-1.5">
               <label className="text-xs font-medium text-foreground">Corporate Email</label>
-              <Input defaultValue="saswat@mad-ui.dev" />
+              <Input defaultValue="saswat@oryn-ui.dev" />
             </div>
           </div>
           <SheetFooter>
@@ -416,7 +416,7 @@ function InteractiveLayoutShellDemo() {
       <div className="h-12 border-b border-border bg-card px-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="h-5 w-5 rounded bg-primary text-primary-foreground flex items-center justify-center font-bold text-[10px]">M</div>
-          <span className="font-semibold text-xs text-foreground">Mad UI Dashboard</span>
+          <span className="font-semibold text-xs text-foreground">ORYN UI Dashboard</span>
         </div>
         <div className="flex items-center gap-2">
           <button 
@@ -478,7 +478,7 @@ export const layoutExamples = {
     {
       title: 'Interactive Multi-Direction Drawer',
       description: 'Slide-out drawer panel supporting 4 directions (right, left, top, bottom) and custom sizes',
-      code: `import { Drawer, Button } from 'mad-ui-components'
+      code: `import { Drawer, Button } from '@oryn/ui'
 import { useState } from 'react'
 
 export function DrawerDemo() {
@@ -512,7 +512,7 @@ export function DrawerDemo() {
     {
       title: 'Interactive Modal Dialog',
       description: 'Modal with backdrop blur, focus trap, customizable sizes, header, and action buttons',
-      code: `import { Modal, Button, Input } from 'mad-ui-components'
+      code: `import { Modal, Button, Input } from '@oryn/ui'
 import { useState } from 'react'
 
 export function ModalDemo() {
@@ -544,7 +544,7 @@ export function ModalDemo() {
           </p>
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-foreground">Repository Name</label>
-            <Input defaultValue="mad-ui-components" />
+            <Input defaultValue="@oryn/ui" />
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-foreground">Production Branch</label>
@@ -563,7 +563,7 @@ export function ModalDemo() {
     {
       title: 'Composable Popover (Radix / shadcn Style)',
       description: 'Floating contextual popover anchored to a trigger button with automatic viewport flipping',
-      code: `import { Popover, PopoverTrigger, PopoverContent, Button, Input } from 'mad-ui-components'
+      code: `import { Popover, PopoverTrigger, PopoverContent, Button, Input } from '@oryn/ui'
 
 export function PopoverDemo() {
   return (
@@ -613,7 +613,7 @@ export function PopoverDemo() {
   SheetClose, 
   Button, 
   Input 
-} from 'mad-ui-components'
+} from '@oryn/ui'
 
 export function SheetDemo() {
   return (
@@ -635,7 +635,7 @@ export function SheetDemo() {
           </div>
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-foreground">Corporate Email</label>
-            <Input defaultValue="saswat@mad-ui.dev" />
+            <Input defaultValue="saswat@oryn-ui.dev" />
           </div>
         </div>
         <SheetFooter>
@@ -656,7 +656,7 @@ export function SheetDemo() {
     {
       title: 'Interactive Resizable Panels',
       description: 'Split pane container with draggable divider handle and keyboard arrow key resizing',
-      code: `import { Resizable, ResizablePanel, ResizableHandle } from 'mad-ui-components'
+      code: `import { Resizable, ResizablePanel, ResizableHandle } from '@oryn/ui'
 
 export function ResizableDemo() {
   return (
@@ -692,7 +692,7 @@ export function ResizableDemo() {
     {
       title: 'Custom Scroll Area (Vertical & Horizontal)',
       description: 'Custom scrollable viewport with native momentum scrolling and sleek themed scrollbars',
-      code: `import { ScrollArea } from 'mad-ui-components'
+      code: `import { ScrollArea } from '@oryn/ui'
 
 export function ScrollAreaDemo() {
   const tags = Array.from({ length: 30 }).map((_, i) => \`v3.2.\${i + 1}-rc\`)
@@ -718,7 +718,7 @@ export function ScrollAreaDemo() {
     {
       title: 'Custom Scroll Area (Vertical & Horizontal)',
       description: 'Custom scrollable viewport with native momentum scrolling and sleek themed scrollbars',
-      code: `import { ScrollArea } from 'mad-ui-components'
+      code: `import { ScrollArea } from '@oryn/ui'
 
 export function ScrollAreaDemo() {
   const tags = Array.from({ length: 30 }).map((_, i) => \`v3.2.\${i + 1}-rc\`)
@@ -743,7 +743,7 @@ export function ScrollAreaDemo() {
     {
       title: 'Interactive Application Shell',
       description: 'Enterprise dashboard layout featuring sticky topbar, collapsible navigation sidebar, and main workspace',
-      code: `import { Layout } from 'mad-ui-components'
+      code: `import { Layout } from '@oryn/ui'
 
 export function AppShellDemo() {
   return (
@@ -766,7 +766,7 @@ export function AppShellDemo() {
     {
       title: 'Interactive Application Shell',
       description: 'Enterprise dashboard layout featuring sticky topbar, collapsible navigation sidebar, and main workspace',
-      code: `import { Layout } from 'mad-ui-components'
+      code: `import { Layout } from '@oryn/ui'
 
 export function AppShellDemo() {
   return (
@@ -789,7 +789,7 @@ export function AppShellDemo() {
     {
       title: 'Enterprise Header Navbar',
       description: 'Sleek, responsive black & white enterprise header with dropdown navigation, embedded search, notification center, and user profile',
-      code: `import { Navbar } from 'mad-ui-components'
+      code: `import { Navbar } from '@oryn/ui'
 import { Home, Layers, Settings, BarChart, Shield, Zap } from 'lucide-react'
 
 export function NavbarDemo() {
@@ -866,7 +866,7 @@ export function NavbarDemo() {
     {
       title: 'Collapsible Enterprise Sidebar',
       description: 'Sleek multi-section application navigation with search filtering, badges, keyboard shortcuts, collapsed tooltips, and user profile footer',
-      code: `import { Sidebar } from 'mad-ui-components'
+      code: `import { Sidebar } from '@oryn/ui'
 import { Home, BarChart, Users, Settings, Shield, Layers } from 'lucide-react'
 
 export function SidebarDemo() {
@@ -942,7 +942,7 @@ export function SidebarDemo() {
     {
       title: 'Accessible Hover Tooltip',
       description: 'Directional floating tooltip popup on hover and focus with keyboard escape dismiss',
-      code: `import { Tooltip, Button } from 'mad-ui-components'
+      code: `import { Tooltip, Button } from '@oryn/ui'
 
 export function TooltipDemo() {
   return (

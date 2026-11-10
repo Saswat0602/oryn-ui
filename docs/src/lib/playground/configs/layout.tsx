@@ -17,7 +17,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton
-} from 'mad-ui-components'
+} from '@oryn/ui'
 import { PlaygroundConfig } from '@/components/playground/types'
 
 export const layoutPlaygrounds: Record<string, PlaygroundConfig> = {
@@ -259,7 +259,7 @@ export const layoutPlaygrounds: Record<string, PlaygroundConfig> = {
     ],
     render: (props) => (
       <div className="w-full max-w-xs p-4 rounded-xl border border-border/60 bg-card text-xs space-y-3">
-        <div>Root Package (mad-ui-components)</div>
+        <div>Root Package (@oryn/ui)</div>
         <Separator
           orientation={props.orientation}
           lineStyle={props.lineStyle}

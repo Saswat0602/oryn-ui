@@ -44,8 +44,8 @@ export async function generateMetadata({
   
   if (!slug) {
     return {
-      title: 'Components - Mad UI',
-      description: 'Explore all 75+ production-ready React components in the Mad UI library.',
+      title: 'Components - ORYN UI',
+      description: 'Explore all 75+ production-ready React components in the ORYN UI library.',
     }
   }
 
@@ -53,16 +53,16 @@ export async function generateMetadata({
   
   if (!component) {
     return {
-      title: 'Component Not Found - Mad UI'
+      title: 'Component Not Found - ORYN UI'
     }
   }
 
   return {
-    title: `${component.title} - Mad UI Component Library`,
+    title: `${component.title} - ORYN UI Component Library`,
     description: component.description,
     keywords: [...component.tags],
     openGraph: {
-      title: `${component.title} - Mad UI`,
+      title: `${component.title} - ORYN UI`,
       description: component.description,
       type: 'article',
     },

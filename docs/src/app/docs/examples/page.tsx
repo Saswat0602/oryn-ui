@@ -27,7 +27,7 @@ import {
   MessageBubble,
   ReasoningDisclosure,
   ToolCallCard
-} from 'mad-ui-components'
+} from '@oryn/ui'
 import { 
   Copy, 
   Check, 
@@ -483,7 +483,7 @@ export default function ExamplesPage() {
   MessageBubble, 
   ReasoningDisclosure, 
   ToolCallCard 
-} from 'mad-ui-components'
+} from '@oryn/ui'
 import { useState } from 'react'
 
 export function AIAssistantPattern() {
@@ -559,7 +559,7 @@ export function AIAssistantPattern() {
           Real-World Application Patterns
         </h1>
         <p className="mt-2 text-base text-muted-foreground leading-relaxed max-w-3xl">
-          Complete, production-grade interface patterns built directly with Mad UI primitives. Copy, paste, and customize with zero setup friction.
+          Complete, production-grade interface patterns built directly with ORYN UI primitives. Copy, paste, and customize with zero setup friction.
         </p>
 
         {/* Category Filters */}

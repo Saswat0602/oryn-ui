@@ -20,7 +20,7 @@ import {
   TabsTrigger,
   TabsContent,
   Alert
-} from 'mad-ui-components'
+} from '@oryn/ui'
 import { 
   Palette, 
   Check, 
@@ -205,7 +205,7 @@ module.exports = {
                 <span>Interactive Theme Builder</span>
               </div>
               <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
-                Tailor Mad UI to Your Brand
+                Tailor ORYN UI to Your Brand
               </h1>
               <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
                 Customize primary accents, border radii, and visual density. Preview live components instantly and copy zero-runtime CSS tokens into your application.

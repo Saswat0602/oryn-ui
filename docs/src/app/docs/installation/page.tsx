@@ -14,6 +14,7 @@ import {
 } from "lucide-react"
 import { CodeBlock } from "@/components/CodeBlock"
 import * as snippets from "@/data/installation-snippets"
+import { siteConfig } from "@/lib/site-config"
 
 interface CodeSnippetProps {
   code: string
@@ -63,22 +64,22 @@ export default function InstallationPage() {
           Installation &amp; Setup
         </h1>
         <p className="mt-2 text-base text-muted-foreground leading-relaxed max-w-3xl">
-          Quickly install and integrate Mad UI into your project with Next.js, Vite, or standard React setups.
+          Quickly install and integrate {siteConfig.fullName} into your project with Next.js, Vite, or standard React setups.
         </p>
 
         <div className="flex flex-wrap items-center gap-3 mt-4 text-xs">
           <a 
-            href="https://www.npmjs.com/package/mad-ui-components" 
+            href={siteConfig.links.npm} 
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border/60 bg-muted/30 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors font-medium"
           >
             <span className="font-bold text-red-500">npm</span>
-            <span>mad-ui-components</span>
+            <span>{siteConfig.packageName}</span>
             <ExternalLink className="h-3 w-3 opacity-60" />
           </a>
           <a 
-            href="https://github.com/Saswat0602/mad-ui" 
+            href={siteConfig.links.github} 
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border/60 bg-muted/30 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors font-medium"
@@ -98,7 +99,7 @@ export default function InstallationPage() {
             </div>
             <div>
               <h2 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
-                <span>Install Mad UI Package</span>
+                <span>Install {siteConfig.fullName} Package</span>
               </h2>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Select your package manager to copy the install command.
@@ -194,7 +195,7 @@ export default function InstallationPage() {
               <div className="flex items-center gap-2.5">
                 <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[11px] font-bold">2</span>
                 <h3 className="text-sm font-semibold text-foreground">
-                  Install Mad UI
+                  Install ORYN UI
                 </h3>
               </div>
               <CodeSnippet 
@@ -310,7 +311,7 @@ export default function InstallationPage() {
               <div className="flex items-center gap-2.5">
                 <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[11px] font-bold">2</span>
                 <h3 className="text-sm font-semibold text-foreground">
-                  Install Tailwind CSS &amp; Mad UI
+                  Install Tailwind CSS &amp; ORYN UI
                 </h3>
               </div>
               <CodeSnippet 
@@ -364,7 +365,7 @@ export default function InstallationPage() {
                 <h3 className="text-sm font-semibold text-foreground">Peer Dependencies</h3>
               </div>
               <p className="text-xs text-muted-foreground pl-7.5">
-                Mad UI requires React &gt;= 18.0.0 and Tailwind CSS 3 or 4.
+                ORYN UI requires React &gt;= 18.0.0 and Tailwind CSS 3 or 4.
               </p>
               <CodeSnippet 
                 code={snippets.manual.install}
@@ -398,7 +399,7 @@ export default function InstallationPage() {
       <section className="space-y-6 pt-6 border-t border-border/40">
         <div>
           <h2 className="text-xl font-bold tracking-tight text-foreground">Import Methods</h2>
-          <p className="text-xs text-muted-foreground mt-1">Mad UI provides 3 import levels for bundle size optimization.</p>
+          <p className="text-xs text-muted-foreground mt-1">ORYN UI provides 3 import levels for bundle size optimization.</p>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-3">
@@ -409,7 +410,7 @@ export default function InstallationPage() {
             </div>
             <p className="text-xs text-muted-foreground">Convenient single package import</p>
             <div className="text-[11px] font-mono text-foreground bg-muted/60 p-2.5 rounded-lg border border-border">
-              import &#123; Button &#125; from &apos;mad-ui-components&apos;
+              import &#123; Button &#125; from &apos;{siteConfig.packageName}&apos;
             </div>
           </div>
 
@@ -420,7 +421,7 @@ export default function InstallationPage() {
             </div>
             <p className="text-xs text-muted-foreground">Grouped subpath module</p>
             <div className="text-[11px] font-mono text-foreground bg-muted/60 p-2.5 rounded-lg border border-border">
-              import &#123; Button &#125; from &apos;mad-ui-components/core&apos;
+              import &#123; Button &#125; from &apos;{siteConfig.packageName}/core&apos;
             </div>
           </div>
 
@@ -431,7 +432,7 @@ export default function InstallationPage() {
             </div>
             <p className="text-xs text-muted-foreground">Maximum tree-shaking efficiency</p>
             <div className="text-[11px] font-mono text-foreground bg-muted/60 p-2.5 rounded-lg border border-border">
-              import &#123; Button &#125; from &apos;mad-ui-components/button&apos;
+              import &#123; Button &#125; from &apos;{siteConfig.packageName}/button&apos;
             </div>
           </div>
         </div>
@@ -460,15 +461,15 @@ export default function InstallationPage() {
             <CodeBlock 
               language="bash" 
               code={`# Add individual components (primitives and hooks bundled automatically)
-npx mad-ui-components add button
-npx mad-ui-components add dialog
-npx mad-ui-components add data-table
+${siteConfig.cli.command} add button
+${siteConfig.cli.command} add dialog
+${siteConfig.cli.command} add data-table
 
 # Specify custom target directory
-npx mad-ui-components add form --path src/components/ui
+${siteConfig.cli.command} add form --path src/components/ui
 
 # Explore all available components
-npx mad-ui-components list`} 
+${siteConfig.cli.command} list`} 
             />
           </div>
         </div>
@@ -479,7 +480,7 @@ npx mad-ui-components list`}
         <div>
           <h2 className="text-xl font-bold tracking-tight text-foreground">Theme Variables (HSL Channel Tokens)</h2>
           <p className="text-xs text-muted-foreground mt-1">
-            Mad UI uses HSL channel tokens (<code className="font-mono text-foreground">--primary: 221.2 83.2% 53.3%</code>) without hardcoded color functions. This ensures Tailwind opacity modifiers like <code className="font-mono text-foreground">bg-primary/80</code> and <code className="font-mono text-foreground">ring-primary/20</code> work without color clipping.
+            ORYN UI uses HSL channel tokens (<code className="font-mono text-foreground">--primary: 221.2 83.2% 53.3%</code>) without hardcoded color functions. This ensures Tailwind opacity modifiers like <code className="font-mono text-foreground">bg-primary/80</code> and <code className="font-mono text-foreground">ring-primary/20</code> work without color clipping.
           </p>
         </div>
 

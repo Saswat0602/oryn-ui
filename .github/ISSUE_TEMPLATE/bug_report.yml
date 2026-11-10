@@ -10,7 +10,7 @@ body:
     id: version
     attributes:
       label: Mad UI Version
-      description: What version of `mad-ui-components` are you using?
+      description: What version of `@oryn/ui` are you using?
       placeholder: "3.0.0"
     validations:
       required: true

@@ -10,7 +10,7 @@ import {
   CommandGroup,
   CommandItem,
   CommandShortcut,
-} from 'mad-ui-components'
+} from '@oryn/ui'
 import { getAllComponents } from '@/lib/component-registry'
 
 interface ComponentSearchProps {

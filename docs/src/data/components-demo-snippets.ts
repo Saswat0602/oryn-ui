@@ -1,5 +1,5 @@
 export const drawerUsageCode = `import { useState } from 'react'
-import { Drawer, Button } from 'mad-ui-components'
+import { Drawer, Button } from '@oryn/ui'
 
 export default function DrawerExample() {
   const [isOpen, setIsOpen] = useState(false)
@@ -25,7 +25,7 @@ export default function DrawerExample() {
   )
 }`
 
-export const accordionUsageCode = `import { Accordion } from 'mad-ui-components'
+export const accordionUsageCode = `import { Accordion } from '@oryn/ui'
 
 export default function AccordionExample() {
   const items = [

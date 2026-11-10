@@ -25,7 +25,7 @@ import {
   ButtonGroupItem,
   InputGroup,
   InputGroupAddon
-} from 'mad-ui-components'
+} from '@oryn/ui'
 import { Mail, Search, Download, Upload, Check, User, ArrowRight, Heart, ShoppingCart } from 'lucide-react'
 import * as snippets from '@/data/core-snippets'
 
@@ -412,7 +412,7 @@ export const coreExamples: Record<string, ComponentExample[]> = {
     {
       title: 'Interactive Half-Star Rating',
       description: 'Interactive star rating with 0.5 precision, hover preview, and keyboard arrow controls',
-      code: `import { Rating } from 'mad-ui-components'
+      code: `import { Rating } from '@oryn/ui'
 import { useState } from 'react'
 
 export function RatingExample() {
@@ -435,7 +435,7 @@ export function RatingExample() {
     {
       title: 'Rating Sizes & States',
       description: 'Multiple scale sizes and read-only display states',
-      code: `import { Rating } from 'mad-ui-components'
+      code: `import { Rating } from '@oryn/ui'
 
 export function RatingSizesExample() {
   return (
@@ -586,7 +586,7 @@ export function RatingSizesExample() {
     {
       title: 'Segmented Control with Selection State',
       description: 'Single-select segmented button group with active pill indicator and responsive keyboard navigation',
-      code: `import { ButtonGroup, ButtonGroupItem } from 'mad-ui-components'
+      code: `import { ButtonGroup, ButtonGroupItem } from '@oryn/ui'
 import { useState } from 'react'
 
 export function SegmentedControlExample() {
@@ -606,7 +606,7 @@ export function SegmentedControlExample() {
     {
       title: 'Attached Action Group',
       description: 'Connected buttons with shared borders and seamless corner radius merging',
-      code: `import { ButtonGroup, Button } from 'mad-ui-components'
+      code: `import { ButtonGroup, Button } from '@oryn/ui'
 
 export function AttachedGroupExample() {
   return (
@@ -633,7 +633,7 @@ export function AttachedGroupExample() {
     {
       title: 'Input Group with Addons',
       description: 'Text inputs with prefix and suffix addons for currencies, protocols, and domains',
-      code: `import { InputGroup, InputGroupAddon, Input, Button } from 'mad-ui-components'
+      code: `import { InputGroup, InputGroupAddon, Input, Button } from '@oryn/ui'
 
 export function InputGroupExample() {
   return (

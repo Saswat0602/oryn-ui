@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import { PACKAGE_VERSION } from '@/lib/version'
+import { siteConfig } from '@/lib/site-config'
 import { 
   Button, 
   Card, 
@@ -16,7 +16,7 @@ import {
   Progress, 
   Slider,
   Avatar
-} from 'mad-ui-components'
+} from '@oryn/ui'
 import { 
   ArrowRight, 
   Copy, 
@@ -117,22 +117,25 @@ export default function HomePage() {
     <div className="space-y-24 pb-20">
       {/* Hero Section */}
       <section className="relative pt-12 md:pt-20 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto space-y-8">
-        {/* Release Pill using authentic Mad UI Badge */}
+        {/* Release Pill using authentic ORYN Badge */}
         <Badge variant="outline" className="inline-flex items-center gap-2 px-3 py-1 text-xs font-medium border-border/60 bg-muted/30 text-muted-foreground hover:border-primary/40 transition-colors cursor-default">
           <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="font-semibold text-foreground">Mad UI {PACKAGE_VERSION}</span>
+          <span className="font-semibold text-foreground">{siteConfig.fullName} {siteConfig.version}</span>
           <span className="text-muted-foreground/60">•</span>
-          <span>75+ Production Components</span>
+          <span>{siteConfig.totalComponents} Production Components</span>
           <ArrowRight className="h-3 w-3 text-primary ml-0.5" />
         </Badge>
 
         {/* Headline */}
         <div className="space-y-4">
+          <div className="text-xs font-semibold uppercase tracking-widest text-primary font-mono">
+            {siteConfig.name}.
+          </div>
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground leading-[1.1]">
-            The Modern React Component Library.
+            {siteConfig.tagline}
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Accessible, themeable, and precision-engineered React components built with TypeScript and Tailwind CSS.
+            {siteConfig.description}
           </p>
         </div>
 
@@ -150,7 +153,7 @@ export default function HomePage() {
             </Button>
           </Link>
           <a 
-            href="https://github.com/Saswat0602/mad-ui" 
+            href={siteConfig.links.github} 
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center h-10 px-4 rounded-md border border-border/60 bg-background hover:bg-muted text-sm font-medium transition-colors"
@@ -392,7 +395,7 @@ export default function HomePage() {
             Integrates with Any Modern Stack
           </h2>
           <p className="text-sm text-muted-foreground">
-            Choose your framework and start building with Mad UI in under 2 minutes.
+            Choose your framework and start building with ORYN UI in under 2 minutes.
           </p>
         </div>
 
@@ -482,7 +485,7 @@ export default function HomePage() {
                               {lineObj.text.slice(lineObj.text.indexOf('{'), lineObj.text.indexOf('}') + 1)}
                             </span>
                             <span className="text-[#c586c0]"> from </span>
-                            <span className="text-[#ce9178]">&apos;mad-ui-components&apos;</span>
+                            <span className="text-[#ce9178]">&apos;{siteConfig.packageName}&apos;</span>
                           </>
                         ) : (
                           <span className="text-zinc-300">{lineObj.text.replace('import ', '')}</span>
@@ -534,7 +537,7 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* 8 Category Bento Grid using authentic Mad UI Card & Badge primitives */}
+        {/* 8 Category Bento Grid using authentic ORYN UI Card & Badge primitives */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {categories.map((cat) => (
             <Card 
@@ -555,7 +558,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              {/* Component Tag Pills using authentic Mad UI Badges */}
+              {/* Component Tag Pills using authentic ORYN UI Badges */}
               <div className="space-y-3 pt-1">
                 <div className="flex flex-wrap gap-1.5">
                   {cat.tags.map((tag) => (
@@ -631,7 +634,7 @@ export default function HomePage() {
       <section className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center space-y-6">
         <div className="p-8 sm:p-12 rounded-xl border border-border/60 bg-gradient-to-b from-card/80 to-muted/20 space-y-4 shadow-sm">
           <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-            Start Building with Mad UI Today
+            Start Building with ORYN UI Today
           </h2>
           <p className="text-sm text-muted-foreground max-w-lg mx-auto">
             Discover all 75+ components with comprehensive interactive previews, props tables, and code snippets.

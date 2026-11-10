@@ -31,7 +31,7 @@ import {
   TabsContent,
   TimePicker,
   Label
-} from 'mad-ui-components'
+} from '@oryn/ui'
 import { PlaygroundConfig } from '@/components/playground/types'
 
 // Interactive wrapper for InputOTP

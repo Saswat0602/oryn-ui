@@ -192,8 +192,8 @@ export function generateComponentDoc(component: ComponentInfo): string {
 
 import React, { useState } from 'react'
 import { ComponentDocLayout } from '@/components/component-doc-layout'
-import { ${component.name} } from 'mad-ui-components/${component.name.toLowerCase()}'
-import { Button } from 'mad-ui-components/button'
+import { ${component.name} } from '@oryn/ui/${component.name.toLowerCase()}'
+import { Button } from '@oryn/ui/button'
 
 const ${component.name}Page = () => {
   const [showExample, setShowExample] = useState(false)

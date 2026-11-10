@@ -7,6 +7,7 @@ import { ComponentPreview } from './ComponentPreview'
 import { ComponentPlayground } from './playground'
 import { PropsTable } from './PropsTable'
 import { CodeBlock } from './CodeBlock'
+import { siteConfig } from '@/lib/site-config'
 import Link from 'next/link'
 import { Copy, Check, Eye, Code2, Terminal, BookOpen, ExternalLink, Github, ChevronLeft, ChevronRight, Sparkles, Layers } from 'lucide-react'
 import { getComponentExamples } from '@/lib/component-examples'
@@ -53,10 +54,10 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
     .filter(Boolean) as (typeof allComponents[0])[]
 
   const exportName = (component as any).exportName || component.title.replace(/\s+/g, '')
-  const defaultImport = `import { ${exportName} } from 'mad-ui-components'`
+  const defaultImport = siteConfig.imports.root(exportName)
 
   const handleCopyInstall = () => {
-    navigator.clipboard.writeText('npm install mad-ui-components')
+    navigator.clipboard.writeText(siteConfig.installCommands.npm)
     setCopiedInstall(true)
     setTimeout(() => setCopiedInstall(false), 2000)
   }
@@ -90,18 +91,18 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
           {/* Quick links to npm & GitHub */}
           <div className="flex items-center gap-2 self-start sm:self-auto">
             <a
-              href="https://www.npmjs.com/package/mad-ui-components"
+              href={siteConfig.links.npm}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md border border-border/50 bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
               title="npm package"
             >
               <span className="font-bold text-red-500">npm</span>
-              <span className="hidden sm:inline">mad-ui-components</span>
+              <span className="hidden sm:inline">{siteConfig.packageName}</span>
               <ExternalLink className="h-3 w-3 opacity-60" />
             </a>
             <a
-              href="https://github.com/Saswat0602/mad-ui"
+              href={siteConfig.links.github}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md border border-border/50 bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
@@ -127,7 +128,7 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
           >
             <div className="flex items-center gap-1.5 truncate">
               <span className="text-muted-foreground">$</span>
-              <span className="truncate">npm i mad-ui-components</span>
+              <span className="truncate">npm i {siteConfig.packageName}</span>
             </div>
             {copiedInstall ? (
               <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0 ml-1" />
@@ -144,8 +145,8 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
             <div className="flex items-center gap-1.5 truncate">
               <span className="text-muted-foreground shrink-0">import</span>
               <span className="truncate">&#123; {exportName} &#125;</span>
-              <span className="text-muted-foreground shrink-0 hidden sm:inline">from &apos;mad-ui-components&apos;</span>
-              <span className="text-muted-foreground shrink-0 sm:hidden">from &apos;mad-ui...&apos;</span>
+              <span className="text-muted-foreground shrink-0 hidden sm:inline">from &apos;{siteConfig.packageName}&apos;</span>
+              <span className="text-muted-foreground shrink-0 sm:hidden">from &apos;{siteConfig.packageName}&apos;</span>
             </div>
             {copiedImport ? (
               <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0 ml-1" />
@@ -243,10 +244,10 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
               {/* Installation */}
               <div className="space-y-3">
                 <h3 className="text-base font-semibold text-foreground">Package Installation</h3>
-                <p className="text-xs text-muted-foreground">Add Mad UI components to your project via your preferred package manager.</p>
+                <p className="text-xs text-muted-foreground">Add {siteConfig.fullName} components to your project via your preferred package manager.</p>
                 
                 <div className="relative">
-                  <CodeBlock language="bash" code="npm install mad-ui-components" />
+                  <CodeBlock language="bash" code={siteConfig.installCommands.npm} />
                 </div>
               </div>
               
@@ -254,7 +255,7 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
               <div className="space-y-4">
                 <div>
                   <h3 className="text-base font-semibold text-foreground">Import Methods</h3>
-                  <p className="text-xs text-muted-foreground">Mad UI supports full library imports, categorized module bundles, or direct individual component imports.</p>
+                  <p className="text-xs text-muted-foreground">{siteConfig.fullName} supports full library imports, categorized module bundles, or direct individual component imports.</p>
                 </div>
                 
                 <div className="space-y-4">
@@ -262,7 +263,7 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
                     <h4 className="text-xs font-semibold text-foreground">1. Full Library Import (Recommended)</h4>
                     <CodeBlock 
                       language="tsx" 
-                      code={`import { ${exportName} } from 'mad-ui-components'`} 
+                      code={siteConfig.imports.root(exportName)} 
                     />
                   </div>
                   
@@ -280,7 +281,7 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
                     <h4 className="text-xs font-semibold text-foreground">3. CLI Direct Source Copy (shadcn-style)</h4>
                     <CodeBlock 
                       language="bash" 
-                      code={`npx mad-ui-components add ${slug}`} 
+                      code={siteConfig.cli.add(slug)} 
                     />
                   </div>
                 </div>
@@ -291,7 +292,7 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
                 <h3 className="text-base font-semibold text-foreground">Basic Code Example</h3>
                 <CodeBlock 
                   language="tsx" 
-                  code={examples[0]?.code || `import { ${exportName} } from 'mad-ui-components'\n\nexport default function Example() {\n  return <${exportName} />\n}`} 
+                  code={examples[0]?.code || `${siteConfig.imports.root(exportName)}\n\nexport default function Example() {\n  return <${exportName} />\n}`} 
                 />
               </div>
             </div>
@@ -413,7 +414,7 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
 function getIndividualImportCommand(slug: string): string {
   const component = getComponentBySlug(slug)
   const componentName = (component as any)?.exportName || component?.title.replace(/\s+/g, '') || slug
-  return `import { ${componentName} } from 'mad-ui-components/${slug}'`
+  return siteConfig.imports.subpath(componentName, slug)
 }
 
 function getBestPractices(slug: string): string[] {

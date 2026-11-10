@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import * as snippets from '@/data/getting-started-snippets'
 import { CodeBlock } from '@/components/CodeBlock'
+import { siteConfig } from '@/lib/site-config'
 
 export default function GettingStartedPage() {
   const [activeTab, setActiveTab] = useState<'npm' | 'pnpm' | 'yarn' | 'bun'>('npm')
@@ -24,17 +25,16 @@ export default function GettingStartedPage() {
           <span>Overview</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
-          Getting Started with Mad UI
+          Getting Started with {siteConfig.fullName}
         </h1>
         <p className="mt-2 text-base text-muted-foreground leading-relaxed max-w-3xl">
-          Mad UI is an enterprise-grade React component library built with TypeScript and Tailwind CSS.
-          It gives you accessible, themeable, high-performance UI primitives ready for production.
+          {siteConfig.fullName} — {siteConfig.tagline} {siteConfig.description}
         </p>
 
         <div className="flex flex-wrap items-center gap-4 mt-6 text-xs text-muted-foreground">
           <div className="flex items-center gap-1.5">
             <Check className="h-4 w-4 text-emerald-500 shrink-0" />
-            <span>75+ Components</span>
+            <span>{siteConfig.totalComponents} Components</span>
           </div>
           <div className="flex items-center gap-1.5">
             <Check className="h-4 w-4 text-emerald-500 shrink-0" />
@@ -57,7 +57,7 @@ export default function GettingStartedPage() {
         </div>
 
         <p className="text-xs text-muted-foreground">
-          Install <code className="text-foreground font-mono">mad-ui-components</code> into your project (zero external framework lock-in, with native SVG icon primitives):
+          Install <code className="text-foreground font-mono">{siteConfig.packageName}</code> into your project (zero external framework lock-in, with native SVG icon primitives):
         </p>
 
         <div className="space-y-2">
@@ -96,7 +96,7 @@ export default function GettingStartedPage() {
         </div>
 
         <p className="text-xs text-muted-foreground">
-          Add the Mad UI build path to your <code className="text-foreground font-mono">tailwind.config.js</code> so Tailwind compiles component styles:
+          Add the ORYN UI build path to your <code className="text-foreground font-mono">tailwind.config.js</code> so Tailwind compiles component styles:
         </p>
 
         <CodeBlock
@@ -130,7 +130,7 @@ export default function GettingStartedPage() {
 
       {/* Feature Highlights Grid */}
       <section className="space-y-4 border-t border-border/40 pt-8">
-        <h2 className="text-xl font-bold text-foreground">Why Mad UI?</h2>
+        <h2 className="text-xl font-bold text-foreground">Why ORYN UI?</h2>
         <div className="grid gap-3 sm:grid-cols-3">
           <div className="p-4 rounded-lg border border-border/50 bg-card/40 space-y-1.5">
             <div className="flex items-center gap-2 text-primary font-semibold text-xs">
@@ -168,11 +168,11 @@ export default function GettingStartedPage() {
       <section className="space-y-4 border-t border-border/40 pt-8">
         <h2 className="text-xl font-bold text-foreground">Theming &amp; CSS Variables</h2>
         <p className="text-xs text-muted-foreground leading-relaxed max-w-3xl">
-          Mad UI components are styled using semantic CSS custom properties. You can import the pre-built stylesheet directly or customize the color tokens in your global stylesheet:
+          {siteConfig.fullName} components are styled using semantic CSS custom properties. You can import the pre-built stylesheet directly or customize the color tokens in your global stylesheet:
         </p>
 
         <CodeBlock
-          code={`/* Import pre-built theme */\n@import "mad-ui-components/theme.css";\n\n/* Or customize design tokens directly */\n:root {\n  --background: #ffffff;\n  --foreground: #09090b;\n  --primary: #2563eb;\n  --primary-foreground: #ffffff;\n  --muted: #f4f4f5;\n  --muted-foreground: #71717a;\n  --border: #e4e4e7;\n  --ring: #2563eb;\n  --radius: 0.5rem;\n}\n\n.dark {\n  --background: #09090b;\n  --foreground: #fafafa;\n  --primary: #3b82f6;\n  --primary-foreground: #ffffff;\n  --muted: #27272a;\n  --muted-foreground: #a1a1aa;\n  --border: #27272a;\n  --ring: #3b82f6;\n}`}
+          code={`/* Import pre-built theme */\n@import "${siteConfig.packageName}/theme.css";\n\n/* Or customize design tokens directly */\n:root {\n  --background: #ffffff;\n  --foreground: #09090b;\n  --primary: #2563eb;\n  --primary-foreground: #ffffff;\n  --muted: #f4f4f5;\n  --muted-foreground: #71717a;\n  --border: #e4e4e7;\n  --ring: #2563eb;\n  --radius: 0.5rem;\n}\n\n.dark {\n  --background: #09090b;\n  --foreground: #fafafa;\n  --primary: #3b82f6;\n  --primary-foreground: #ffffff;\n  --muted: #27272a;\n  --muted-foreground: #a1a1aa;\n  --border: #27272a;\n  --ring: #3b82f6;\n}`}
           language="css"
           filename="globals.css"
           showLineNumbers={true}

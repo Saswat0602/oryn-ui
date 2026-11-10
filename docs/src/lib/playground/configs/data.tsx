@@ -4,7 +4,7 @@ import {
   Chart,
   Table,
   DataTable
-} from 'mad-ui-components'
+} from '@oryn/ui'
 import { PlaygroundConfig } from '@/components/playground/types'
 
 export const dataPlaygrounds: Record<string, PlaygroundConfig> = {

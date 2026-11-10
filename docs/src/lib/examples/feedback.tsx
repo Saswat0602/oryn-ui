@@ -14,7 +14,7 @@ import {
   MessageBubble,
   ReasoningDisclosure,
   ToolCallCard
-} from 'mad-ui-components'
+} from '@oryn/ui'
 
 export interface ComponentExample {
   title: string
@@ -28,7 +28,7 @@ export const feedbackExamples: Record<string, ComponentExample[]> = {
     {
       title: 'Basic Alert',
       description: 'A simple alert component',
-      code: `import { Alert } from 'mad-ui-components'
+      code: `import { Alert } from '@oryn/ui'
 
 export function AlertExample() {
   return (
@@ -48,7 +48,7 @@ export function AlertExample() {
     {
       title: 'Alert Variants',
       description: 'Different alert variants',
-      code: `import { Alert } from 'mad-ui-components'
+      code: `import { Alert } from '@oryn/ui'
 
 export function AlertVariants() {
   return (
@@ -91,7 +91,7 @@ export function AlertVariants() {
     {
       title: 'Interactive Sonner Toaster',
       description: 'Stackable physics-driven notifications with action buttons, promise handlers, and rich colors',
-      code: `import { Sonner, toast, Button } from 'mad-ui-components'
+      code: `import { Sonner, toast, Button } from '@oryn/ui'
 
 export function SonnerExample() {
   return (
@@ -137,7 +137,7 @@ export function SonnerExample() {
     {
       title: 'Imperative Toast & Viewport',
       description: 'Headless toast system powered by useToast and global dispatch',
-      code: `import { Toaster, useToast, Button, ToastAction } from 'mad-ui-components'
+      code: `import { Toaster, useToast, Button, ToastAction } from '@oryn/ui'
 
 export function ToastExample() {
   const { toast } = useToast()
@@ -180,7 +180,7 @@ export function ToastExample() {
     {
       title: 'Spinner Sizes & Variants',
       description: 'Accessible loading indicator across multiple scales and semantic variants',
-      code: `import { Spinner } from 'mad-ui-components'
+      code: `import { Spinner } from '@oryn/ui'
 
 export function SpinnerExample() {
   return (
@@ -209,7 +209,7 @@ export function SpinnerExample() {
     {
       title: 'Dashed Empty State',
       description: 'Zero data placeholder with title, subtext, and action buttons',
-      code: `import { EmptyState, Button } from 'mad-ui-components'
+      code: `import { EmptyState, Button } from '@oryn/ui'
 
 export function EmptyStateExample() {
   return (
@@ -238,7 +238,7 @@ export function EmptyStateExample() {
     {
       title: 'Announcement Banner',
       description: 'Full-width banner for maintenance alerts and system notifications with action link and dismiss button',
-      code: `import { Banner, Button } from 'mad-ui-components'
+      code: `import { Banner, Button } from '@oryn/ui'
 
 export function BannerExample() {
   return (
@@ -288,20 +288,20 @@ export function BannerExample() {
     {
       title: 'AI Chat Message Thread',
       description: 'Conversational message bubbles for user queries and AI assistant answers with markdown/code blocks and copy action',
-      code: `import { MessageBubble } from 'mad-ui-components'
+      code: `import { MessageBubble } from '@oryn/ui'
 
 export function MessageBubbleExample() {
   return (
     <div className="w-full max-w-xl space-y-4">
       <MessageBubble
         role="user"
-        content="How do I configure tree-shaking for individual components in Mad UI?"
+        content="How do I configure tree-shaking for individual components in ORYN UI?"
         timestamp="Just now"
       />
       
       <MessageBubble
         role="assistant"
-        content="You can import directly from individual subpaths like \`mad-ui-components/button\` or \`mad-ui-components/dialog\`. Each component bundle includes its required primitives and hooks automatically with zero overhead."
+        content="You can import directly from individual subpaths like \`@oryn/ui/button\` or \`@oryn/ui/dialog\`. Each component bundle includes its required primitives and hooks automatically with zero overhead."
         timestamp="1s ago"
         copyable
       />
@@ -312,12 +312,12 @@ export function MessageBubbleExample() {
         <div className="w-full max-w-xl space-y-4">
           <MessageBubble
             role="user"
-            content="How do I configure tree-shaking for individual components in Mad UI?"
+            content="How do I configure tree-shaking for individual components in ORYN UI?"
             timestamp="Just now"
           />
           <MessageBubble
             role="assistant"
-            content="You can import directly from individual subpaths like `mad-ui-components/button` or `mad-ui-components/dialog`. Each component bundle includes its required primitives and hooks automatically with zero overhead."
+            content="You can import directly from individual subpaths like `@oryn/ui/button` or `@oryn/ui/dialog`. Each component bundle includes its required primitives and hooks automatically with zero overhead."
             timestamp="1s ago"
             copyable
           />
@@ -330,7 +330,7 @@ export function MessageBubbleExample() {
     {
       title: 'AI Reasoning & Chain-of-Thought',
       description: 'Collapsible thinking disclosure displaying internal model reasoning steps, duration badge, and streaming animation',
-      code: `import { ReasoningDisclosure } from 'mad-ui-components'
+      code: `import { ReasoningDisclosure } from '@oryn/ui'
 import { useState } from 'react'
 
 export function ReasoningDisclosureExample() {
@@ -373,7 +373,7 @@ export function ReasoningDisclosureExample() {
     {
       title: 'AI Agent Tool Call Card',
       description: 'Structured execution card for AI agent tool invocations, showing arguments, runtime duration, status badges, and output data',
-      code: `import { ToolCallCard } from 'mad-ui-components'
+      code: `import { ToolCallCard } from '@oryn/ui'
 
 export function ToolCallCardExample() {
   return (

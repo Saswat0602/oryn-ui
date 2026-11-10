@@ -1,9 +1,10 @@
 "use client"
 
 import React from 'react'
-import { Badge } from 'mad-ui-components/badge'
-import { Tabs } from 'mad-ui-components/tabs'
+import { Badge } from '@oryn/ui/badge'
+import { Tabs } from '@oryn/ui/tabs'
 import { CodeBlock } from '@/components/CodeBlock'
+import { siteConfig } from '@/lib/site-config'
 
 interface ComponentDocLayoutProps {
   name: string
@@ -46,8 +47,8 @@ export const ComponentDocLayout: React.FC<ComponentDocLayoutProps> = ({
   category,
   children
 }) => {
-  const installationCode = `npm install mad-ui-components`
-  const importCode = `import { ${name} } from 'mad-ui-components/${name.toLowerCase()}'`
+  const installationCode = siteConfig.installCommands.npm
+  const importCode = siteConfig.imports.subpath(name, name.toLowerCase())
 
   const tabItems = [
     {

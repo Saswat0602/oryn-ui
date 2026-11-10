@@ -1,12 +1,9 @@
 // Getting started snippets and installation commands
 // Extracted to keep page component clean, declarative, and maintainable.
 
-export const installCommands = {
-  npm: 'npm install mad-ui-components',
-  pnpm: 'pnpm add mad-ui-components',
-  yarn: 'yarn add mad-ui-components',
-  bun: 'bun add mad-ui-components',
-}
+import { siteConfig } from '@/lib/site-config'
+
+export const installCommands = siteConfig.installCommands
 
 export const tailwindConfig = `const path = require("path")
 
@@ -18,7 +15,7 @@ module.exports = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     // Monorepo & hoisting-safe resolution
-    path.dirname(require.resolve("mad-ui-components/package.json")) + "/dist/**/*.{mjs,js}"
+    path.dirname(require.resolve("${siteConfig.packageName}/package.json")) + "/dist/**/*.{mjs,js}"
   ],
   theme: {
     extend: {},
@@ -27,12 +24,12 @@ module.exports = {
 }`
 
 export const tailwindV4Config = `@import "tailwindcss";
-@source "../node_modules/mad-ui-components/dist";`
+@source "../node_modules/${siteConfig.packageName}/dist";`
 
 export const cssImport = `// In your root layout or main entry:
-import "mad-ui-components/styles.css"`
+import "${siteConfig.packageName}/styles.css"`
 
-export const usage = `import { Button, Card, Input } from 'mad-ui-components'
+export const usage = `import { Button, Card, Input } from '${siteConfig.packageName}'
 
 export function LoginCard() {
   return (

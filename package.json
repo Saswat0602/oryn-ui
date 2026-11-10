@@ -14,7 +14,7 @@
     "url": "https://github.com/Saswat0602/mad-ui/issues"
   },
   "engines": {
-    "node": "20.x || 22.x"
+    "node": ">=20.0.0"
   },
   "workspaces": [
     "docs"

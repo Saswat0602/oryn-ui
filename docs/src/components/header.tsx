@@ -8,7 +8,7 @@ import { Menu, X, Search, ExternalLink, Github } from "lucide-react"
 import { useState, useEffect } from "react"
 import { ComponentSearch } from "./ComponentSearch"
 import { DocsSidebar } from "./DocsSidebar"
-import { PACKAGE_VERSION } from "@/lib/version"
+import { siteConfig } from "@/lib/site-config"
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -59,10 +59,10 @@ export function Header() {
 
             <Link href="/" className="flex items-center space-x-2.5 group">
               <div className="w-7 h-7 rounded-md bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs shadow-sm transition-transform group-hover:scale-105">
-                M
+                O
               </div>
               <span className="font-bold text-base tracking-tight text-foreground">
-                Mad UI
+                {siteConfig.fullName}
               </span>
             </Link>
 
@@ -88,19 +88,19 @@ export function Header() {
 
             {/* npm Link (Desktop) */}
             <a 
-              href="https://www.npmjs.com/package/mad-ui-components" 
+              href={siteConfig.links.npm} 
               target="_blank" 
               rel="noopener noreferrer"
               className="hidden sm:flex items-center space-x-1.5 px-2.5 py-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors text-xs font-medium"
-              title="View on npm (mad-ui-components)"
+              title={`View on npm (${siteConfig.packageName})`}
             >
               <span className="font-bold text-red-500 text-xs tracking-tighter">npm</span>
-              <span className="hidden xl:inline text-[11px] text-muted-foreground/80">{PACKAGE_VERSION}</span>
+              <span className="hidden xl:inline text-[11px] text-muted-foreground/80">{siteConfig.version}</span>
             </a>
 
             {/* GitHub Link */}
             <a 
-              href="https://github.com/Saswat0602/mad-ui" 
+              href={siteConfig.links.github} 
               target="_blank" 
               rel="noopener noreferrer"
               aria-label="View source on GitHub"
@@ -137,11 +137,11 @@ export function Header() {
                   className="flex items-center space-x-2.5"
                 >
                   <div className="w-7 h-7 rounded-md bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs shadow-sm">
-                    M
+                    O
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-bold text-sm tracking-tight text-foreground">Mad UI</span>
-                    <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-mono font-semibold">{PACKAGE_VERSION}</span>
+                    <span className="font-bold text-sm tracking-tight text-foreground">{siteConfig.fullName}</span>
+                    <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-mono font-semibold">{siteConfig.version}</span>
                   </div>
                 </Link>
                 <button
@@ -170,7 +170,7 @@ export function Header() {
               {/* Drawer Footer with Links */}
               <div className="p-3 border-t border-border/40 bg-muted/20 flex items-center justify-between text-xs text-muted-foreground">
                 <a 
-                  href="https://github.com/Saswat0602/mad-ui" 
+                  href={siteConfig.links.github} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center space-x-1.5 hover:text-foreground transition-colors"
@@ -180,13 +180,13 @@ export function Header() {
                   <ExternalLink className="h-3 w-3 opacity-60" />
                 </a>
                 <a 
-                  href="https://www.npmjs.com/package/mad-ui-components" 
+                  href={siteConfig.links.npm} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="flex items-center space-x-1.5 hover:text-foreground transition-colors"
                 >
                   <span className="font-bold text-red-500 text-xs">npm</span>
-                  <span>{PACKAGE_VERSION}</span>
+                  <span>{siteConfig.version}</span>
                   <ExternalLink className="h-3 w-3 opacity-60" />
                 </a>
               </div>

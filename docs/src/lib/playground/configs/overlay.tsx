@@ -45,7 +45,7 @@ import {
   HoverCard,
   HoverCardTrigger,
   HoverCardContent
-} from 'mad-ui-components'
+} from '@oryn/ui'
 import { PlaygroundConfig } from '@/components/playground/types'
 
 // Interactive wrapper component for Drawer

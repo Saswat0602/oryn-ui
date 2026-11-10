@@ -18,7 +18,7 @@ import {
   toast,
   ToolCallCard,
   Button
-} from 'mad-ui-components'
+} from '@oryn/ui'
 import { PlaygroundConfig } from '@/components/playground/types'
 
 // Interactive Sonner trigger wrapper

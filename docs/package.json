@@ -3,7 +3,7 @@
   "version": "3.2.1",
   "private": true,
   "engines": {
-    "node": "20.x || 22.x"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "dev": "node scripts/build-package.js && next dev",
@@ -23,7 +23,7 @@
     "framer-motion": "^12.23.12",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.577.0",
-    "mad-ui-components": "file:..",
+    "@oryn/ui": "file:..",
     "next": "^16.4.3",
     "prismjs": "^1.30.0",
     "react": "^19.3.1",

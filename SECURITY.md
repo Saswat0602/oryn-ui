@@ -9,14 +9,14 @@
 
 ## Reporting a Vulnerability
 
-We take the security of Mad UI seriously. If you believe you have discovered a security vulnerability in this project, please report it privately.
+We take the security of ORYN UI seriously. If you believe you have discovered a security vulnerability in this project, please report it privately.
 
 **Please do not report vulnerabilities via public GitHub issues, discussions, or social media.**
 
 ### How to report:
-1. Use GitHub Private Vulnerability Reporting on the [Mad UI Security tab](https://github.com/Saswat0602/mad-ui/security).
+1. Use GitHub Private Vulnerability Reporting on the [ORYN UI Security tab](https://github.com/Saswat0602/oryn-ui/security).
 2. Alternatively, email the maintainer at `saswatranjan0602@gmail.com` with the subject line:  
-   `[SECURITY] Vulnerability report in mad-ui-components`.
+   `[SECURITY] Vulnerability report in @oryn/ui`.
 
 ### What to include in your report:
 - A clear description of the vulnerability and its potential impact.

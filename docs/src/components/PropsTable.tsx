@@ -1,5 +1,5 @@
 import React from 'react'
-import { Badge } from 'mad-ui-components'
+import { Badge } from '@oryn/ui'
 import { FileCode2 } from 'lucide-react'
 
 interface ComponentProp {

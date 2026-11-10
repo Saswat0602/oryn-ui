@@ -1,9 +1,9 @@
 "use client"
 
 import React from 'react'
-import { Button } from 'mad-ui-components/button'
-import { Card, CardContent } from 'mad-ui-components/card'
-import { Badge } from 'mad-ui-components/badge'
+import { Button } from '@oryn/ui/button'
+import { Card, CardContent } from '@oryn/ui/card'
+import { Badge } from '@oryn/ui/badge'
 import { 
   ArrowRight, 
   Package, 
@@ -144,7 +144,7 @@ export function GettingStartedHero() {
   return (
     <HeroSection
       title="Getting Started with"
-      subtitle="Mad UI"
+      subtitle="ORYN UI"
       description="Build beautiful interfaces in minutes. Install, import, and start creating with our comprehensive component library designed for modern web development."
       badge={{
         text: "Documentation",
@@ -173,7 +173,7 @@ export function InstallationHero() {
   return (
     <HeroSection
       title="Installation Guide"
-      description="Learn how to install and set up Mad UI components in your project with our comprehensive installation guide."
+      description="Learn how to install and set up ORYN UI components in your project with our comprehensive installation guide."
       badge={{
         text: "Installation Guide",
         icon: Package
