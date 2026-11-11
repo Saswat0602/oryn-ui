@@ -1,22 +1,22 @@
 ---
-name: mad-ui-docs
+name: oryn-ui-docs
 description: >-
   Use this skill whenever creating, updating, or debugging pages, component showcases,
-  live previews, props tables, or navigation in the Mad UI documentation app (docs/).
+  live previews, props tables, or navigation in the ORYN UI documentation app (docs/).
   Covers Next.js 16 App Router, React 19 Turbopack rules, anti-patterns, and aesthetic standards.
 ---
 
-# Mad UI Documentation & Showcase Engineering Skill
+# ORYN UI Documentation & Showcase Engineering Skill
 
-This skill details how to author, maintain, and debug documentation pages, live component previews, and props tables in the **Mad UI** Next.js 16 documentation site (`docs/`).
+This skill details how to author, maintain, and debug documentation pages, live component previews, and props tables in the **ORYN UI** Next.js 16 documentation site (`docs/`).
 
 ---
 
 ## 1. Architecture & Monorepo Linkage
 
 - **Next.js 16 + React 19**: The `docs` site runs Next.js 16.4.3+ with React 19, Turbopack, and Tailwind CSS v4.
-- **Root Package Dependency**: `docs/package.json` specifies `"mad-ui-components": "file:.."`, consuming the pre-compiled ESM bundle in `dist/`.
-- **CRITICAL RULE**: NEVER import components from `../../../src/` or alias `mad-ui-components` to `../src` in `docs/tsconfig.json`. React 19's typing for `cloneElement` and `ReactNode` conflicts with React 18 source definitions. Always run `npm run build` at root and import from `'mad-ui-components'` or subpaths like `'mad-ui-components/button'`.
+- **Root Package Dependency**: `docs/package.json` specifies `"oryn-ui": "file:.."`, consuming the pre-compiled ESM bundle in `dist/`.
+- **CRITICAL RULE**: NEVER import components from `../../../src/` or alias `oryn-ui` to `../src` in `docs/tsconfig.json`. React 19's typing for `cloneElement` and `ReactNode` conflicts with React 18 source definitions. Always run `npm run build` at root and import from `'oryn-ui'` or subpaths like `'oryn-ui/button'`.
 
 ---
 
@@ -79,7 +79,7 @@ Document each prop with its type, default value, and description:
 ### Step 3: Interactive Example (`docs/src/lib/examples/<category>.tsx`)
 Create a modular demo and export the component along with its code snippet string:
 - Make the code snippet clean and self-contained.
-- **RULE**: In the code snippet, ONLY import `mad-ui-components`. Never show imports for `clsx` or `tailwind-merge` as consumers do not need to install them.
+- **RULE**: In the code snippet, ONLY import `oryn-ui`. Never show imports for `clsx` or `tailwind-merge` as consumers do not need to install them.
 
 ---
 
@@ -114,7 +114,7 @@ cd ..
 - **Features**: Live component canvas responding dynamically to 6 curated enterprise color presets (Zinc, Indigo, Emerald, Rose, Ocean, Violet) and border-radius sliders.
 - **Export**: Generates clean zero-runtime `:root` / `.dark` CSS custom properties or Tailwind CSS configuration snippets.
 
-### B. CLI Component Distribution (`npx mad-ui-components`)
-- **CLI Adder**: `npx mad-ui-components add <component>` copies component source code along with required primitives (`primitives/`), hooks (`hooks/`), and utilities (`lib/utils.ts`) automatically resolved.
-- **Listing**: `npx mad-ui-components list` shows all 55 components by domain.
-- **Custom Dir**: Supports `--path <dir>` (default: `components/ui/mad-ui`).
+### B. CLI Component Distribution (`npx oryn-ui`)
+- **CLI Adder**: `npx oryn-ui add <component>` copies component source code along with required primitives (`primitives/`), hooks (`hooks/`), and utilities (`lib/utils.ts`) automatically resolved.
+- **Listing**: `npx oryn-ui list` shows all 55 components by domain.
+- **Custom Dir**: Supports `--path <dir>` (default: `components/ui/oryn-ui`).

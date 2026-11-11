@@ -1,14 +1,14 @@
 ---
-name: mad-ui-theme
+name: oryn-ui-theme
 description: >-
   Use this skill whenever editing CSS styles, adjusting design tokens, modifying
-  Tailwind CSS configurations, or managing dark mode themes in Mad UI. Covers HSL color
+  Tailwind CSS configurations, or managing dark mode themes in ORYN UI. Covers HSL color
   variables, animations, and the build-css.js pipeline.
 ---
 
-# Mad UI Theme & Styling Engineering Skill
+# ORYN UI Theme & Styling Engineering Skill
 
-This skill documents how to manage the design token system, CSS variables, Tailwind configurations, and the PostCSS/Tailwind build pipeline in **Mad UI**.
+This skill documents how to manage the design token system, CSS variables, Tailwind configurations, and the PostCSS/Tailwind build pipeline in **ORYN UI**.
 
 ---
 
@@ -74,10 +74,10 @@ How [`scripts/build-css.js`](file:///home/saswatranjanmohanty/Desktop/personal%2
 Consumers import CSS in two ways:
 ```ts
 // Full stylesheet (Tailwind utilities + theme tokens)
-import 'mad-ui-components/styles.css'
+import 'oryn-ui/styles.css'
 
 // Theme tokens only
-import 'mad-ui-components/theme.css'
+import 'oryn-ui/theme.css'
 ```
 
 Both paths are exposed in root `package.json` under `"exports"`:

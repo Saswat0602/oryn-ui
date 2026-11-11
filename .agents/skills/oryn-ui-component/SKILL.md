@@ -1,14 +1,14 @@
 ---
-name: mad-ui-component
+name: oryn-ui-component
 description: >-
   Use this skill whenever creating, updating, refactoring, or documenting a UI
-  component in the Mad UI library. Covers the full 10-point integration checklist
+  component in the ORYN UI library. Covers the full 10-point integration checklist
   from implementation and tree-shakable exports to docs showcase and verification.
 ---
 
-# Mad UI Component Engineering Skill
+# ORYN UI Component Engineering Skill
 
-This skill guides the end-to-end workflow for adding or updating components in **Mad UI** (`mad-ui-components`), ensuring compliance with monorepo exports, bundler architecture, React 18/19 cross-compatibility, and design system standards.
+This skill guides the end-to-end workflow for adding or updating components in **ORYN UI** (`oryn-ui`), ensuring compliance with monorepo exports, bundler architecture, React 18/19 cross-compatibility, and design system standards.
 
 ---
 
@@ -16,7 +16,7 @@ This skill guides the end-to-end workflow for adding or updating components in *
 
 Before writing code, verify:
 - **Zero Third-Party UI Foundation**: 100% native React implementation. NEVER install or import `@radix-ui/*` packages.
-- **Headless Primitives (`src/primitives/`)**: Base complex interactive components on Mad UI native primitives (`Slot`, `Portal`, `FocusTrap`, `Presence`).
+- **Headless Primitives (`src/primitives/`)**: Base complex interactive components on ORYN UI native primitives (`Slot`, `Portal`, `FocusTrap`, `Presence`).
 - **State & Lifecycle Hooks (`src/hooks/`)**: Leverage reusable hooks (`useControllableState`, `useClickOutside`, `useFocusTrap`, `useKeyboardNavigation`, `useRovingTabIndex`, `useId`, `useVirtualizer`).
 - **Styling**: Always use the `cn(...)` utility from `src/lib/utils.ts` for Tailwind class composition.
 - **Universal Icons**: Always type icon props as `icon?: any;` or `React.ReactNode` (never `React.ComponentType<{ size?: number }>`) to avoid React 19 `ReactNode` / `bigint` type incompatibility.

@@ -1,13 +1,13 @@
 ---
-name: mad-ui-verify
+name: oryn-ui-verify
 description: >-
   Use this skill whenever validating code quality, running tests, or performing
-  end-to-end build verification across the Mad UI root library and documentation app.
+  end-to-end build verification across the ORYN UI root library and documentation app.
 ---
 
-# Mad UI Build & Quality Verification Skill
+# ORYN UI Build & Quality Verification Skill
 
-This skill documents the complete multi-tier verification process for **Mad UI**. Because `docs` imports directly from the compiled root package `dist/` via symlink (`mad-ui-components: "file:.."`), changes in `src/` must be compiled first before verifying documentation.
+This skill documents the complete multi-tier verification process for **ORYN UI**. Because `docs` imports directly from the compiled root package `dist/` via symlink (`oryn-ui: "file:.."`), changes in `src/` must be compiled first before verifying documentation.
 
 ---
 
@@ -68,7 +68,7 @@ cd ..
 
 | Issue | Cause | Fix |
 |---|---|---|
-| `Cannot find module 'mad-ui-components/...'` in `docs` | `dist/` is outdated or `tsup.config.ts` had `clean: true` | Run `npm run build` at root. Ensure `clean: false` in `tsup.config.ts`. |
+| `Cannot find module 'oryn-ui/...'` in `docs` | `dist/` is outdated or `tsup.config.ts` had `clean: true` | Run `npm run build` at root. Ensure `clean: false` in `tsup.config.ts`. |
 | `ERR_PACKAGE_PATH_NOT_EXPORTED` in Next.js SSR | Subpath in `package.json` lacks `"default"` fallback | Add `"default": "./dist/<name>.mjs"` to `package.json` under `"exports"`. |
 | `Type 'bigint' is not assignable to type 'ReactNode'` | `icon` prop typed as React 18 `ComponentType` | Change icon prop interface to `icon?: any;` or `React.ReactNode`. |
 | `react/no-unescaped-entities` in `docs` lint | Raw quotes in JSX strings | Replace `'` with `&apos;` and `"` with `&quot;`. |

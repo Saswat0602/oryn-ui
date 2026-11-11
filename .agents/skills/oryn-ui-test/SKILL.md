@@ -1,14 +1,14 @@
 ---
-name: mad-ui-test
+name: oryn-ui-test
 description: >-
   Use this skill whenever authoring, updating, or debugging unit, SSR, or accessibility
-  tests for components in Mad UI. Enforces the 9-point behavior checklist including ARIA roles,
+  tests for components in ORYN UI. Enforces the 9-point behavior checklist including ARIA roles,
   ref forwarding, controlled/uncontrolled states, keyboard navigation, axe-core audit, and React StrictMode/SSR compatibility.
 ---
 
-# Mad UI Testing & Accessibility Engineering Skill
+# ORYN UI Testing & Accessibility Engineering Skill
 
-This skill documents how to author and maintain robust unit, SSR, and accessibility tests for **Mad UI** components using Vitest, React Testing Library, and `vitest-axe`.
+This skill documents how to author and maintain robust unit, SSR, and accessibility tests for **ORYN UI** components using Vitest, React Testing Library, and `vitest-axe`.
 
 ---
 

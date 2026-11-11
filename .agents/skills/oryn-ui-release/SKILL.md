@@ -1,13 +1,13 @@
 ---
-name: mad-ui-release
+name: oryn-ui-release
 description: >-
   Use this skill whenever preparing, bumping, or publishing a new version of the
-  mad-ui-components package to npm.
+  oryn-ui package to npm.
 ---
 
-# Mad UI Release & NPM Publishing Skill
+# ORYN UI Release & NPM Publishing Skill
 
-This skill documents the safe release protocol for publishing `mad-ui-components` to npm, adhering to 2FA authentication, version bumping, and monorepo integrity checks.
+This skill documents the safe release protocol for publishing `oryn-ui` to npm, adhering to 2FA authentication, version bumping, and monorepo integrity checks.
 
 ---
 

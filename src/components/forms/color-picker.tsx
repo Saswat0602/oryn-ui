@@ -159,6 +159,19 @@ export function hsvToHsl(h: number, s: number, v: number, a = 1): HslColor {
   return { h, s: clamp(sHsl, 0, 100), l: clamp(l, 0, 100), a }
 }
 
+export function hslToHsv(h: number, s: number, l: number, a = 1): HsvColor {
+  const sNorm = s / 100
+  const lNorm = l / 100
+  const vNorm = lNorm + sNorm * Math.min(lNorm, 1 - lNorm)
+  const sHsv = vNorm === 0 ? 0 : 2 * (1 - lNorm / vNorm)
+  return {
+    h,
+    s: clamp(Math.round(sHsv * 100), 0, 100),
+    v: clamp(Math.round(vNorm * 100), 0, 100),
+    a,
+  }
+}
+
 export const DEFAULT_PRESETS = [
   "#09090b", // Zinc 950
   "#64748b", // Slate 500
@@ -641,8 +654,9 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
                   max={100}
                   value={hsl.s}
                   onChange={(e) => {
-                    const val = clamp(Number(e.target.value) || 0, 100)
-                    updateFromHsv({ ...hsv, s: val })
+                    const val = clamp(Number(e.target.value) || 0, 0, 100)
+                    const next = hslToHsv(hsl.h, val, hsl.l, hsv.a)
+                    updateFromHsv(next)
                   }}
                   className="w-full h-8 text-center text-xs font-mono font-medium rounded-lg border border-border/70 bg-background text-foreground shadow-2xs focus:outline-hidden focus:ring-1 focus:ring-primary"
                 />
@@ -655,8 +669,9 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
                   max={100}
                   value={hsl.l}
                   onChange={(e) => {
-                    const val = clamp(Number(e.target.value) || 0, 100)
-                    updateFromHsv({ ...hsv, v: val })
+                    const val = clamp(Number(e.target.value) || 0, 0, 100)
+                    const next = hslToHsv(hsl.h, hsl.s, val, hsv.a)
+                    updateFromHsv(next)
                   }}
                   className="w-full h-8 text-center text-xs font-mono font-medium rounded-lg border border-border/70 bg-background text-foreground shadow-2xs focus:outline-hidden focus:ring-1 focus:ring-primary"
                 />

@@ -1,20 +1,20 @@
 ---
-name: mad-ui-forms
+name: oryn-ui-forms
 description: >-
-  Use this skill whenever authoring, updating, or debugging forms and form fields in Mad UI.
+  Use this skill whenever authoring, updating, or debugging forms and form fields in ORYN UI.
   Covers the composable form system (Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage),
   dual standalone / react-hook-form + zod integration, automatic ARIA ID wiring, and custom input integrations.
 ---
 
-# Mad UI Composable Form Engineering Skill
+# ORYN UI Composable Form Engineering Skill
 
-This skill guides the design, integration, and accessibility patterns for the **Composable Form System** in **Mad UI** (`mad-ui-components`).
+This skill guides the design, integration, and accessibility patterns for the **Composable Form System** in **ORYN UI** (`oryn-ui`).
 
 ---
 
 ## 1. Composable Form Architecture
 
-The Mad UI form system uses React Context and the headless `Slot` primitive to decouple form state, layout, label binding, and validation feedback.
+The ORYN UI form system uses React Context and the headless `Slot` primitive to decouple form state, layout, label binding, and validation feedback.
 
 ```
 <Form {...form}>
@@ -79,7 +79,7 @@ No external libraries required.
 
 ```tsx
 import React, { useState } from 'react'
-import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Input, Button } from 'mad-ui-components'
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Input, Button } from 'oryn-ui'
 
 export function StandaloneForm() {
   const [email, setEmail] = useState('')
@@ -124,7 +124,7 @@ For consumers using `react-hook-form` and schema validation.
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Input, Button } from 'mad-ui-components'
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage, Input, Button } from 'oryn-ui'
 
 const schema = z.object({
   username: z.string().min(2, 'Username must be at least 2 characters'),
@@ -160,9 +160,9 @@ export function ProfileForm() {
 
 ---
 
-## 3. Integrating Mad UI Controls
+## 3. Integrating ORYN UI Controls
 
-Any Mad UI form control works seamlessly inside `<FormControl>`:
+Any ORYN UI form control works seamlessly inside `<FormControl>`:
 
 - **`<Input>`**: standard text, password, email, number.
 - **`<Select>`**: native select listbox with trigger value binding.

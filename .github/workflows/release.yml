@@ -41,18 +41,7 @@ jobs:
       - name: Check component manifest integrity
         run: npm run check:manifest
 
-      - name: Check npm token configuration
-        id: check-token
-        run: |
-          if [ -z "${{ secrets.NPM_TOKEN }}" ]; then
-            echo "has_token=false" >> $GITHUB_OUTPUT
-            echo "⚠️ NPM_TOKEN secret is not set in repository secrets. Skipping publish step."
-          else
-            echo "has_token=true" >> $GITHUB_OUTPUT
-          fi
-
       - name: Publish to npm
-        if: steps.check-token.outputs.has_token == 'true'
         run: |
           PKG_NAME=$(node -p "require('./package.json').name")
           CURRENT_VERSION=$(node -p "require('./package.json').version")
@@ -60,7 +49,15 @@ jobs:
           if [ "$CURRENT_VERSION" = "$PUBLISHED_VERSION" ]; then
             echo "Version $CURRENT_VERSION of $PKG_NAME is already published to npm. Skipping publish."
           else
-            npm publish --access public
+            echo "Publishing $PKG_NAME@$CURRENT_VERSION to npm..."
+            if [ -n "$NODE_AUTH_TOKEN" ]; then
+              echo "Publishing via NPM_TOKEN secret..."
+              npm publish --access public --provenance
+            else
+              echo "Publishing via npm Trusted Publisher (OIDC / Provenance)..."
+              sed -i '/_authToken/d' ~/.npmrc 2>/dev/null || true
+              npm publish --access public --provenance
+            fi
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
