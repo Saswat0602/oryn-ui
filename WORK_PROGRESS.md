@@ -1,7 +1,7 @@
 # 🚀 Mad UI — Engineering Work Progress Tracker
 
 > **Current Version**: `3.0.0`  
-> **Repository**: [mad-ui](https://github.com/Saswat0602/mad-ui) (`mad-ui-components`)  
+> **Repository**: [oryn-ui](https://github.com/Saswat0602/oryn-ui) (`oryn-ui`)  
 > **Last Updated**: October 2026  
 > **Status**: **Phase 0 (100% Completed)** · **Phase 1 (100% Completed)** · **Phase 2 (100% Completed)** · **Phase 3 (100% Completed)** · **Phase 4 (100% Completed)** · **Phase 5 (100% Completed)**  
 
@@ -82,7 +82,7 @@
   - Expanded `src/styles.css` with semantic tokens for status (`success`, `warning`, `info`), charts (`chart-1`–`5`), sidebar variables, radius scale, and z-indexes.
   - Quoted path escaping in `scripts/build-css.js` for space-safe Tailwind CLI compilation (65.64 KB).
 - [x] **Opt-in Base Styles**:
-  - Scoped global body restyling in `src/styles.css` to `.mad-ui-base, body[data-mad-ui-theme]`.
+  - Scoped global body restyling in `src/styles.css` to `.oryn-ui-base, body[data-oryn-ui-theme]`.
 - [x] **Neutral Scale (`zinc`) Standardization & Palette Migration**:
   - Standardized all 55 components on the `zinc` neutral palette.
   - Completely eliminated inconsistent `gray-` and `slate-` color classes in `accordion.tsx`, `typography.tsx`, `tabs.tsx`, `slider.tsx`, `layout.tsx`, `navbar.tsx`, `sidebar.tsx`, `calendar.tsx`, and `datetime-picker.tsx`.
@@ -173,8 +173,8 @@
   - Integrated `virtualized?: boolean` mode using `useVirtualizer`.
   - Polished loading skeleton rows and minimal empty-state graphics.
 - [x] **Agent Skills Updates & Authoring (`.agents/skills/`)**:
-  - Updated `mad-ui-component/SKILL.md`: Purged obsolete `@radix-ui/*` references and established the **Architecture-by-Layer** pattern.
-  - Authored new `mad-ui-forms/SKILL.md`: Comprehensive guide for composable forms, dual-mode usage, ARIA ID wiring, and custom input controls.
+  - Updated `oryn-ui-component/SKILL.md`: Purged obsolete `@radix-ui/*` references and established the **Architecture-by-Layer** pattern.
+  - Authored new `oryn-ui-forms/SKILL.md`: Comprehensive guide for composable forms, dual-mode usage, ARIA ID wiring, and custom input controls.
 - [x] **Documentation Showcases (`docs/src/lib/examples/`)**:
   - Upgraded `forms.tsx` with an interactive Profile Settings Form featuring real-time validation and helper descriptions.
   - Upgraded `data.tsx` with a live enterprise Team Members DataTable featuring search, sorting, checkbox row selection, status badges, and pagination.
@@ -195,8 +195,8 @@
   - Documented complete TypeScript prop specifications for all 55 components in the manifest.
   - Normalized kebab-case and unhyphenated registry slugs for seamless navigation.
 - [x] **Smart CLI Component Adder (`scripts/copy-component.js`)**:
-  - `npx mad-ui-components add <component>`: Automatically resolves internal dependencies (`primitives/`, `hooks/`, `lib/utils.ts`) and rewrites relative imports.
-  - `npx mad-ui-components list`: Lists all 55 components grouped by domain.
+  - `npx oryn-ui add <component>`: Automatically resolves internal dependencies (`primitives/`, `hooks/`, `lib/utils.ts`) and rewrites relative imports.
+  - `npx oryn-ui list`: Lists all 55 components grouped by domain.
   - Flags: `--all`, `--path <dir>`, `--dry-run`, `--overwrite`.
 - [x] **Real-World Application Patterns (`docs/src/app/docs/examples/page.tsx`)**:
   - Added enterprise Operations & Analytics Dashboard showcase pattern combining metrics cards with the semantic `DataTable`.

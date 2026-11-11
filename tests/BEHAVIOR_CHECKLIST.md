@@ -1,6 +1,6 @@
 # Component Behavior & Accessibility Test Checklist
 
-Every component in `mad-ui-components` must satisfy this 9-point checklist before release. Use this checklist as a template when writing new unit tests (`<component>.test.tsx`).
+Every component in `oryn-ui` must satisfy this 9-point checklist before release. Use this checklist as a template when writing new unit tests (`<component>.test.tsx`).
 
 ---
 

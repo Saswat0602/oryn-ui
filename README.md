@@ -181,7 +181,7 @@ For a complete status breakdown and implementation checklist, see [COMPONENTS_ST
 ```bash
 # Clone the repository
 git clone https://github.com/Saswat0602/oryn-ui.git
-cd mad-ui
+cd oryn-ui
 
 # Install dependencies
 npm install

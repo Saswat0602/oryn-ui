@@ -1,6 +1,6 @@
-# Mad UI Component Library — Roadmap
+# ORYN UI Component Library — Roadmap
 
-This roadmap outlines the multi-phase engineering evolution of **Mad UI** (`mad-ui-components`).
+This roadmap outlines the multi-phase engineering evolution of **ORYN UI** (`oryn-ui`).
 
 ---
 
@@ -73,5 +73,5 @@ This roadmap outlines the multi-phase engineering evolution of **Mad UI** (`mad-
 ## 📖 Phase 4: Showcase & Developer Experience
 
 1. Interactive theme builder & CSS token exporter.
-2. Code copy tabs with CLI installer (`npx mad-ui-components add <component>`).
+2. Code copy tabs with CLI installer (`npx oryn-ui add <component>`).
 3. Complete props API tables and keyboard shortcuts reference for every component.

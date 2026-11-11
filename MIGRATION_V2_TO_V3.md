@@ -1,19 +1,19 @@
-# 🚀 Migration Guide: Upgrading from Mad UI v2 to v3
+# 🚀 Migration Guide: Upgrading to ORYN UI v3
 
-Welcome to **Mad UI v3.0.0**! This major release transforms the library into an enterprise-grade, standalone native design system with **zero third-party UI runtime dependencies**, an accessible **Composable Form System**, an advanced **Semantic DataTable**, an **Interactive Theme Builder**, and a **Smart CLI Component Adder**.
+Welcome to **ORYN UI v3**! This major release transforms the library into an enterprise-grade, standalone native design system with **zero third-party UI runtime dependencies**, an accessible **Composable Form System**, an advanced **Semantic DataTable**, an **Interactive Theme Builder**, and a **Smart CLI Component Adder**.
 
 ---
 
 ## 📋 Summary of Key Upgrades
 
-| Area | Version 2.x | Version 3.0.0 |
+| Area | Version 2.x | Version 3.x (ORYN UI) |
 | :--- | :--- | :--- |
 | **UI Dependencies** | Relied on external `@radix-ui/*` packages | **Zero external UI dependencies** (pure native React primitives) |
 | **Architecture** | Flat component layout | **Architecture-by-Layer** (`primitives/`, `hooks/`, `theme/`, `components/`) |
 | **Forms** | Monolithic passive wrapper divs | **Composable Form Architecture** with automated ARIA ID binding |
 | **Data Table** | Fixed 12-column CSS grid | **Semantic Table** with multi-sorting, indeterminate selection & virtualization |
 | **Theming** | Static CSS color classes | **Dynamic CSS Tokens** + Interactive Theme Builder (`/theme-builder`) |
-| **Distribution** | npm package only | npm package + **Smart CLI** (`npx mad-ui-components add <component>`) |
+| **Distribution** | npm package only | npm package + **Smart CLI** (`npx oryn-ui add <component>`) |
 
 ---
 
@@ -31,7 +31,7 @@ npm uninstall @radix-ui/react-dialog @radix-ui/react-dropdown-menu @radix-ui/rea
 
 Your `package.json` now only requires:
 ```bash
-npm install mad-ui-components
+npm install oryn-ui
 ```
 
 ---
@@ -68,7 +68,7 @@ import {
   FormMessage, 
   Input, 
   Button 
-} from 'mad-ui-components'
+} from 'oryn-ui'
 
 export function ProfileForm() {
   const [username, setUsername] = useState('')
@@ -109,7 +109,7 @@ export function ProfileForm() {
 In v3, `DataTable` has been rebuilt from scratch on semantic HTML `<table>` elements with interactive capabilities:
 
 ```tsx
-import { DataTable, type DataTableColumn, Badge } from 'mad-ui-components'
+import { DataTable, type DataTableColumn, Badge } from 'oryn-ui'
 
 interface UserRecord {
   id: string
@@ -151,20 +151,20 @@ export function TeamTable({ users }: { users: UserRecord[] }) {
 
 ## 4. Layered Subpath Imports
 
-In addition to importing everything from `'mad-ui-components'`, v3 exposes dedicated headless layers for maximum bundle optimization:
+In addition to importing everything from `'oryn-ui'`, v3 exposes dedicated headless layers for maximum bundle optimization:
 
 ```tsx
 // 1. Full Library
-import { Button, Dialog, Form } from 'mad-ui-components'
+import { Button, Dialog, Form } from 'oryn-ui'
 
 // 2. Primitives Layer (Zero runtime overhead)
-import { Slot, Portal, Presence } from 'mad-ui-components/primitives'
+import { Slot, Portal, Presence } from 'oryn-ui/primitives'
 
 // 3. Headless Hooks
-import { useControllableState, useId, useVirtualizer } from 'mad-ui-components/hooks'
+import { useControllableState, useId, useVirtualizer } from 'oryn-ui/hooks'
 
 // 4. Theming & Tokens
-import { ThemeProvider, useTheme } from 'mad-ui-components/theme'
+import { ThemeProvider, useTheme } from 'oryn-ui/theme'
 ```
 
 ---
@@ -175,19 +175,19 @@ If you prefer copying components directly into your application codebase (shadcn
 
 ```bash
 # Add components directly with dependencies (primitives, hooks, utils) resolved:
-npx mad-ui-components add button
-npx mad-ui-components add dialog
-npx mad-ui-components add data-table
-npx mad-ui-components add form
+npx oryn-ui add button
+npx oryn-ui add dialog
+npx oryn-ui add data-table
+npx oryn-ui add form
 
 # Explore available components:
-npx mad-ui-components list
+npx oryn-ui list
 ```
 
 ---
 
 ## 6. Need Help?
 
-- **Documentation & Theme Builder**: [mad-ui.vercel.app](https://mad-ui.vercel.app)
-- **GitHub Issues**: [github.com/Saswat0602/mad-ui/issues](https://github.com/Saswat0602/mad-ui/issues)
+- **Documentation & Theme Builder**: [oryn-ui.vercel.app](https://oryn-ui.vercel.app)
+- **GitHub Issues**: [github.com/Saswat0602/oryn-ui/issues](https://github.com/Saswat0602/oryn-ui/issues)
 

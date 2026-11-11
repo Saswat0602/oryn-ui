@@ -1,6 +1,6 @@
-# Contributing to Mad UI
+# Contributing to ORYN UI
 
-Thank you for your interest in contributing to **Mad UI** (`mad-ui-components`)!
+Thank you for your interest in contributing to **ORYN UI** (`oryn-ui`)!
 
 This guide outlines the local development setup, code quality standards, and Pull Request (PR) workflow to ensure smooth collaboration.
 
@@ -18,8 +18,8 @@ This guide outlines the local development setup, code quality standards, and Pul
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/Saswat0602/mad-ui.git
-cd mad-ui
+git clone https://github.com/Saswat0602/oryn-ui.git
+cd oryn-ui
 
 # 2. Install dependencies
 npm install
@@ -39,7 +39,7 @@ npm run dev
 ## 3. Project Structure
 
 - **`/src`**: Core library source code (components, utilities, module entry points).
-- **`/docs`**: Next.js 16.4.3+ showcase and documentation application. Consumes the root library directly via `"mad-ui-components": "file:.."`.
+- **`/docs`**: Next.js 16.4.3+ showcase and documentation application. Consumes the root library directly via `"oryn-ui": "file:.."`.
 - **`/dist`**: Compiled ESM bundles and TypeScript definitions output by `tsup`.
 
 > **Note**: Because `/docs` consumes the compiled output in `dist/`, run `npm run build` at root whenever you modify code in `src/` so changes reflect in the docs app.
@@ -57,7 +57,7 @@ Please adhere to the strict engineering guidelines detailed in [AGENTS.md](AGENT
 3. **No Direct Symlinks to `src/` in Docs**:
    The documentation site must consume the pre-bundled `dist/` ESM/DTS packages.
 4. **Zero Redundant Package Installs**:
-   `clsx`, `tailwind-merge`, and `lucide-react` are direct dependencies of `mad-ui-components`. Do not instruct users to install them separately.
+   `clsx`, `tailwind-merge`, and `lucide-react` are direct dependencies of `oryn-ui`. Do not instruct users to install them separately.
 
 ---
 
