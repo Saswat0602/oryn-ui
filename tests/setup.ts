@@ -13,6 +13,13 @@ console.error = (...args: any[]) => {
 }
 
 if (typeof window !== 'undefined') {
+  const originalGetComputedStyle = window.getComputedStyle.bind(window)
+  window.getComputedStyle = (elt: Element, pseudoElt?: string | null) => {
+    // JSDOM's getComputedStyle emits a virtual console error whenever pseudoElt is passed.
+    // Calling it without pseudoElt avoids this while returning a valid CSSStyleDeclaration for axe-core.
+    return originalGetComputedStyle(elt)
+  }
+
   if (!window.ResizeObserver) {
     window.ResizeObserver = class ResizeObserver {
       observe() {}

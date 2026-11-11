@@ -228,6 +228,7 @@ export interface ToastProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "
   closable?: boolean
   onClose?: (id?: string) => void
   open?: boolean
+  isVisible?: boolean
   onOpenChange?: (open: boolean) => void
 }
 
@@ -273,7 +274,8 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
       action,
       closable = true,
       duration = 5000,
-      open = true,
+      open: openProp,
+      isVisible,
       onClose,
       onOpenChange,
       children,
@@ -282,6 +284,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
     },
     ref
   ) => {
+    const open = openProp !== undefined ? openProp : (isVisible !== undefined ? isVisible : true)
     const variant: ToastVariant =
       variantProp || (type === "error" ? "destructive" : (type as ToastVariant)) || "default"
 
