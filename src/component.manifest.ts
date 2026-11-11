@@ -605,11 +605,11 @@ export const componentManifest: ComponentMeta[] = [
     name: 'chart',
     title: 'Chart',
     category: 'data',
-    status: 'beta',
+    status: 'stable',
     subpath: './chart',
     sourceFile: 'src/components/data/chart.tsx',
-    exports: ['Chart', 'ChartProps'],
-    description: 'SVG charts supporting bar and line visualizations.'
+    exports: ['Chart', 'ChartProps', 'AreaChart', 'BarChart', 'LineChart', 'PieChart', 'DoughnutChart', 'RadialBarChart', 'ChartContainer', 'ChartTooltip', 'ChartTooltipContent', 'ChartLegend', 'ChartLegendContent', 'ChartStyle'],
+    description: 'Modern composable SVG charts supporting area, bar, line, pie, and radial bar visualizations with theme CSS variables.'
   },
   {
     name: 'stat-card',

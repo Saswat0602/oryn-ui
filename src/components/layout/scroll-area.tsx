@@ -1,28 +1,70 @@
+"use client"
+
 import React from 'react'
 import { cn } from '../../lib/utils'
 
 export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   orientation?: 'vertical' | 'horizontal' | 'both'
+  scrollbarVariant?: 'default' | 'subtle' | 'pill' | 'minimal' | 'none'
+  scrollbarClassName?: string
+  thumbClassName?: string
+  scrollbarSize?: 'sm' | 'md' | 'lg'
 }
 
 export const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
-  ({ className, children, orientation = 'vertical', ...props }, ref) => {
+  (
+    {
+      className,
+      children,
+      orientation = 'vertical',
+      scrollbarVariant = 'default',
+      scrollbarClassName,
+      thumbClassName,
+      scrollbarSize = 'md',
+      style,
+      ...props
+    },
+    ref
+  ) => {
     const overflowClasses = {
       vertical: 'overflow-y-auto overflow-x-hidden',
       horizontal: 'overflow-x-auto overflow-y-hidden',
       both: 'overflow-auto',
     }
 
+    const sizeClasses = {
+      sm: 'scrollbar-w-1 scrollbar-h-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar]:h-1',
+      md: 'scrollbar-w-1.5 scrollbar-h-1.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-1.5',
+      lg: 'scrollbar-w-2.5 scrollbar-h-2.5 [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar]:h-2.5',
+    }
+
+    const variantClasses = {
+      default:
+        '[&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-border/80 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-muted-foreground/50',
+      subtle:
+        '[&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-muted/40 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-muted-foreground/30',
+      pill:
+        '[&::-webkit-scrollbar-track]:bg-muted/30 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/70 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-primary',
+      minimal:
+        '[&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-border/40 [&::-webkit-scrollbar-thumb]:rounded-xs hover:[&::-webkit-scrollbar-thumb]:bg-border',
+      none: '[&::-webkit-scrollbar]:hidden [scrollbar-width:none] [-ms-overflow-style:none]',
+    }
+
     return (
       <div
         ref={ref}
         className={cn('relative overflow-hidden', className)}
+        style={style}
         {...props}
       >
         <div
           className={cn(
-            'h-full w-full rounded-[inherit] scrollbar-thin scrollbar-thumb-border hover:scrollbar-thumb-muted-foreground/40',
-            overflowClasses[orientation]
+            'h-full w-full rounded-[inherit] transition-colors',
+            overflowClasses[orientation],
+            sizeClasses[scrollbarSize],
+            variantClasses[scrollbarVariant],
+            scrollbarClassName,
+            thumbClassName && `[&::-webkit-scrollbar-thumb]:${thumbClassName}`
           )}
         >
           {children}
@@ -35,28 +77,44 @@ ScrollArea.displayName = 'ScrollArea'
 
 export interface ScrollBarProps extends React.HTMLAttributes<HTMLDivElement> {
   orientation?: 'vertical' | 'horizontal'
+  variant?: 'default' | 'subtle' | 'pill' | 'minimal'
+  thumbClassName?: string
 }
 
 export const ScrollBar = React.forwardRef<HTMLDivElement, ScrollBarProps>(
-  ({ className, orientation = 'vertical', ...props }, ref) => (
-    <div
-      ref={ref}
-      aria-hidden="true"
-      className={cn(
-        'flex touch-none select-none transition-colors duration-150 ease-out',
-        orientation === 'vertical' && 'h-full w-2.5 border-l border-l-transparent p-[1px]',
-        orientation === 'horizontal' && 'h-2.5 flex-col border-t border-t-transparent p-[1px]',
-        className
-      )}
-      {...props}
-    >
-      <div className="relative flex-1 rounded-full bg-border hover:bg-muted-foreground/40 transition-colors" />
-    </div>
-  )
+  ({ className, orientation = 'vertical', variant = 'default', thumbClassName, ...props }, ref) => {
+    const thumbVariants = {
+      default: 'bg-border/80 hover:bg-muted-foreground/50 rounded-full',
+      subtle: 'bg-muted/50 hover:bg-muted-foreground/30 rounded-full',
+      pill: 'bg-primary/70 hover:bg-primary rounded-full ring-1 ring-primary/20',
+      minimal: 'bg-border/40 hover:bg-border rounded-xs',
+    }
+
+    return (
+      <div
+        ref={ref}
+        aria-hidden="true"
+        className={cn(
+          'flex touch-none select-none transition-colors duration-150 ease-out',
+          orientation === 'vertical' && 'h-full w-2.5 border-l border-l-transparent p-[1px]',
+          orientation === 'horizontal' && 'h-2.5 flex-col border-t border-t-transparent p-[1px]',
+          className
+        )}
+        {...props}
+      >
+        <div
+          className={cn(
+            'relative flex-1 transition-colors',
+            thumbVariants[variant],
+            thumbClassName
+          )}
+        />
+      </div>
+    )
+  }
 )
 ScrollBar.displayName = 'ScrollBar'
 
-// Compound component pattern attachment
 export type ScrollAreaComponent = typeof ScrollArea & {
   ScrollBar: typeof ScrollBar
   Bar: typeof ScrollBar

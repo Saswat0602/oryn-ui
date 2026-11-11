@@ -1,8 +1,133 @@
+"use client"
+
 import * as React from "react"
 import { cn } from "../../lib/utils"
-import { componentColors } from "../../lib/colors"
-import { Slot } from "../../lib/slot"
 import { ChevronRight, MoreHorizontal, Home } from "../../icons"
+
+// ==========================================
+// Composable Compound Primitives (shadcn/ui Parity)
+// ==========================================
+
+export interface BreadcrumbRootProps extends React.ComponentPropsWithoutRef<"nav"> {
+  separator?: React.ReactNode
+  separatorVariant?: "slash" | "chevron" | "arrow" | "dot" | "custom"
+  separatorClassName?: string
+}
+
+export const BreadcrumbList = React.forwardRef<HTMLOListElement, React.ComponentPropsWithoutRef<"ol">>(
+  ({ className, ...props }, ref) => (
+    <ol
+      ref={ref}
+      className={cn(
+        "flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5",
+        className
+      )}
+      {...props}
+    />
+  )
+)
+BreadcrumbList.displayName = "BreadcrumbList"
+
+export const BreadcrumbItem = React.forwardRef<HTMLLIElement, React.ComponentPropsWithoutRef<"li">>(
+  ({ className, ...props }, ref) => (
+    <li
+      ref={ref}
+      className={cn("inline-flex items-center gap-1.5", className)}
+      {...props}
+    />
+  )
+)
+BreadcrumbItem.displayName = "BreadcrumbItem"
+
+export interface BreadcrumbLinkProps extends React.ComponentPropsWithoutRef<"a"> {
+  asChild?: boolean
+}
+
+export const BreadcrumbLink = React.forwardRef<HTMLAnchorElement, BreadcrumbLinkProps>(
+  ({ asChild = false, className, ...props }, ref) => {
+    return (
+      <a
+        ref={ref}
+        className={cn("transition-colors hover:text-foreground font-medium text-muted-foreground", className)}
+        {...props}
+      />
+    )
+  }
+)
+BreadcrumbLink.displayName = "BreadcrumbLink"
+
+export const BreadcrumbPage = React.forwardRef<HTMLSpanElement, React.ComponentPropsWithoutRef<"span">>(
+  ({ className, ...props }, ref) => (
+    <span
+      ref={ref}
+      role="link"
+      aria-disabled="true"
+      aria-current="page"
+      className={cn("font-semibold text-foreground tracking-tight", className)}
+      {...props}
+    />
+  )
+)
+BreadcrumbPage.displayName = "BreadcrumbPage"
+
+export interface BreadcrumbSeparatorProps extends React.ComponentPropsWithoutRef<"li"> {
+  variant?: "slash" | "chevron" | "arrow" | "dot" | "custom"
+}
+
+export const BreadcrumbSeparator = ({
+  children,
+  className,
+  variant = "chevron",
+  ...props
+}: BreadcrumbSeparatorProps) => {
+  const renderIcon = () => {
+    if (children) return children
+    switch (variant) {
+      case "chevron":
+        return <ChevronRight className="h-3.5 w-3.5" />
+      case "slash":
+        return <span className="opacity-60 select-none font-mono">/</span>
+      case "arrow":
+        return <span className="opacity-70 select-none">→</span>
+      case "dot":
+        return <span className="h-1.5 w-1.5 rounded-full bg-current opacity-50 select-none" />
+      default:
+        return <ChevronRight className="h-3.5 w-3.5" />
+    }
+  }
+
+  return (
+    <li
+      role="presentation"
+      aria-hidden="true"
+      className={cn("[&>svg]:size-3.5 text-muted-foreground/60 inline-flex items-center select-none", className)}
+      {...props}
+    >
+      {renderIcon()}
+    </li>
+  )
+}
+BreadcrumbSeparator.displayName = "BreadcrumbSeparator"
+
+export const BreadcrumbEllipsis = ({
+  className,
+  ...props
+}: React.ComponentPropsWithoutRef<"span">) => (
+  <span
+    role="presentation"
+    aria-hidden="true"
+    className={cn("flex h-8 w-8 items-center justify-center text-muted-foreground", className)}
+    {...props}
+  >
+    <MoreHorizontal className="h-4 w-4" />
+    <span className="sr-only">More</span>
+  </span>
+)
+BreadcrumbEllipsis.displayName = "BreadcrumbEllipsis"
+
+// ==========================================
+// Primary Composite Breadcrumbs (Array + Compound Support)
+// ==========================================
 
 export interface BreadcrumbItemData {
   label: string
@@ -15,393 +140,158 @@ export interface BreadcrumbItemData {
 export type BreadcrumbsItem = BreadcrumbItemData
 
 export interface BreadcrumbsProps extends React.HTMLAttributes<HTMLElement> {
-  items: BreadcrumbItemData[]
+  items?: BreadcrumbItemData[]
   separator?: React.ReactNode
+  separatorVariant?: "slash" | "chevron" | "arrow" | "dot" | "custom"
+  separatorClassName?: string
   size?: "sm" | "md" | "lg"
-  variant?: "default" | "minimal" | "outlined" | "modern" | "card" | "pill" | "gradient" | "steps"
-  color?: string
-  backgroundColor?: string
-  textColor?: string
-  activeColor?: string
-  separatorColor?: string
-  borderRadius?: string | number
-  shadow?: "none" | "sm" | "md" | "lg"
-  fullWidth?: boolean
+  variant?: "default" | "minimal" | "outlined" | "modern" | "card" | "pill" | "steps"
   showHomeIcon?: boolean
   homeIcon?: React.ReactNode
   maxItems?: number
-  collapseOnMobile?: boolean
+  fullWidth?: boolean
+  children?: React.ReactNode
 }
 
-const Breadcrumbs = React.forwardRef<HTMLElement, BreadcrumbsProps>(
-  ({ 
-    className, 
-    items,
-    separator = "/",
-    size = "md",
-    variant = "default",
-    color,
-    backgroundColor,
-    textColor,
-    activeColor,
-    separatorColor,
-    borderRadius,
-    shadow = "none",
-    fullWidth = false,
-    showHomeIcon = false,
-    homeIcon,
-    maxItems,
-    collapseOnMobile = true,
-    style,
-    ...props 
-  }, ref) => {
-    
-    // Size classes
-    const sizeClasses = {
-      sm: "text-sm",
-      md: "text-base",
-      lg: "text-lg"
-    }
-    
-    const separatorSizeClasses = {
-      sm: "text-xs",
-      md: "text-sm",
-      lg: "text-base"
-    }
-    
-    // Shadow classes
-    const shadowClasses = {
-      none: "",
-      sm: "shadow-sm",
-      md: "shadow-md",
-      lg: "shadow-lg"
-    }
-    
-    // Variant styles
-    const getVariantStyles = () => {
-      switch (variant) {
-        case "minimal":
-          return {
-            backgroundColor: "transparent",
-            padding: "0"
-          }
-        case "outlined":
-          return {
-            backgroundColor: backgroundColor || "hsl(var(--color-card, var(--card)))",
-            border: `1px solid hsl(var(--color-border, var(--border)))`,
-            padding: "8px 14px",
-            borderRadius: borderRadius || "8px"
-          }
-        case "modern":
-          return {
-            backgroundColor: backgroundColor || "hsl(var(--color-muted, var(--muted)) / 0.5)",
-            border: `1px solid hsl(var(--color-border, var(--border)) / 0.7)`,
-            padding: "10px 16px",
-            borderRadius: borderRadius || "10px"
-          }
-        case "card":
-          return {
-            backgroundColor: backgroundColor || "hsl(var(--color-card, var(--card)))",
-            border: `1px solid hsl(var(--color-border, var(--border)))`,
-            boxShadow: "0 1px 3px 0 rgba(0, 0, 0, 0.05)",
-            padding: "10px 16px",
-            borderRadius: borderRadius || "10px"
-          }
-        case "pill":
-          return {
-            backgroundColor: backgroundColor || "hsl(var(--color-muted, var(--muted)) / 0.6)",
-            borderRadius: borderRadius || "9999px",
-            padding: "6px 14px",
-            border: `1px solid hsl(var(--color-border, var(--border)) / 0.8)`
-          }
-        case "gradient":
-          return {
-            backgroundColor: backgroundColor || "hsl(var(--color-muted, var(--muted)) / 0.4)",
-            border: `1px solid hsl(var(--color-border, var(--border)))`,
-            padding: "10px 16px",
-            borderRadius: borderRadius || "10px"
-          }
-        case "steps":
-          return {
-            backgroundColor: backgroundColor || "transparent",
-            padding: "0"
-          }
-        default:
-          return {
-            backgroundColor: backgroundColor || "transparent",
-            padding: "4px 0"
-          }
-      }
-    }
-    
-    // Custom styles
-    const customStyles: React.CSSProperties = {
-      color: textColor || "hsl(var(--color-foreground))",
-      borderRadius: borderRadius,
-      ...getVariantStyles(),
-      ...style
-    }
-    
-    // Process items (limit if maxItems is set)
-    const processedItems = maxItems && items.length > maxItems 
-      ? [
-          ...items.slice(0, 1),
-          { label: "...", disabled: true },
-          ...items.slice(-maxItems + 2)
-        ]
-      : items
-    
-    // Render breadcrumb item
-    const renderItem = (item: BreadcrumbItemData, index: number, isLast: boolean) => {
-      const isActive = isLast
-      const isClickable = item.href || item.onClick
-      
-      const itemStyles: React.CSSProperties = {
-        color: isActive 
-          ? (activeColor || "hsl(var(--color-primary))")
-          : (textColor || "hsl(var(--color-foreground))")
-      }
-      
-      const ItemContent = () => (
-        <>
-          {item.icon && <span className="mr-1">{item.icon}</span>}
-          {item.label}
-        </>
-      )
-
-      // Special rendering for steps variant
-      if (variant === "steps") {
-        return (
-          <div className="flex items-center">
-            <div className={cn(
-              "flex items-center justify-center w-8 h-8 rounded-full border-2 transition-colors duration-200",
-              isActive 
-                ? "bg-primary border-primary text-primary-foreground" 
-                : "bg-card border-border text-muted-foreground"
-            )}>
-              {item.icon || (index + 1)}
-            </div>
-            <span className={cn(
-              "ml-2",
-              sizeClasses[size],
-              isActive ? "font-semibold text-primary" : "font-medium text-muted-foreground"
-            )}>
-              {item.label}
-            </span>
-          </div>
-        )
-      }
-      
-      if (isClickable && !item.disabled) {
-        if (item.href) {
-          return (
-            <a
-              href={item.href}
-              className={cn(
-                "hover:text-primary transition-colors duration-200",
-                sizeClasses[size],
-                "font-medium"
-              )}
-              style={itemStyles}
-            >
-              <ItemContent />
-            </a>
-          )
-        } else if (item.onClick) {
-          return (
-            <button
-              onClick={item.onClick}
-              className={cn(
-                "hover:text-primary transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2",
-                sizeClasses[size],
-                "font-medium"
-              )}
-              style={itemStyles}
-            >
-              <ItemContent />
-            </button>
-          )
-        }
-      }
-      
+export const Breadcrumbs = React.forwardRef<HTMLElement, BreadcrumbsProps>(
+  (
+    {
+      className,
+      items,
+      separator,
+      separatorVariant = "chevron",
+      separatorClassName,
+      size = "md",
+      variant = "default",
+      showHomeIcon = false,
+      homeIcon,
+      maxItems,
+      fullWidth = false,
+      children,
+      ...props
+    },
+    ref
+  ) => {
+    // If children are passed, use composable compound mode
+    if (children) {
       return (
-        <span
+        <nav
+          ref={ref}
+          aria-label="Breadcrumb"
           className={cn(
-            sizeClasses[size],
-            isActive ? "font-semibold" : "font-medium",
-            item.disabled && "text-muted-foreground cursor-not-allowed"
+            "flex items-center",
+            fullWidth && "w-full",
+            className
           )}
-          style={itemStyles}
+          {...props}
         >
-          <ItemContent />
-        </span>
+          {children}
+        </nav>
       )
     }
-    
+
+    const sizeClasses = {
+      sm: "text-xs gap-1 sm:gap-1.5",
+      md: "text-sm gap-1.5 sm:gap-2",
+      lg: "text-base gap-2 sm:gap-3",
+    }
+
+    const processedItems = items || []
+
     return (
       <nav
         ref={ref}
+        aria-label="Breadcrumb"
         className={cn(
-          variant === "steps" ? "flex items-center space-x-8" : "flex items-center space-x-2",
+          "flex items-center",
+          variant === "outlined" && "p-2.5 rounded-xl border border-border/80 bg-card/60 shadow-xs",
+          variant === "modern" && "p-3 rounded-2xl border border-border/60 bg-muted/30 backdrop-blur-xs",
+          variant === "pill" && "px-4 py-2 rounded-full border border-border/70 bg-muted/40",
           fullWidth && "w-full",
           className
         )}
-        style={customStyles}
-        aria-label="Breadcrumb"
         {...props}
       >
-        {/* Home icon */}
-        {showHomeIcon && variant !== "steps" && (
-          <>
-            <span
-              className={cn(
-                "inline-flex items-center text-muted-foreground hover:text-foreground transition-colors duration-200",
-                sizeClasses[size]
-              )}
-            >
-              {homeIcon || <Home className="w-3.5 h-3.5" />}
-            </span>
-            <span
-              className={cn(
-                "text-muted-foreground",
-                separatorSizeClasses[size]
-              )}
-              style={{ color: separatorColor || "hsl(var(--color-muted-foreground))" }}
-            >
-              {separator}
-            </span>
-          </>
-        )}
-        
-        {/* Breadcrumb items */}
-        {processedItems.map((item, index) => (
-          <React.Fragment key={index}>
-            {renderItem(item, index, index === processedItems.length - 1)}
-            {index < processedItems.length - 1 && variant !== "steps" && (
-              <span
-                className={cn(
-                  "text-muted-foreground",
-                  separatorSizeClasses[size]
-                )}
-                style={{ color: separatorColor || "hsl(var(--color-muted-foreground))" }}
+        <BreadcrumbList className={sizeClasses[size]}>
+          {showHomeIcon && (
+            <>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/" aria-label="Home">
+                  {homeIcon || <Home className="h-3.5 w-3.5" />}
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator
+                variant={separatorVariant}
+                className={separatorClassName}
               >
                 {separator}
-              </span>
-            )}
-            {index < processedItems.length - 1 && variant === "steps" && (
-              <div className="flex-1 h-0.5 bg-border mx-4" />
-            )}
-          </React.Fragment>
-        ))}
+              </BreadcrumbSeparator>
+            </>
+          )}
+
+          {processedItems.map((item, index) => {
+            const isLast = index === processedItems.length - 1
+
+            return (
+              <React.Fragment key={index}>
+                <BreadcrumbItem>
+                  {isLast ? (
+                    <BreadcrumbPage className={cn(item.disabled && "opacity-50 pointer-events-none")}>
+                      {item.icon && <span className="mr-1.5 inline-flex">{item.icon}</span>}
+                      {item.label}
+                    </BreadcrumbPage>
+                  ) : item.href ? (
+                    <BreadcrumbLink
+                      href={item.href}
+                      className={cn(item.disabled && "opacity-50 pointer-events-none")}
+                    >
+                      {item.icon && <span className="mr-1.5 inline-flex">{item.icon}</span>}
+                      {item.label}
+                    </BreadcrumbLink>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={item.onClick}
+                      disabled={item.disabled}
+                      className="transition-colors hover:text-foreground font-medium text-muted-foreground cursor-pointer disabled:opacity-50"
+                    >
+                      {item.icon && <span className="mr-1.5 inline-flex">{item.icon}</span>}
+                      {item.label}
+                    </button>
+                  )}
+                </BreadcrumbItem>
+
+                {!isLast && (
+                  <BreadcrumbSeparator
+                    variant={separatorVariant}
+                    className={separatorClassName}
+                  >
+                    {separator}
+                  </BreadcrumbSeparator>
+                )}
+              </React.Fragment>
+            )
+          })}
+        </BreadcrumbList>
       </nav>
     )
   }
 )
-
 Breadcrumbs.displayName = "Breadcrumbs"
 
-// Composable Shadcn/Radix Compound Components
-export const Breadcrumb = React.forwardRef<
-  HTMLElement,
-  React.ComponentPropsWithoutRef<"nav"> & {
-    separator?: React.ReactNode
-  }
->(({ ...props }, ref) => <nav ref={ref} aria-label="breadcrumb" {...props} />)
-Breadcrumb.displayName = "Breadcrumb"
+// Alias for shadcn/ui naming convention
+export const Breadcrumb = Breadcrumbs
 
-export const BreadcrumbList = React.forwardRef<
-  HTMLOListElement,
-  React.ComponentPropsWithoutRef<"ol">
->(({ className, ...props }, ref) => (
-  <ol
-    ref={ref}
-    className={cn(
-      "flex flex-wrap items-center gap-1.5 break-words text-sm text-muted-foreground sm:gap-2.5",
-      className
-    )}
-    {...props}
-  />
-))
-BreadcrumbList.displayName = "BreadcrumbList"
+// Compound component attachments
+export type BreadcrumbsComponent = typeof Breadcrumbs & {
+  List: typeof BreadcrumbList
+  Item: typeof BreadcrumbItem
+  Link: typeof BreadcrumbLink
+  Page: typeof BreadcrumbPage
+  Separator: typeof BreadcrumbSeparator
+  Ellipsis: typeof BreadcrumbEllipsis
+}
 
-export const BreadcrumbItem = React.forwardRef<
-  HTMLLIElement,
-  React.ComponentPropsWithoutRef<"li">
->(({ className, ...props }, ref) => (
-  <li
-    ref={ref}
-    className={cn("inline-flex items-center gap-1.5", className)}
-    {...props}
-  />
-))
-BreadcrumbItem.displayName = "BreadcrumbItem"
-
-export const BreadcrumbLink = React.forwardRef<
-  HTMLAnchorElement,
-  React.ComponentPropsWithoutRef<"a"> & {
-    asChild?: boolean
-  }
->(({ asChild, className, ...props }, ref) => {
-  const Comp = asChild ? Slot : "a"
-
-  return (
-    <Comp
-      ref={ref}
-      className={cn("transition-colors hover:text-foreground", className)}
-      {...props}
-    />
-  )
-})
-BreadcrumbLink.displayName = "BreadcrumbLink"
-
-export const BreadcrumbPage = React.forwardRef<
-  HTMLSpanElement,
-  React.ComponentPropsWithoutRef<"span">
->(({ className, ...props }, ref) => (
-  <span
-    ref={ref}
-    role="link"
-    aria-disabled="true"
-    aria-current="page"
-    className={cn("font-normal text-foreground", className)}
-    {...props}
-  />
-))
-BreadcrumbPage.displayName = "BreadcrumbPage"
-
-export const BreadcrumbSeparator = ({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"li">) => (
-  <li
-    role="presentation"
-    aria-hidden="true"
-    className={cn("[&>svg]:w-3.5 [&>svg]:h-3.5", className)}
-    {...props}
-  >
-    {children ?? <ChevronRight />}
-  </li>
-)
-BreadcrumbSeparator.displayName = "BreadcrumbSeparator"
-
-export const BreadcrumbEllipsis = ({
-  className,
-  ...props
-}: React.ComponentProps<"span">) => (
-  <span
-    role="presentation"
-    aria-hidden="true"
-    className={cn("flex h-9 w-9 items-center justify-center", className)}
-    {...props}
-  >
-    <MoreHorizontal className="h-4 w-4" />
-    <span className="sr-only">More</span>
-  </span>
-)
-BreadcrumbEllipsis.displayName = "BreadcrumbEllipsis"
-
-// Attach compound subcomponents to Breadcrumbs
 ;(Breadcrumbs as any).List = BreadcrumbList
 ;(Breadcrumbs as any).Item = BreadcrumbItem
 ;(Breadcrumbs as any).Link = BreadcrumbLink
@@ -409,7 +299,11 @@ BreadcrumbEllipsis.displayName = "BreadcrumbEllipsis"
 ;(Breadcrumbs as any).Separator = BreadcrumbSeparator
 ;(Breadcrumbs as any).Ellipsis = BreadcrumbEllipsis
 
+;(Breadcrumb as any).List = BreadcrumbList
+;(Breadcrumb as any).Item = BreadcrumbItem
+;(Breadcrumb as any).Link = BreadcrumbLink
+;(Breadcrumb as any).Page = BreadcrumbPage
+;(Breadcrumb as any).Separator = BreadcrumbSeparator
+;(Breadcrumb as any).Ellipsis = BreadcrumbEllipsis
+
 export default Breadcrumbs
-export {
-  Breadcrumbs,
-}

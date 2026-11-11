@@ -501,33 +501,33 @@ export function CompoundPaginationExample() {
 import { useState } from 'react'
 
 const STEPS = [
-  { title: 'Project Details', description: 'Name and repository settings' },
-  { title: 'Environment', description: 'Configure build variables' },
-  { title: 'Deployment', description: 'Review and trigger launch' }
+  { id: 1, title: 'Project Details', description: 'Name and repository settings' },
+  { id: 2, title: 'Environment', description: 'Configure build variables' },
+  { id: 3, title: 'Deployment', description: 'Review and trigger launch' }
 ]
 
 export function StepperExample() {
-  const [activeStep, setActiveStep] = useState(1)
+  const [activeStep, setActiveStep] = useState(2)
 
   return (
     <div className="w-full max-w-xl space-y-6">
       <Stepper
         steps={STEPS}
-        activeStep={activeStep}
-        onStepChange={setActiveStep}
+        currentStep={activeStep}
+        onStepClick={setActiveStep}
       />
       <div className="flex justify-between pt-4 border-t border-zinc-200 dark:border-zinc-800">
         <Button
           variant="outline"
           size="sm"
-          disabled={activeStep === 0}
+          disabled={activeStep === 1}
           onClick={() => setActiveStep(prev => prev - 1)}
         >
           Previous
         </Button>
         <Button
           size="sm"
-          disabled={activeStep === STEPS.length - 1}
+          disabled={activeStep === STEPS.length}
           onClick={() => setActiveStep(prev => prev + 1)}
         >
           Next Step
@@ -537,42 +537,92 @@ export function StepperExample() {
   )
 }`,
       preview: <StepperDemo />
+    },
+    {
+      title: 'Vertical Orientation with Connecting Line',
+      description: 'Continuous vertical connecting track indicating linear stage progression in complex multi-phase tasks',
+      code: `import { Stepper } from 'oryn-ui'
+import { useState } from 'react'
+
+const RELEASE_STAGES = [
+  { id: 1, title: 'Build Artifacts', description: 'tsup bundles compiled into ESM and types' },
+  { id: 2, title: 'Automated Smoke Tests', description: '76 vitest test suites verified' },
+  { id: 3, title: 'Release to NPM', description: 'OIDC provenance verification active' }
+]
+
+export function VerticalStepperExample() {
+  const [currentStep, setCurrentStep] = useState(2)
+
+  return (
+    <div className="w-full max-w-sm p-4 bg-card rounded-xl border border-border">
+      <Stepper
+        steps={RELEASE_STAGES}
+        currentStep={currentStep}
+        orientation="vertical"
+        clickable
+        onStepClick={setCurrentStep}
+      />
+    </div>
+  )
+}`,
+      preview: <VerticalStepperDemo />
     }
   ]
 }
 
 function StepperDemo() {
-  const [activeStep, setActiveStep] = React.useState(1)
+  const [activeStep, setActiveStep] = React.useState(2)
   const steps = [
-    { title: 'Project Details', description: 'Name & repository' },
-    { title: 'Environment', description: 'Build variables' },
-    { title: 'Deployment', description: 'Launch to prod' }
+    { id: 1, title: 'Project Details', description: 'Name & repository' },
+    { id: 2, title: 'Environment', description: 'Build variables' },
+    { id: 3, title: 'Deployment', description: 'Launch to prod' }
   ]
 
   return (
     <div className="w-full max-w-xl space-y-6 p-4">
       <Stepper
         steps={steps}
-        activeStep={activeStep}
-        onStepChange={setActiveStep}
+        currentStep={activeStep}
+        onStepClick={setActiveStep}
       />
       <div className="flex justify-between pt-4 border-t border-zinc-200 dark:border-zinc-800">
         <Button
           variant="outline"
           size="sm"
-          disabled={activeStep === 0}
+          disabled={activeStep === 1}
           onClick={() => setActiveStep(prev => prev - 1)}
         >
           Previous
         </Button>
         <Button
           size="sm"
-          disabled={activeStep === steps.length - 1}
+          disabled={activeStep === steps.length}
           onClick={() => setActiveStep(prev => prev + 1)}
         >
           Next Step
         </Button>
       </div>
+    </div>
+  )
+}
+
+function VerticalStepperDemo() {
+  const [currentStep, setCurrentStep] = React.useState(2)
+  const steps = [
+    { id: 1, title: 'Build Artifacts', description: 'tsup bundles compiled into ESM and types' },
+    { id: 2, title: 'Automated Smoke Tests', description: '76 vitest test suites verified' },
+    { id: 3, title: 'Release to NPM', description: 'OIDC provenance verification active' }
+  ]
+
+  return (
+    <div className="w-full max-w-sm p-4 bg-card rounded-xl border border-border">
+      <Stepper
+        steps={steps}
+        currentStep={currentStep}
+        orientation="vertical"
+        clickable
+        onStepClick={setCurrentStep}
+      />
     </div>
   )
 }

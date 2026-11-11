@@ -306,7 +306,7 @@ export const NavigationMenuContent = React.forwardRef<HTMLDivElement, Navigation
     {
       className,
       align = "start",
-      usePortal = true,
+      usePortal = false,
       sideOffset = 6,
       children,
       style,
@@ -320,6 +320,13 @@ export const NavigationMenuContent = React.forwardRef<HTMLDivElement, Navigation
     if (!isOpen) return null
 
     const rect = triggerRect || (typeof window !== "undefined" && triggerRef.current ? triggerRef.current.getBoundingClientRect() : null)
+
+    const alignmentClasses =
+      align === "end"
+        ? "right-0"
+        : align === "center"
+        ? "left-1/2 -translate-x-1/2"
+        : "left-0"
 
     const contentElement = (
       <div
@@ -350,10 +357,13 @@ export const NavigationMenuContent = React.forwardRef<HTMLDivElement, Navigation
                 zIndex: 70,
                 ...style,
               }
-            : style
+            : {
+                marginTop: sideOffset,
+                ...style,
+              }
         }
         className={cn(
-          usePortal ? "" : "absolute left-0 top-full mt-1.5",
+          usePortal ? "" : cn("absolute top-full", alignmentClasses),
           "w-max max-w-md rounded-xl border border-border bg-popover p-3 text-popover-foreground shadow-xl duration-150 animate-in fade-in-0 zoom-in-95",
           "before:content-[''] before:absolute before:-top-3 before:left-0 before:right-0 before:h-3",
           className

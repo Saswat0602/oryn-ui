@@ -280,33 +280,175 @@ export function DataTableExample() {
 
   chart: [
     {
-      title: 'Basic Chart',
-      description: 'A simple chart component',
+      title: 'Area Chart - Stacked Gradient',
+      description: 'Composable area chart with linear gradient fills, cubic Bézier splines, and interactive crosshair hover tooltip',
+      code: `import { Chart, ChartConfig } from 'oryn-ui'
+
+const chartData = [
+  { month: "January", desktop: 186, mobile: 80 },
+  { month: "February", desktop: 305, mobile: 200 },
+  { month: "March", desktop: 237, mobile: 120 },
+  { month: "April", desktop: 73, mobile: 190 },
+  { month: "May", desktop: 209, mobile: 130 },
+  { month: "June", desktop: 214, mobile: 140 },
+]
+
+const chartConfig: ChartConfig = {
+  desktop: {
+    label: "Desktop Visitors",
+    color: "#3b82f6",
+  },
+  mobile: {
+    label: "Mobile Visitors",
+    color: "#8b5cf6",
+  },
+}
+
+export function AreaChartExample() {
+  return (
+    <div className="w-full max-w-lg p-5 rounded-2xl border border-border/70 bg-card shadow-xs">
+      <div className="mb-4">
+        <h4 className="text-sm font-semibold text-foreground">Monthly Active Traffic</h4>
+        <p className="text-xs text-muted-foreground">Showing total visitors across devices for the last 6 months</p>
+      </div>
+      <Chart.Container config={chartConfig} className="h-60 w-full">
+        <Chart.Area
+          data={chartData}
+          index="month"
+          categories={["desktop", "mobile"]}
+          colors={["#3b82f6", "#8b5cf6"]}
+          showGrid
+          showTooltip
+          showLegend
+        />
+      </Chart.Container>
+    </div>
+  )
+}`,
+      preview: <AreaChartDemo />
+    },
+    {
+      title: 'Bar Chart - Multiple Series',
+      description: 'Clustered bar chart with rounded caps and responsive category comparison',
+      code: `import { Chart, ChartConfig } from 'oryn-ui'
+
+const chartData = [
+  { month: "Jan", desktop: 186, mobile: 80 },
+  { month: "Feb", desktop: 305, mobile: 200 },
+  { month: "Mar", desktop: 237, mobile: 120 },
+  { month: "Apr", desktop: 73, mobile: 190 },
+  { month: "May", desktop: 209, mobile: 130 },
+  { month: "Jun", desktop: 214, mobile: 140 },
+]
+
+const chartConfig: ChartConfig = {
+  desktop: { label: "Desktop", color: "#3b82f6" },
+  mobile: { label: "Mobile", color: "#8b5cf6" },
+}
+
+export function BarChartExample() {
+  return (
+    <Chart.Container config={chartConfig} className="h-60 w-full">
+      <Chart.Bar
+        data={chartData}
+        index="month"
+        categories={["desktop", "mobile"]}
+        colors={["#3b82f6", "#8b5cf6"]}
+        showGrid
+        showTooltip
+      />
+    </Chart.Container>
+  )
+}`,
+      preview: <BarChartDemo />
+    },
+    {
+      title: 'Line Chart - Smooth Spline with Dots',
+      description: 'Continuous spline line chart with active data points and interactive tooltip',
+      code: `import { Chart, ChartConfig } from 'oryn-ui'
+
+const telemetryData = [
+  { time: "00:00", latency: 28, throughput: 140 },
+  { time: "04:00", latency: 32, throughput: 160 },
+  { time: "08:00", latency: 45, throughput: 280 },
+  { time: "12:00", latency: 38, throughput: 310 },
+  { time: "16:00", latency: 42, throughput: 290 },
+  { time: "20:00", latency: 30, throughput: 180 },
+]
+
+const chartConfig: ChartConfig = {
+  latency: { label: "p95 Latency (ms)", color: "#10b981" },
+  throughput: { label: "Requests / sec", color: "#6366f1" },
+}
+
+export function LineChartExample() {
+  return (
+    <Chart.Container config={chartConfig} className="h-60 w-full">
+      <Chart.Line
+        data={telemetryData}
+        index="time"
+        categories={["latency", "throughput"]}
+        colors={["#10b981", "#6366f1"]}
+        showGrid
+        showDots
+        showTooltip
+      />
+    </Chart.Container>
+  )
+}`,
+      preview: <LineChartDemo />
+    },
+    {
+      title: 'Donut Chart - Visitor Share with Center Metric',
+      description: 'Circular doughnut chart displaying categorical proportions with center KPI label and value',
       code: `import { Chart } from 'oryn-ui'
 
-export function ChartExample() {
-  const data = [
-    { label: 'Jan', value: 100 },
-    { label: 'Feb', value: 150 },
-    { label: 'Mar', value: 200 },
-    { label: 'Apr', value: 180 }
-  ]
+const browserData = [
+  { label: "Chrome", value: 450, color: "#3b82f6" },
+  { label: "Safari", value: 240, color: "#8b5cf6" },
+  { label: "Firefox", value: 160, color: "#10b981" },
+  { label: "Edge", value: 95, color: "#f59e0b" },
+  { label: "Other", value: 55, color: "#ec4899" },
+]
 
-  return <Chart data={data} type="line" />
+export function DonutChartExample() {
+  return (
+    <Chart.Container config={{}} className="h-64 w-full">
+      <Chart.Doughnut
+        data={browserData}
+        centerValue="1,000"
+        centerLabel="Total Users"
+        showLegend
+      />
+    </Chart.Container>
+  )
 }`,
-      preview: (
-        <div className="w-full max-w-md">
-          <Chart 
-            data={[
-              { label: 'Jan', value: 100 },
-              { label: 'Feb', value: 150 },
-              { label: 'Mar', value: 200 },
-              { label: 'Apr', value: 180 }
-            ]} 
-            type="line" 
-          />
-        </div>
-      )
+      preview: <DoughnutChartDemo />
+    },
+    {
+      title: 'Radial Bar - Activity Gauge',
+      description: 'Concentric circular activity meters with background tracks and center KPI metric',
+      code: `import { Chart } from 'oryn-ui'
+
+const quotaData = [
+  { label: "Serverless CPU", value: 84, color: "#3b82f6" },
+  { label: "Persistent SSD", value: 68, color: "#8b5cf6" },
+  { label: "Edge Bandwidth", value: 42, color: "#10b981" },
+]
+
+export function RadialGaugeExample() {
+  return (
+    <Chart.Container config={{}} className="h-64 w-full">
+      <Chart.Radial
+        data={quotaData}
+        centerValue="84%"
+        centerLabel="Peak Utilization"
+        showLegend
+      />
+    </Chart.Container>
+  )
+}`,
+      preview: <RadialGaugeDemo />
     }
   ],
 
@@ -437,6 +579,65 @@ export function TreeViewExample() {
   )
 }`,
       preview: <TreeViewDemo />
+    },
+    {
+      title: 'Organization Directory Tree',
+      description: 'Nested department and team structure with interactive node selection feedback',
+      code: `import { TreeView, TreeNode } from 'oryn-ui'
+import { useState } from 'react'
+
+const ORG_DATA: TreeNode[] = [
+  {
+    id: "exec",
+    label: "Executive Leadership",
+    children: [
+      { id: "ceo", label: "Chief Executive Officer" },
+      { id: "cto", label: "Chief Technology Officer" }
+    ]
+  },
+  {
+    id: "engineering",
+    label: "Engineering Division",
+    children: [
+      { id: "architect", label: "Principal Software Architect" },
+      {
+        id: "frontend",
+        label: "Core Frontend & Design System",
+        children: [
+          { id: "dev-1", label: "Staff UI Engineer" },
+          { id: "dev-2", label: "Accessibility Specialist" }
+        ]
+      },
+      {
+        id: "infra",
+        label: "Cloud Reliability & Edge",
+        children: [
+          { id: "sre-1", label: "Staff SRE" },
+          { id: "sre-2", label: "DevOps Engineer" }
+        ]
+      }
+    ]
+  }
+]
+
+export function OrgTreeExample() {
+  const [selected, setSelected] = useState<string>("architect")
+
+  return (
+    <div className="w-full max-w-md p-4 rounded-xl border border-border/70 bg-card shadow-xs space-y-3">
+      <TreeView
+        data={ORG_DATA}
+        selectedId={selected}
+        onSelect={(node) => setSelected(node.id)}
+        defaultExpandedIds={["engineering", "frontend"]}
+      />
+      <div className="text-xs text-muted-foreground pt-2 border-t border-border/50">
+        Selected Node: <span className="font-mono text-primary font-medium">{selected}</span>
+      </div>
+    </div>
+  )
+}`,
+      preview: <TreeViewOrgDemo />
     }
   ]
 }
@@ -581,6 +782,209 @@ function TreeViewDemo() {
         onSelect={(node) => setSelected(node.id)}
         defaultExpandedIds={["src", "components"]}
       />
+    </div>
+  )
+}
+
+function TreeViewOrgDemo() {
+  const [selected, setSelected] = useState<string>("architect")
+  const orgData = [
+    {
+      id: "exec",
+      label: "Executive Leadership",
+      children: [
+        { id: "ceo", label: "Chief Executive Officer" },
+        { id: "cto", label: "Chief Technology Officer" }
+      ]
+    },
+    {
+      id: "engineering",
+      label: "Engineering Division",
+      children: [
+        { id: "architect", label: "Principal Software Architect" },
+        {
+          id: "frontend",
+          label: "Core Frontend & Design System",
+          children: [
+            { id: "dev-1", label: "Staff UI Engineer" },
+            { id: "dev-2", label: "Accessibility Specialist" }
+          ]
+        },
+        {
+          id: "infra",
+          label: "Cloud Reliability & Edge",
+          children: [
+            { id: "sre-1", label: "Staff SRE" },
+            { id: "sre-2", label: "DevOps Engineer" }
+          ]
+        }
+      ]
+    }
+  ]
+
+  return (
+    <div className="w-full max-w-md p-4 rounded-xl border border-border/70 bg-card shadow-xs space-y-3">
+      <div className="text-xs font-semibold text-foreground">Company Organization Directory</div>
+      <TreeView
+        data={orgData}
+        selectedId={selected}
+        onSelect={(node) => setSelected(node.id)}
+        defaultExpandedIds={["engineering", "frontend"]}
+      />
+      <div className="text-xs text-muted-foreground pt-2 border-t border-border/50">
+        Selected Node: <span className="font-mono text-primary font-medium">{selected}</span>
+      </div>
+    </div>
+  )
+}
+
+function AreaChartDemo() {
+  const chartData = [
+    { month: "January", desktop: 186, mobile: 80 },
+    { month: "February", desktop: 305, mobile: 200 },
+    { month: "March", desktop: 237, mobile: 120 },
+    { month: "April", desktop: 73, mobile: 190 },
+    { month: "May", desktop: 209, mobile: 130 },
+    { month: "June", desktop: 214, mobile: 140 },
+  ]
+  const chartConfig = {
+    desktop: { label: "Desktop Visitors", color: "#3b82f6" },
+    mobile: { label: "Mobile Visitors", color: "#8b5cf6" },
+  }
+  return (
+    <div className="w-full max-w-lg p-5 rounded-2xl border border-border/70 bg-card shadow-xs">
+      <div className="mb-4">
+        <h4 className="text-sm font-semibold text-foreground">Area Chart - Stacked Gradient</h4>
+        <p className="text-xs text-muted-foreground">Showing total visitors across devices for the last 6 months</p>
+      </div>
+      <Chart.Container config={chartConfig} className="h-60 w-full">
+        <Chart.Area
+          data={chartData}
+          index="month"
+          categories={["desktop", "mobile"]}
+          colors={["#3b82f6", "#8b5cf6"]}
+          showGrid
+          showTooltip
+          showLegend
+        />
+      </Chart.Container>
+    </div>
+  )
+}
+
+function BarChartDemo() {
+  const chartData = [
+    { month: "Jan", desktop: 186, mobile: 80 },
+    { month: "Feb", desktop: 305, mobile: 200 },
+    { month: "Mar", desktop: 237, mobile: 120 },
+    { month: "Apr", desktop: 73, mobile: 190 },
+    { month: "May", desktop: 209, mobile: 130 },
+    { month: "Jun", desktop: 214, mobile: 140 },
+  ]
+  const chartConfig = {
+    desktop: { label: "Desktop", color: "#3b82f6" },
+    mobile: { label: "Mobile", color: "#8b5cf6" },
+  }
+  return (
+    <div className="w-full max-w-lg p-5 rounded-2xl border border-border/70 bg-card shadow-xs">
+      <div className="mb-4">
+        <h4 className="text-sm font-semibold text-foreground">Bar Chart - Multiple Categories</h4>
+        <p className="text-xs text-muted-foreground">Monthly breakdown of desktop and mobile sessions</p>
+      </div>
+      <Chart.Container config={chartConfig} className="h-60 w-full">
+        <Chart.Bar
+          data={chartData}
+          index="month"
+          categories={["desktop", "mobile"]}
+          colors={["#3b82f6", "#8b5cf6"]}
+          showGrid
+          showTooltip
+        />
+      </Chart.Container>
+    </div>
+  )
+}
+
+function LineChartDemo() {
+  const telemetryData = [
+    { time: "00:00", latency: 28, throughput: 140 },
+    { time: "04:00", latency: 32, throughput: 160 },
+    { time: "08:00", latency: 45, throughput: 280 },
+    { time: "12:00", latency: 38, throughput: 310 },
+    { time: "16:00", latency: 42, throughput: 290 },
+    { time: "20:00", latency: 30, throughput: 180 },
+  ]
+  const chartConfig = {
+    latency: { label: "p95 Latency (ms)", color: "#10b981" },
+    throughput: { label: "Requests / sec", color: "#6366f1" },
+  }
+  return (
+    <div className="w-full max-w-lg p-5 rounded-2xl border border-border/70 bg-card shadow-xs">
+      <div className="mb-4">
+        <h4 className="text-sm font-semibold text-foreground">Line Chart - Smooth Spline with Dots</h4>
+        <p className="text-xs text-muted-foreground">Real-time edge gateway latency & throughput</p>
+      </div>
+      <Chart.Container config={chartConfig} className="h-60 w-full">
+        <Chart.Line
+          data={telemetryData}
+          index="time"
+          categories={["latency", "throughput"]}
+          colors={["#10b981", "#6366f1"]}
+          showGrid
+          showDots
+          showTooltip
+        />
+      </Chart.Container>
+    </div>
+  )
+}
+
+function DoughnutChartDemo() {
+  const browserData = [
+    { label: "Chrome", value: 450, color: "#3b82f6" },
+    { label: "Safari", value: 240, color: "#8b5cf6" },
+    { label: "Firefox", value: 160, color: "#10b981" },
+    { label: "Edge", value: 95, color: "#f59e0b" },
+    { label: "Other", value: 55, color: "#ec4899" },
+  ]
+  return (
+    <div className="w-full max-w-lg p-5 rounded-2xl border border-border/70 bg-card shadow-xs">
+      <div className="mb-4">
+        <h4 className="text-sm font-semibold text-foreground">Donut Chart - Visitor Share</h4>
+        <p className="text-xs text-muted-foreground">Browser traffic distribution with center KPI value</p>
+      </div>
+      <Chart.Container config={{}} className="h-64 w-full">
+        <Chart.Doughnut
+          data={browserData}
+          centerValue="1,000"
+          centerLabel="Total Users"
+          showLegend
+        />
+      </Chart.Container>
+    </div>
+  )
+}
+
+function RadialGaugeDemo() {
+  const quotaData = [
+    { label: "Serverless CPU", value: 84, color: "#3b82f6" },
+    { label: "Persistent SSD", value: 68, color: "#8b5cf6" },
+    { label: "Edge Bandwidth", value: 42, color: "#10b981" },
+  ]
+  return (
+    <div className="w-full max-w-lg p-5 rounded-2xl border border-border/70 bg-card shadow-xs">
+      <div className="mb-4">
+        <h4 className="text-sm font-semibold text-foreground">Radial Bar - Activity Gauge</h4>
+        <p className="text-xs text-muted-foreground">Concentric resource utilization meters</p>
+      </div>
+      <Chart.Container config={{}} className="h-64 w-full">
+        <Chart.Radial
+          data={quotaData}
+          centerValue="84%"
+          centerLabel="Peak Usage"
+          showLegend
+        />
+      </Chart.Container>
     </div>
   )
 }

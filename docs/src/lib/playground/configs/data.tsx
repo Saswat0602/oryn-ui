@@ -73,34 +73,292 @@ export const dataPlaygrounds: Record<string, PlaygroundConfig> = {
     title: 'Chart',
     componentName: 'Chart',
     defaultProps: {
-      type: 'bar',
-      height: 180
+      type: 'area',
+      showGrid: true
     },
     controls: [
       {
         name: 'type',
-        label: 'Chart Type',
-        type: 'segmented',
-        defaultValue: 'bar',
-        options: ['bar', 'pie', 'doughnut'],
+        label: 'Chart Variety',
+        type: 'select',
+        defaultValue: 'area',
+        options: [
+          { label: 'Area Chart (Gradient)', value: 'area' },
+          { label: 'Bar Chart (Multi-Series)', value: 'bar' },
+          { label: 'Line Chart (Spline)', value: 'line' },
+          { label: 'Donut Chart (With KPI)', value: 'doughnut' },
+          { label: 'Pie Chart', value: 'pie' },
+          { label: 'Radial Bar (Activity Ring)', value: 'radial' }
+        ],
         category: 'appearance',
-        description: 'Visualization format'
+        description: 'Composable chart visualization format'
+      },
+      {
+        name: 'showGrid',
+        label: 'Show Cartesian Grid',
+        type: 'boolean',
+        defaultValue: true,
+        category: 'appearance',
+        description: 'Renders subtle dashed background guide lines'
       }
     ],
-    render: (props) => (
-      <div className="w-full max-w-sm p-4 rounded-xl border border-border/60 bg-card shadow-xs">
-        <Chart
-          type={props.type}
-          height={props.height}
-          data={[
-            { label: 'Jan', value: 45 },
-            { label: 'Feb', value: 72 },
-            { label: 'Mar', value: 90 },
-            { label: 'Apr', value: 65 }
-          ]}
-        />
-      </div>
-    )
+    render: (props) => {
+      const timeSeriesData = [
+        { month: 'Jan', desktop: 186, mobile: 80 },
+        { month: 'Feb', desktop: 305, mobile: 200 },
+        { month: 'Mar', desktop: 237, mobile: 120 },
+        { month: 'Apr', desktop: 273, mobile: 190 },
+        { month: 'May', desktop: 309, mobile: 230 },
+        { month: 'Jun', desktop: 384, mobile: 290 }
+      ]
+
+      const categoryData = [
+        { label: 'Chrome', value: 275, color: '#3b82f6' },
+        { label: 'Safari', value: 200, color: '#8b5cf6' },
+        { label: 'Firefox', value: 187, color: '#10b981' },
+        { label: 'Edge', value: 173, color: '#f59e0b' },
+        { label: 'Other', value: 90, color: '#ec4899' }
+      ]
+
+      const radialData = [
+        { label: 'Compute', value: 85, color: '#3b82f6' },
+        { label: 'Storage', value: 68, color: '#8b5cf6' },
+        { label: 'Bandwidth', value: 42, color: '#10b981' }
+      ]
+
+      const config = {
+        desktop: { label: 'Desktop Clients', color: '#3b82f6' },
+        mobile: { label: 'Mobile Visitors', color: '#8b5cf6' }
+      }
+
+      return (
+        <div className="w-full max-w-lg p-4 rounded-2xl border border-border/80 bg-card shadow-xs">
+          <div className="mb-3">
+            <h4 className="font-semibold text-xs text-foreground">Traffic Performance</h4>
+            <p className="text-[10px] text-muted-foreground">Real-time edge metrics and breakdown</p>
+          </div>
+          <Chart.Container config={config} className="h-56 w-full">
+            {props.type === 'area' && (
+              <Chart.Area
+                data={timeSeriesData}
+                index="month"
+                categories={['desktop', 'mobile']}
+                colors={['#3b82f6', '#8b5cf6']}
+                showGrid={props.showGrid}
+                showTooltip={true}
+                showLegend={true}
+              />
+            )}
+            {props.type === 'bar' && (
+              <Chart.Bar
+                data={timeSeriesData}
+                index="month"
+                categories={['desktop', 'mobile']}
+                colors={['#3b82f6', '#8b5cf6']}
+                showGrid={props.showGrid}
+                showTooltip={true}
+              />
+            )}
+            {props.type === 'line' && (
+              <Chart.Line
+                data={timeSeriesData}
+                index="month"
+                categories={['desktop', 'mobile']}
+                colors={['#3b82f6', '#8b5cf6']}
+                showGrid={props.showGrid}
+                showTooltip={true}
+                showDots={true}
+              />
+            )}
+            {props.type === 'doughnut' && (
+              <Chart.Doughnut
+                data={categoryData}
+                centerValue="925"
+                centerLabel="Total Visitors"
+                showLegend={true}
+              />
+            )}
+            {props.type === 'pie' && (
+              <Chart.Pie
+                data={categoryData}
+                showLegend={true}
+              />
+            )}
+            {props.type === 'radial' && (
+              <Chart.Radial
+                data={radialData}
+                centerValue="85%"
+                centerLabel="Cluster Load"
+                showLegend={true}
+              />
+            )}
+          </Chart.Container>
+        </div>
+      )
+    },
+    generateCode: (props) => {
+      if (props.type === 'area') {
+        return `import { Chart, ChartConfig } from 'oryn-ui'
+
+const chartData = [
+  { month: 'Jan', desktop: 186, mobile: 80 },
+  { month: 'Feb', desktop: 305, mobile: 200 },
+  { month: 'Mar', desktop: 237, mobile: 120 },
+  { month: 'Apr', desktop: 273, mobile: 190 },
+  { month: 'May', desktop: 309, mobile: 230 },
+  { month: 'Jun', desktop: 384, mobile: 290 },
+]
+
+const chartConfig: ChartConfig = {
+  desktop: { label: 'Desktop Clients', color: '#3b82f6' },
+  mobile: { label: 'Mobile Visitors', color: '#8b5cf6' },
+}
+
+export default function AreaChartDemo() {
+  return (
+    <Chart.Container config={chartConfig} className="h-60 w-full">
+      <Chart.Area
+        data={chartData}
+        index="month"
+        categories={['desktop', 'mobile']}
+        colors={['#3b82f6', '#8b5cf6']}
+        showGrid={${props.showGrid}}
+        showTooltip
+        showLegend
+      />
+    </Chart.Container>
+  )
+}`
+      }
+      if (props.type === 'bar') {
+        return `import { Chart, ChartConfig } from 'oryn-ui'
+
+const chartData = [
+  { month: 'Jan', desktop: 186, mobile: 80 },
+  { month: 'Feb', desktop: 305, mobile: 200 },
+  { month: 'Mar', desktop: 237, mobile: 120 },
+  { month: 'Apr', desktop: 273, mobile: 190 },
+  { month: 'May', desktop: 309, mobile: 230 },
+  { month: 'Jun', desktop: 384, mobile: 290 },
+]
+
+const chartConfig: ChartConfig = {
+  desktop: { label: 'Desktop Clients', color: '#3b82f6' },
+  mobile: { label: 'Mobile Visitors', color: '#8b5cf6' },
+}
+
+export default function BarChartDemo() {
+  return (
+    <Chart.Container config={chartConfig} className="h-60 w-full">
+      <Chart.Bar
+        data={chartData}
+        index="month"
+        categories={['desktop', 'mobile']}
+        colors={['#3b82f6', '#8b5cf6']}
+        showGrid={${props.showGrid}}
+        showTooltip
+      />
+    </Chart.Container>
+  )
+}`
+      }
+      if (props.type === 'line') {
+        return `import { Chart, ChartConfig } from 'oryn-ui'
+
+const chartData = [
+  { month: 'Jan', desktop: 186, mobile: 80 },
+  { month: 'Feb', desktop: 305, mobile: 200 },
+  { month: 'Mar', desktop: 237, mobile: 120 },
+  { month: 'Apr', desktop: 273, mobile: 190 },
+  { month: 'May', desktop: 309, mobile: 230 },
+  { month: 'Jun', desktop: 384, mobile: 290 },
+]
+
+const chartConfig: ChartConfig = {
+  desktop: { label: 'Desktop Clients', color: '#3b82f6' },
+  mobile: { label: 'Mobile Visitors', color: '#8b5cf6' },
+}
+
+export default function LineChartDemo() {
+  return (
+    <Chart.Container config={chartConfig} className="h-60 w-full">
+      <Chart.Line
+        data={chartData}
+        index="month"
+        categories={['desktop', 'mobile']}
+        colors={['#3b82f6', '#8b5cf6']}
+        showGrid={${props.showGrid}}
+        showDots
+        showTooltip
+      />
+    </Chart.Container>
+  )
+}`
+      }
+      if (props.type === 'doughnut') {
+        return `import { Chart } from 'oryn-ui'
+
+const browserData = [
+  { label: 'Chrome', value: 275, color: '#3b82f6' },
+  { label: 'Safari', value: 200, color: '#8b5cf6' },
+  { label: 'Firefox', value: 187, color: '#10b981' },
+  { label: 'Edge', value: 173, color: '#f59e0b' },
+  { label: 'Other', value: 90, color: '#ec4899' },
+]
+
+export default function DoughnutChartDemo() {
+  return (
+    <Chart.Container config={{}} className="h-64 w-full">
+      <Chart.Doughnut
+        data={browserData}
+        centerValue="925"
+        centerLabel="Total Visitors"
+        showLegend
+      />
+    </Chart.Container>
+  )
+}`
+      }
+      if (props.type === 'pie') {
+        return `import { Chart } from 'oryn-ui'
+
+const categoryData = [
+  { label: 'Chrome', value: 275, color: '#3b82f6' },
+  { label: 'Safari', value: 200, color: '#8b5cf6' },
+  { label: 'Firefox', value: 187, color: '#10b981' },
+  { label: 'Edge', value: 173, color: '#f59e0b' },
+  { label: 'Other', value: 90, color: '#ec4899' },
+]
+
+export default function PieChartDemo() {
+  return (
+    <Chart.Container config={{}} className="h-64 w-full">
+      <Chart.Pie data={categoryData} showLegend />
+    </Chart.Container>
+  )
+}`
+      }
+      return `import { Chart } from 'oryn-ui'
+
+const quotaData = [
+  { label: 'Compute', value: 85, color: '#3b82f6' },
+  { label: 'Storage', value: 68, color: '#8b5cf6' },
+  { label: 'Bandwidth', value: 42, color: '#10b981' },
+]
+
+export default function RadialChartDemo() {
+  return (
+    <Chart.Container config={{}} className="h-64 w-full">
+      <Chart.Radial
+        data={quotaData}
+        centerValue="85%"
+        centerLabel="Cluster Load"
+        showLegend
+      />
+    </Chart.Container>
+  )
+}`
+    }
   },
 
   table: {
@@ -136,7 +394,30 @@ export const dataPlaygrounds: Record<string, PlaygroundConfig> = {
           ]}
         />
       </div>
-    )
+    ),
+    generateCode: (props) => `import { Table } from 'oryn-ui'
+
+const columns = [
+  { key: 'region', header: 'Region' },
+  { key: 'latency', header: 'Latency (p95)' },
+  { key: 'status', header: 'Status' }
+]
+
+const data = [
+  { region: 'US East (iad1)', latency: '18ms', status: 'Healthy' },
+  { region: 'US West (sfo1)', latency: '24ms', status: 'Healthy' },
+  { region: 'Europe (fra1)', latency: '32ms', status: 'Healthy' }
+]
+
+export default function TableDemo() {
+  return (
+    <Table
+      striped={${props.striped}}
+      columns={columns}
+      data={data}
+    />
+  )
+}`
   },
 
   'data-table': {
@@ -182,6 +463,30 @@ export const dataPlaygrounds: Record<string, PlaygroundConfig> = {
           ]}
         />
       </div>
-    )
+    ),
+    generateCode: (props) => `import { DataTable } from 'oryn-ui'
+
+const columns = [
+  { key: 'deployment', header: 'Deployment' },
+  { key: 'environment', header: 'Env' },
+  { key: 'status', header: 'Status' }
+]
+
+const data = [
+  { deployment: 'prj_prod_01', environment: 'Production', status: 'Active' },
+  { deployment: 'prj_stage_02', environment: 'Preview', status: 'Building' },
+  { deployment: 'prj_dev_03', environment: 'Development', status: 'Completed' }
+]
+
+export default function DataTableDemo() {
+  return (
+    <DataTable
+      pagination={${props.pagination}}
+      searchable={${props.searchable}}
+      columns={columns}
+      data={data}
+    />
+  )
+}`
   }
 }

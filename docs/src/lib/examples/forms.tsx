@@ -54,7 +54,7 @@ function BreadcrumbDesignsDemo() {
     { label: 'Smartphones' }
   ]
 
-  const variants = ['default', 'minimal', 'outlined', 'modern', 'card', 'pill', 'gradient', 'steps']
+  const variants = ['default', 'minimal', 'outlined', 'modern', 'card', 'pill', 'steps']
 
   return (
     <div className="space-y-6">
@@ -79,7 +79,7 @@ function BreadcrumbDesignsDemo() {
       <div className="p-4 bg-muted/30 border border-border rounded-lg">
         <Breadcrumbs 
           items={items} 
-          variant={selectedVariant as 'default' | 'minimal' | 'outlined' | 'modern' | 'card' | 'pill' | 'gradient' | 'steps'}
+          variant={selectedVariant as 'default' | 'minimal' | 'outlined' | 'modern' | 'card' | 'pill' | 'steps'}
           showHomeIcon={selectedVariant !== 'steps'}
         />
       </div>

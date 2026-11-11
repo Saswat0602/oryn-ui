@@ -319,12 +319,12 @@ function InteractiveResizableDemo() {
     <div className="w-full max-w-xl">
       <Resizable
         direction="horizontal"
-        defaultSize={180}
-        minSize={120}
-        maxSize={280}
+        defaultSize={30}
+        minSize={15}
+        maxSize={60}
         className="h-64 rounded-xl border border-border shadow-xs"
       >
-        <ResizablePanel defaultSize={180} className="p-3 bg-muted/30">
+        <ResizablePanel defaultSize={30} className="p-3 bg-muted/30">
           <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider mb-2">
             Project Explorer
           </div>
@@ -372,10 +372,11 @@ function InteractiveScrollAreaDemo() {
   return (
     <div className="flex flex-col sm:flex-row items-center gap-6 w-full max-w-xl justify-center">
       <div className="w-56 rounded-xl border border-border bg-card shadow-xs">
-        <div className="p-3 border-b border-border text-xs font-semibold text-foreground">
-          Release Tags (Vertical)
+        <div className="p-3 border-b border-border text-xs font-semibold text-foreground flex items-center justify-between">
+          <span>Release Tags</span>
+          <span className="text-[10px] font-mono text-primary font-bold">pill style</span>
         </div>
-        <ScrollArea className="h-52 p-2">
+        <ScrollArea scrollbarVariant="pill" scrollbarSize="md" className="h-52 p-2">
           <div className="space-y-1">
             {tags.map((tag) => (
               <div 
@@ -390,10 +391,11 @@ function InteractiveScrollAreaDemo() {
       </div>
 
       <div className="w-full sm:w-64 rounded-xl border border-border bg-card p-4 space-y-3 shadow-xs">
-        <div className="text-xs font-semibold text-foreground">
-          Horizontal Scrolling
+        <div className="text-xs font-semibold text-foreground flex items-center justify-between">
+          <span>Horizontal Tags</span>
+          <span className="text-[10px] font-mono text-muted-foreground">subtle style</span>
         </div>
-        <ScrollArea orientation="horizontal" className="w-full pb-2">
+        <ScrollArea orientation="horizontal" scrollbarVariant="subtle" scrollbarSize="sm" className="w-full pb-2">
           <div className="flex gap-2 w-max pb-1">
             {['React 19', 'Next.js 16', 'TypeScript 5', 'Tailwind CSS v4', 'Turbopack', 'WAI-ARIA', 'Radix Parity', 'Zero Bloat'].map((topic) => (
               <span key={topic} className="px-2.5 py-1 rounded-md bg-muted text-xs font-medium text-foreground shrink-0 border border-border/60">

@@ -10,6 +10,7 @@ export interface ResizableProps extends React.HTMLAttributes<HTMLDivElement> {
   minSize?: number
   maxSize?: number
   defaultSize?: number
+  unit?: '%' | 'px'
   onResize?: (size: number) => void
 }
 
@@ -18,6 +19,7 @@ export interface ResizableHandleProps extends React.HTMLAttributes<HTMLDivElemen
   direction?: 'horizontal' | 'vertical'
   withHandle?: boolean
   disabled?: boolean
+  isDragging?: boolean
   onMouseDown?: (e: React.MouseEvent) => void
 }
 
@@ -38,7 +40,7 @@ export const ResizablePanel = forwardRef<HTMLDivElement, ResizablePanelProps>(
     return (
       <div
         ref={ref}
-        className={cn('overflow-auto', className)}
+        className={cn('overflow-auto min-w-0 min-h-0', className)}
         style={style}
         {...props}
       >
@@ -55,6 +57,7 @@ export const ResizableHandle = forwardRef<HTMLDivElement, ResizableHandleProps>(
       direction = 'horizontal',
       withHandle = true,
       disabled = false,
+      isDragging = false,
       className,
       onMouseDown,
       onKeyDown,
@@ -74,11 +77,12 @@ export const ResizableHandle = forwardRef<HTMLDivElement, ResizableHandleProps>(
         onMouseDown={disabled ? undefined : onMouseDown}
         onKeyDown={onKeyDown}
         className={cn(
-          'relative flex items-center justify-center bg-border transition-colors select-none',
+          'relative flex items-center justify-center bg-border/80 transition-all select-none shrink-0 group',
           direction === 'horizontal'
-            ? 'w-1.5 hover:w-2 cursor-col-resize hover:bg-primary/50'
-            : 'h-1.5 hover:h-2 cursor-row-resize hover:bg-primary/50',
-          'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:bg-primary',
+            ? 'w-2 hover:w-2.5 cursor-col-resize hover:bg-primary/60'
+            : 'h-2 hover:h-2.5 cursor-row-resize hover:bg-primary/60',
+          isDragging && 'bg-primary ring-2 ring-primary/30 z-20',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-primary',
           disabled && 'cursor-default opacity-40 pointer-events-none',
           className
         )}
@@ -87,8 +91,9 @@ export const ResizableHandle = forwardRef<HTMLDivElement, ResizableHandleProps>(
         {withHandle && (
           <div
             className={cn(
-              'z-10 flex items-center justify-center rounded-xs bg-muted-foreground/30',
-              direction === 'horizontal' ? 'h-6 w-1' : 'h-1 w-6'
+              'z-10 flex items-center justify-center rounded-full bg-muted-foreground/40 group-hover:bg-primary-foreground group-hover:scale-110 transition-all shadow-xs',
+              direction === 'horizontal' ? 'h-7 w-1.5' : 'h-1.5 w-7',
+              isDragging && 'bg-primary-foreground scale-125'
             )}
           />
         )}
@@ -98,24 +103,36 @@ export const ResizableHandle = forwardRef<HTMLDivElement, ResizableHandleProps>(
 )
 ResizableHandle.displayName = 'ResizableHandle'
 
-export const Resizable = forwardRef<HTMLDivElement, ResizableProps>(
+const ResizableRoot = forwardRef<HTMLDivElement, ResizableProps>(
   (
     {
       children,
       className,
       direction = 'horizontal',
-      minSize = 50,
-      maxSize = Infinity,
-      defaultSize = 240,
+      minSize: minSizeProp,
+      maxSize: maxSizeProp,
+      defaultSize = 50,
+      unit: unitProp,
       onResize,
       ...props
     },
-    ref
+    forwardedRef
   ) => {
+    const isPercentage = unitProp ? unitProp === '%' : defaultSize <= 100
+    const minSize = minSizeProp ?? (isPercentage ? 10 : 50)
+    const maxSize = maxSizeProp ?? (isPercentage ? 90 : Infinity)
+
     const [size, setSize] = useState(defaultSize)
     const [isDragging, setIsDragging] = useState(false)
+    const containerRef = useRef<HTMLDivElement | null>(null)
     const startPos = useRef(0)
     const startSize = useRef(0)
+    const containerDim = useRef(1)
+
+    // Sync size if defaultSize changes externally
+    useEffect(() => {
+      setSize(defaultSize)
+    }, [defaultSize])
 
     const handleMouseDown = useCallback(
       (e: React.MouseEvent) => {
@@ -123,6 +140,11 @@ export const Resizable = forwardRef<HTMLDivElement, ResizableProps>(
         setIsDragging(true)
         startPos.current = direction === 'horizontal' ? e.clientX : e.clientY
         startSize.current = size
+
+        if (containerRef.current) {
+          const rect = containerRef.current.getBoundingClientRect()
+          containerDim.current = direction === 'horizontal' ? rect.width : rect.height
+        }
       },
       [direction, size]
     )
@@ -130,16 +152,21 @@ export const Resizable = forwardRef<HTMLDivElement, ResizableProps>(
     const handleMouseMove = useCallback(
       (e: MouseEvent) => {
         if (!isDragging) return
-        const delta =
-          direction === 'horizontal'
-            ? e.clientX - startPos.current
-            : e.clientY - startPos.current
+        const currentPos = direction === 'horizontal' ? e.clientX : e.clientY
+        const deltaPx = currentPos - startPos.current
 
-        const newSize = Math.max(minSize, Math.min(maxSize, startSize.current + delta))
-        setSize(newSize)
-        onResize?.(newSize)
+        let nextSize = size
+        if (isPercentage) {
+          const deltaPct = containerDim.current > 0 ? (deltaPx / containerDim.current) * 100 : 0
+          nextSize = Math.max(minSize, Math.min(maxSize, startSize.current + deltaPct))
+        } else {
+          nextSize = Math.max(minSize, Math.min(maxSize, startSize.current + deltaPx))
+        }
+
+        setSize(Math.round(nextSize * 10) / 10)
+        onResize?.(nextSize)
       },
-      [isDragging, direction, minSize, maxSize, onResize]
+      [isDragging, direction, isPercentage, minSize, maxSize, size, onResize]
     )
 
     const handleMouseUp = useCallback(() => {
@@ -150,16 +177,20 @@ export const Resizable = forwardRef<HTMLDivElement, ResizableProps>(
       if (isDragging) {
         document.addEventListener('mousemove', handleMouseMove)
         document.addEventListener('mouseup', handleMouseUp)
+        document.body.style.userSelect = 'none'
+        document.body.style.cursor = direction === 'horizontal' ? 'col-resize' : 'row-resize'
         return () => {
           document.removeEventListener('mousemove', handleMouseMove)
           document.removeEventListener('mouseup', handleMouseUp)
+          document.body.style.userSelect = ''
+          document.body.style.cursor = ''
         }
       }
-    }, [isDragging, handleMouseMove, handleMouseUp])
+    }, [isDragging, handleMouseMove, handleMouseUp, direction])
 
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLDivElement>) => {
-        const step = 10
+        const step = isPercentage ? 5 : 15
         let nextSize = size
         if (
           (direction === 'horizontal' && e.key === 'ArrowRight') ||
@@ -185,22 +216,30 @@ export const Resizable = forwardRef<HTMLDivElement, ResizableProps>(
           onResize?.(nextSize)
         }
       },
-      [direction, size, minSize, maxSize, onResize]
+      [direction, size, isPercentage, minSize, maxSize, onResize]
     )
 
     const childArray = React.Children.toArray(children)
+    const panels = childArray.filter(
+      (c) =>
+        React.isValidElement(c) &&
+        ((c.type as any)?.displayName === 'ResizablePanel' || c.type === ResizablePanel)
+    )
     const hasCustomHandle = childArray.some(
-      (child) =>
-        React.isValidElement(child) &&
-        ((child.type as any)?.displayName === 'ResizableHandle' ||
-          child.type === ResizableHandle)
+      (c) =>
+        React.isValidElement(c) &&
+        ((c.type as any)?.displayName === 'ResizableHandle' || c.type === ResizableHandle)
     )
 
     return (
       <div
-        ref={ref}
+        ref={(el) => {
+          containerRef.current = el
+          if (typeof forwardedRef === 'function') forwardedRef(el)
+          else if (forwardedRef) (forwardedRef as any).current = el
+        }}
         className={cn(
-          'flex overflow-hidden rounded-xl border border-border bg-background',
+          'flex overflow-hidden rounded-xl border border-border/80 bg-background w-full h-full min-h-[160px]',
           direction === 'vertical' ? 'flex-col' : 'flex-row',
           className
         )}
@@ -210,16 +249,14 @@ export const Resizable = forwardRef<HTMLDivElement, ResizableProps>(
           if (!React.isValidElement(child)) return child
 
           const isPanel =
-            (child.type as any)?.displayName === 'ResizablePanel' ||
-            child.type === ResizablePanel
-
+            (child.type as any)?.displayName === 'ResizablePanel' || child.type === ResizablePanel
           const isHandle =
-            (child.type as any)?.displayName === 'ResizableHandle' ||
-            child.type === ResizableHandle
+            (child.type as any)?.displayName === 'ResizableHandle' || child.type === ResizableHandle
 
           if (isHandle) {
             return React.cloneElement(child as React.ReactElement<any>, {
               direction,
+              isDragging,
               'aria-valuenow': Math.round(size),
               'aria-valuemin': Math.round(minSize),
               'aria-valuemax': maxSize !== Infinity ? Math.round(maxSize) : 100,
@@ -228,19 +265,34 @@ export const Resizable = forwardRef<HTMLDivElement, ResizableProps>(
             })
           }
 
-          if (isPanel && index === 0) {
+          if (isPanel) {
+            const panelIndex = panels.indexOf(child)
+            const isFirst = panelIndex === 0
+            const panelStyle: React.CSSProperties = isPercentage
+              ? {
+                  flex: isFirst ? `0 0 ${size}%` : `1 1 ${100 - size}%`,
+                  minWidth: 0,
+                  minHeight: 0,
+                  ...(child.props.style || {}),
+                }
+              : {
+                  ...(child.props.style || {}),
+                  [direction === 'horizontal' ? 'width' : 'height']: isFirst ? `${size}px` : undefined,
+                  flex: isFirst ? undefined : 1,
+                  flexShrink: isFirst ? 0 : 1,
+                  minWidth: 0,
+                  minHeight: 0,
+                }
+
             return (
               <React.Fragment key={index}>
                 {React.cloneElement(child as React.ReactElement<any>, {
-                  style: {
-                    ...(child.props.style || {}),
-                    [direction === 'horizontal' ? 'width' : 'height']: `${size}px`,
-                    flexShrink: 0,
-                  },
+                  style: panelStyle,
                 })}
-                {!hasCustomHandle && (
+                {isFirst && !hasCustomHandle && (
                   <ResizableHandle
                     direction={direction}
+                    isDragging={isDragging}
                     aria-valuenow={Math.round(size)}
                     aria-valuemin={Math.round(minSize)}
                     aria-valuemax={maxSize !== Infinity ? Math.round(maxSize) : 100}
@@ -258,15 +310,15 @@ export const Resizable = forwardRef<HTMLDivElement, ResizableProps>(
     )
   }
 )
-Resizable.displayName = 'Resizable'
+ResizableRoot.displayName = 'Resizable'
 
-// Compound attachment pattern
-export type ResizableComponent = typeof Resizable & {
+export type ResizableComponent = typeof ResizableRoot & {
   Panel: typeof ResizablePanel
   Handle: typeof ResizableHandle
 }
 
-;(Resizable as any).Panel = ResizablePanel
-;(Resizable as any).Handle = ResizableHandle
+export const Resizable = ResizableRoot as ResizableComponent
+Resizable.Panel = ResizablePanel
+Resizable.Handle = ResizableHandle
 
 export default Resizable

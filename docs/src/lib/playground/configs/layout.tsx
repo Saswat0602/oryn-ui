@@ -167,22 +167,46 @@ export const layoutPlaygrounds: Record<string, PlaygroundConfig> = {
       }
     ],
     render: (props, context) => (
-      <div className="w-full max-w-md h-40 rounded-xl border border-border/60 bg-card overflow-hidden shadow-xs">
+      <div className="w-full max-w-md h-48 rounded-xl border border-border/80 bg-card overflow-hidden shadow-xs">
         <Resizable
           direction={props.direction}
           defaultSize={props.defaultSize}
-          onResize={(sz) => context.onEvent('onResize', `${sz}%`)}
+          onResize={(sz) => context.onEvent('onResize', `${Math.round(sz)}%`)}
           className="h-full"
         >
-          <div className="p-3 text-xs text-muted-foreground flex items-center justify-center h-full bg-muted/20">
-            Panel A ({props.defaultSize}%)
-          </div>
-          <div className="p-3 text-xs text-muted-foreground flex items-center justify-center h-full bg-muted/40">
-            Panel B ({100 - props.defaultSize}%)
-          </div>
+          <Resizable.Panel className="p-4 text-xs font-medium text-foreground/80 flex flex-col items-center justify-center h-full bg-muted/20 border-r border-border/40">
+            <span className="font-semibold text-primary">Explorer Pane</span>
+            <span className="text-[10px] text-muted-foreground mt-1">Drag handle to resize</span>
+          </Resizable.Panel>
+          <Resizable.Panel className="p-4 text-xs font-medium text-foreground/80 flex flex-col items-center justify-center h-full bg-muted/40">
+            <span className="font-semibold text-foreground">Editor Canvas</span>
+            <span className="text-[10px] text-muted-foreground mt-1">Responsive flex-grow</span>
+          </Resizable.Panel>
         </Resizable>
       </div>
-    )
+    ),
+    generateCode: (props) => `import { Resizable } from 'oryn-ui'
+
+export default function ResizableDemo() {
+  return (
+    <div className="w-full h-64 rounded-xl border border-border bg-card overflow-hidden">
+      <Resizable
+        direction="${props.direction}"
+        defaultSize={${props.defaultSize}}
+        className="h-full"
+      >
+        <Resizable.Panel className="p-4 bg-muted/20 flex flex-col justify-center items-center">
+          <span className="font-semibold text-xs text-primary">Explorer Pane</span>
+          <span className="text-[10px] text-muted-foreground mt-1">Drag handle to resize</span>
+        </Resizable.Panel>
+        <Resizable.Panel className="p-4 bg-muted/40 flex flex-col justify-center items-center">
+          <span className="font-semibold text-xs text-foreground">Editor Canvas</span>
+          <span className="text-[10px] text-muted-foreground mt-1">Responsive flex-grow</span>
+        </Resizable.Panel>
+      </Resizable>
+    </div>
+  )
+}`
   },
 
   'scroll-area': {
@@ -190,9 +214,35 @@ export const layoutPlaygrounds: Record<string, PlaygroundConfig> = {
     title: 'ScrollArea',
     componentName: 'ScrollArea',
     defaultProps: {
-      orientation: 'vertical'
+      orientation: 'vertical',
+      scrollbarVariant: 'pill',
+      scrollbarSize: 'md'
     },
     controls: [
+      {
+        name: 'scrollbarVariant',
+        label: 'Scrollbar Style',
+        type: 'select',
+        defaultValue: 'pill',
+        options: [
+          { label: 'Pill / Accent', value: 'pill' },
+          { label: 'Subtle', value: 'subtle' },
+          { label: 'Default', value: 'default' },
+          { label: 'Minimal', value: 'minimal' },
+          { label: 'Hidden (None)', value: 'none' }
+        ],
+        category: 'appearance',
+        description: 'Customizable visual scrollbar styling'
+      },
+      {
+        name: 'scrollbarSize',
+        label: 'Bar Thickness',
+        type: 'segmented',
+        defaultValue: 'md',
+        options: ['sm', 'md', 'lg'],
+        category: 'size',
+        description: 'Scrollbar track width'
+      },
       {
         name: 'orientation',
         label: 'Scroll Orientation',
@@ -204,19 +254,51 @@ export const layoutPlaygrounds: Record<string, PlaygroundConfig> = {
       }
     ],
     render: (props) => (
-      <div className="w-full max-w-xs rounded-xl border border-border/60 bg-card p-2 shadow-xs">
-        <ScrollArea orientation={props.orientation} className="h-40 w-full">
-          <div className="p-3 space-y-2 text-xs">
-            <h4 className="font-semibold text-foreground">Changelog Releases</h4>
-            {Array.from({ length: 10 }).map((_, i) => (
-              <p key={i} className="text-muted-foreground">
-                • v3.{i}.0 – Upgraded zero-dependency primitives &amp; theme presets.
-              </p>
+      <div className="w-full max-w-sm rounded-2xl border border-border/80 bg-card p-3 shadow-xs">
+        <ScrollArea
+          orientation={props.orientation}
+          scrollbarVariant={props.scrollbarVariant}
+          scrollbarSize={props.scrollbarSize}
+          className="h-44 w-full"
+        >
+          <div className="p-3 space-y-2.5 text-xs">
+            <div className="flex items-center justify-between border-b border-border/40 pb-2">
+              <h4 className="font-semibold text-foreground">Changelog Releases</h4>
+              <span className="text-[10px] text-primary font-mono font-bold">12 entries</span>
+            </div>
+            {Array.from({ length: 14 }).map((_, i) => (
+              <div key={i} className="flex items-center justify-between text-muted-foreground p-1.5 rounded-lg hover:bg-muted/40 transition-colors">
+                <span>• v3.{i}.0 – Upgraded zero-dependency primitives &amp; themes</span>
+                <span className="text-[10px] font-mono text-muted-foreground/60">Nov {i + 1}</span>
+              </div>
             ))}
           </div>
         </ScrollArea>
       </div>
-    )
+    ),
+    generateCode: (props) => `import { ScrollArea } from 'oryn-ui'
+
+export default function ScrollAreaDemo() {
+  return (
+    <div className="w-full max-w-sm rounded-xl border border-border bg-card p-3">
+      <ScrollArea
+        orientation="${props.orientation}"
+        scrollbarVariant="${props.scrollbarVariant}"
+        scrollbarSize="${props.scrollbarSize}"
+        className="h-44 w-full"
+      >
+        <div className="p-3 space-y-2.5 text-xs">
+          <h4 className="font-semibold text-foreground pb-2 border-b border-border/40">Changelog</h4>
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div key={i} className="text-muted-foreground p-1 rounded hover:bg-muted/40">
+              • Release v3.{i}.0 – High-craft UI improvements
+            </div>
+          ))}
+        </div>
+      </ScrollArea>
+    </div>
+  )
+}`
   },
 
   separator: {

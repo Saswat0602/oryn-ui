@@ -146,36 +146,72 @@ export const formsPlaygrounds: Record<string, PlaygroundConfig> = {
     title: 'Breadcrumbs',
     componentName: 'Breadcrumbs',
     defaultProps: {
-      separator: '/'
+      separatorVariant: 'chevron',
+      size: 'md'
     },
     controls: [
       {
-        name: 'separator',
+        name: 'separatorVariant',
         label: 'Separator Style',
-        type: 'segmented',
-        defaultValue: '/',
-        options: ['/', '>', '•'],
+        type: 'select',
+        defaultValue: 'chevron',
+        options: [
+          { label: 'Chevron (›)', value: 'chevron' },
+          { label: 'Slash (/)', value: 'slash' },
+          { label: 'Arrow (→)', value: 'arrow' },
+          { label: 'Dot (•)', value: 'dot' }
+        ],
         category: 'appearance',
-        description: 'Visual character dividing path segments'
+        description: 'Icon or character dividing navigation path items'
+      },
+      {
+        name: 'size',
+        label: 'Size',
+        type: 'segmented',
+        defaultValue: 'md',
+        options: ['sm', 'md', 'lg'],
+        category: 'size',
+        description: 'Scale of breadcrumbs text and icons'
       }
     ],
     render: (props) => (
-      <Breadcrumb>
-        <BreadcrumbList>
+      <Breadcrumb className="p-3 rounded-xl border border-border/60 bg-muted/20">
+        <BreadcrumbList className={props.size === 'sm' ? 'text-xs' : props.size === 'lg' ? 'text-base' : 'text-sm'}>
           <BreadcrumbItem>
             <BreadcrumbLink href="#">Organization</BreadcrumbLink>
           </BreadcrumbItem>
-          <BreadcrumbSeparator>{props.separator}</BreadcrumbSeparator>
+          <BreadcrumbSeparator variant={props.separatorVariant} />
           <BreadcrumbItem>
-            <BreadcrumbLink href="#">Production Cluster</BreadcrumbLink>
+            <BreadcrumbLink href="#">Infrastructure</BreadcrumbLink>
           </BreadcrumbItem>
-          <BreadcrumbSeparator>{props.separator}</BreadcrumbSeparator>
+          <BreadcrumbSeparator variant={props.separatorVariant} />
           <BreadcrumbItem>
             <BreadcrumbPage>Security Policies</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-    )
+    ),
+    generateCode: (props) => `import { Breadcrumbs } from 'oryn-ui'
+
+export default function BreadcrumbsDemo() {
+  return (
+    <Breadcrumbs>
+      <Breadcrumbs.List className="${props.size === 'sm' ? 'text-xs' : props.size === 'lg' ? 'text-base' : 'text-sm'}">
+        <Breadcrumbs.Item>
+          <Breadcrumbs.Link href="/org">Organization</Breadcrumbs.Link>
+        </Breadcrumbs.Item>
+        <Breadcrumbs.Separator variant="${props.separatorVariant}" />
+        <Breadcrumbs.Item>
+          <Breadcrumbs.Link href="/org/infra">Infrastructure</Breadcrumbs.Link>
+        </Breadcrumbs.Item>
+        <Breadcrumbs.Separator variant="${props.separatorVariant}" />
+        <Breadcrumbs.Item>
+          <Breadcrumbs.Page>Security Policies</Breadcrumbs.Page>
+        </Breadcrumbs.Item>
+      </Breadcrumbs.List>
+    </Breadcrumbs>
+  )
+}`
   },
 
   calendar: {
