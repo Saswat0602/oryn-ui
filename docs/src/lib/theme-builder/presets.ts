@@ -290,3 +290,4 @@ export const FONT_OPTIONS: { id: FontFamily; label: string; description: string;
   { id: 'serif', label: 'Serif', description: 'Editorial, classic luxury typography', className: 'font-serif' },
   { id: 'mono', label: 'Monospace', description: 'Technical, devtools, and terminal code', className: 'font-mono' }
 ]
+

@@ -59,6 +59,7 @@ This document provides a comprehensive audit of all **75 components** in `mad-ui
 | **MultiSelect** | `src/components/forms/multi-select.tsx` | `mad-ui-components/multi-select` | 🟢 100% Stable | Searchable multi-tag selector with keyboard tags, clear button, and max badges. |
 | **DateRangePicker** | `src/components/forms/date-range-picker.tsx` | `mad-ui-components/date-range-picker` | 🟢 100% Stable | Dual-calendar date range picker with fast preset ranges and constraint validation. |
 | **TimePicker** | `src/components/forms/time-picker.tsx` | `mad-ui-components/time-picker` | 🟢 100% Stable | Segmented time selector supporting 12h/24h formats and minute step controls. |
+| **ColorPicker** | `src/components/forms/color-picker.tsx` | `mad-ui-components/color-picker` | 🟢 100% Stable | Interactive 2D gradient canvas, rainbow hue slider, opacity channel, and preset palette swatches. |
 | **FileUpload** | `src/components/forms/file-upload.tsx` | `mad-ui-components/file-upload` | 🟢 100% Stable | Drag-and-drop file upload dropzone with preview cards, size limits, and removal. |
 | **PromptInput** | `src/components/forms/prompt-input.tsx` | `mad-ui-components/prompt-input` | 🟢 100% Stable | AI prompt input box with auto-expanding textarea, attachments, and submit/cancel controls. |
 

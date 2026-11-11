@@ -2064,6 +2064,83 @@ export const COMPONENT_PROPS: Record<string, ComponentProp[]> = {
       description: 'Input box dimension'
     }
   ],
+  'color-picker': [
+    {
+      name: 'value',
+      type: 'string',
+      required: false,
+      description: 'Controlled color string (hex format like #3b82f6)'
+    },
+    {
+      name: 'defaultValue',
+      type: 'string',
+      required: false,
+      default: '#3b82f6',
+      description: 'Initial hex color for uncontrolled operation'
+    },
+    {
+      name: 'onChange',
+      type: '(color: string) => void',
+      required: false,
+      description: 'Callback dispatched on every drag or direct input update'
+    },
+    {
+      name: 'format',
+      type: "'hex' | 'rgb' | 'hsl'",
+      required: false,
+      default: 'hex',
+      description: 'Initial color readout and numeric input mode'
+    },
+    {
+      name: 'showAlpha',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+      description: 'Whether to show the transparency opacity slider'
+    },
+    {
+      name: 'showEyeDropper',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+      description: 'Whether to enable the native browser EyeDropper API tool'
+    },
+    {
+      name: 'showPresets',
+      type: 'boolean',
+      required: false,
+      default: 'true',
+      description: 'Whether to render the quick-swatch palette grid'
+    },
+    {
+      name: 'presets',
+      type: 'string[]',
+      required: false,
+      default: 'DEFAULT_PRESETS',
+      description: 'Array of custom hex colors for the swatch palette'
+    },
+    {
+      name: 'inline',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+      description: 'Render the picker canvas inline rather than in a floating popover'
+    },
+    {
+      name: 'size',
+      type: "'sm' | 'default' | 'lg'",
+      required: false,
+      default: 'default',
+      description: 'Trigger button size dimensions'
+    },
+    {
+      name: 'disabled',
+      type: 'boolean',
+      required: false,
+      default: 'false',
+      description: 'Disables trigger interaction and color modification'
+    }
+  ],
   'file-upload': [
     {
       name: 'accept',

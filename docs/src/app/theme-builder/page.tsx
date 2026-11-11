@@ -24,7 +24,8 @@ import {
   SelectTrigger,
   SelectValue,
   SelectContent,
-  SelectItem
+  SelectItem,
+  ColorPicker
 } from 'oryn-ui'
 import { 
   Palette, 
@@ -377,35 +378,29 @@ export default function ThemeBuilderPage() {
 
               {/* Direct Color Picker & Hex Input Box */}
               <div className="space-y-3">
-                <div className="flex items-center gap-3 p-3 rounded-xl border border-border/60 bg-muted/20">
-                  {/* Native Color Picker Swatch */}
-                  <label 
-                    className="relative w-11 h-11 rounded-xl border border-black/20 dark:border-white/20 shadow-xs cursor-pointer shrink-0 overflow-hidden flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
-                    style={{ backgroundColor: primaryHex }}
-                    title="Click to open color picker"
-                  >
-                    <input
-                      type="color"
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 p-3.5 rounded-xl border border-border/60 bg-muted/20">
+                  {/* Library's Own ColorPicker Component */}
+                  <div className="w-full sm:w-44 shrink-0">
+                    <ColorPicker
                       value={primaryHex}
-                      onChange={(e) => handleHexChange(e.target.value)}
-                      className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                      onChange={(val) => handleHexChange(val)}
+                      size="default"
+                      showAlpha={false}
+                      showEyeDropper={true}
                     />
-                  </label>
+                  </div>
 
-                  {/* Hex Text Input */}
+                  {/* Hex Text Input & HSL Readout */}
                   <div className="min-w-0 flex-1 space-y-1">
-                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                      Custom Color (Hex)
-                    </label>
                     <div className="flex items-center gap-2">
                       <Input
                         value={hexInput}
-                        onChange={(e) => handleHexChange(e.target.value)}
+                        onChange={(e: any) => handleHexChange(e.target.value)}
                         placeholder="#4f46e5"
-                        className="h-8 font-mono text-xs uppercase"
+                        className="h-9 font-mono text-xs uppercase"
                         maxLength={7}
                       />
-                      <span className="text-[11px] font-mono text-muted-foreground/80 shrink-0 bg-muted px-2 py-1 rounded-md border border-border/40">
+                      <span className="text-[11px] font-mono text-muted-foreground/80 shrink-0 bg-muted px-2.5 py-2 rounded-lg border border-border/40">
                         {hexToHslString(primaryHex)}
                       </span>
                     </div>
@@ -413,7 +408,7 @@ export default function ThemeBuilderPage() {
                 </div>
 
                 <p className="text-[11px] text-muted-foreground leading-relaxed">
-                  Select any custom color via the picker, paste a hex code, or choose from the curated designer palettes below.
+                  Select any custom color via the interactive color picker, paste a hex code, or choose from the curated designer palettes below.
                 </p>
               </div>
 

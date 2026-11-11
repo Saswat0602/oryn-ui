@@ -95,6 +95,7 @@ export default defineConfig([
       'src/individual/multi-select.ts',
       'src/individual/date-range-picker.ts',
       'src/individual/time-picker.ts',
+      'src/individual/color-picker.ts',
       'src/individual/file-upload.ts',
       'src/individual/prompt-input.ts',
     ],

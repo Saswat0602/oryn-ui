@@ -30,6 +30,7 @@ import {
   TabsTrigger,
   TabsContent,
   TimePicker,
+  ColorPicker,
   Label
 } from 'oryn-ui'
 import { PlaygroundConfig } from '@/components/playground/types'
@@ -769,6 +770,75 @@ export const formsPlaygrounds: Record<string, PlaygroundConfig> = {
           format={props.format}
           disabled={props.disabled}
           onChange={(time: any) => context.onEvent('onChange', time)}
+        />
+      </div>
+    )
+  },
+
+  'color-picker': {
+    slug: 'color-picker',
+    title: 'ColorPicker',
+    componentName: 'ColorPicker',
+    defaultProps: {
+      format: 'hex',
+      showAlpha: false,
+      inline: false,
+      disabled: false,
+      size: 'default'
+    },
+    controls: [
+      {
+        name: 'format',
+        label: 'Color Format',
+        type: 'segmented',
+        defaultValue: 'hex',
+        options: ['hex', 'rgb', 'hsl'],
+        category: 'appearance',
+        description: 'Readout and numeric input mode'
+      },
+      {
+        name: 'size',
+        label: 'Trigger Size',
+        type: 'segmented',
+        defaultValue: 'default',
+        options: ['sm', 'default', 'lg'],
+        category: 'size',
+        description: 'Trigger button size'
+      },
+      {
+        name: 'showAlpha',
+        label: 'Alpha Opacity Channel',
+        type: 'boolean',
+        defaultValue: false,
+        category: 'options',
+        description: 'Enable alpha transparency slider'
+      },
+      {
+        name: 'inline',
+        label: 'Inline Canvas',
+        type: 'boolean',
+        defaultValue: false,
+        category: 'options',
+        description: 'Render picker canvas directly inline'
+      },
+      {
+        name: 'disabled',
+        label: 'Disabled',
+        type: 'boolean',
+        defaultValue: false,
+        category: 'state',
+        description: 'Disables color interaction'
+      }
+    ],
+    render: (props, context) => (
+      <div className="w-full max-w-xs flex flex-col items-center justify-center">
+        <ColorPicker
+          format={props.format}
+          size={props.size}
+          showAlpha={props.showAlpha}
+          inline={props.inline}
+          disabled={props.disabled}
+          onChange={(color: any) => context.onEvent('onChange', color)}
         />
       </div>
     )

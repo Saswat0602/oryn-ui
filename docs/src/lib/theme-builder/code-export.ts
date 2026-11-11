@@ -169,3 +169,4 @@ export function generateJsonTokens(theme: ThemeConfig, tokens: TokenSet): string
     2
   )
 }
+

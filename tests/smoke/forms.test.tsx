@@ -25,6 +25,7 @@ import { NumberInput } from '../../src/components/forms/number-input'
 import { MultiSelect } from '../../src/components/forms/multi-select'
 import { DateRangePicker } from '../../src/components/forms/date-range-picker'
 import { TimePicker } from '../../src/components/forms/time-picker'
+import { ColorPicker } from '../../src/components/forms/color-picker'
 import { FileUpload } from '../../src/components/forms/file-upload'
 import { PromptInput } from '../../src/components/forms/prompt-input'
 
@@ -283,5 +284,44 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
+  })
+
+  it('renders ColorPicker trigger and supports inline mode without SSR errors', () => {
+    // SSR Smoke Check
+    const ssrHtml = renderToString(<ColorPicker value="#4f46e5" />)
+    expect(ssrHtml).toContain('#4f46e5')
+
+    // Client DOM Render
+    let selectedColor = '#4f46e5'
+    const { getByRole, getByText, rerender } = render(
+      <StrictMode>
+        <ColorPicker
+          value={selectedColor}
+          onChange={(c) => { selectedColor = c }}
+        />
+      </StrictMode>
+    )
+
+    expect(getByText('#4f46e5')).toBeDefined()
+    const trigger = getByRole('button')
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+
+    // Click trigger to open floating popover
+    fireEvent.click(trigger)
+    expect(trigger.getAttribute('aria-expanded')).toBe('true')
+
+    // Inline mode test
+    rerender(
+      <StrictMode>
+        <ColorPicker
+          inline={true}
+          value="#10b981"
+          onChange={() => {}}
+        />
+      </StrictMode>
+    )
+    expect(getByText(/hex/i)).toBeDefined()
+    expect(getByText(/rgb/i)).toBeDefined()
+    expect(getByText(/hsl/i)).toBeDefined()
   })
 })

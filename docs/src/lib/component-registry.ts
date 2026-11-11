@@ -229,6 +229,14 @@ export const COMPONENT_REGISTRY = {
     status: 'stable' as const,
     tags: ['form', 'time', 'clock']
   },
+  'color-picker': {
+    category: 'Form' as ComponentCategory,
+    title: 'Color Picker',
+    description: 'Interactive color picker with 2D saturation gradient, rainbow hue slider, alpha opacity channel, eye dropper, and curated palettes',
+    version: '3.0.0',
+    status: 'stable' as const,
+    tags: ['form', 'color', 'picker', 'palette']
+  },
   'file-upload': {
     category: 'Form' as ComponentCategory,
     title: 'File Upload',

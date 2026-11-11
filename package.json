@@ -411,6 +411,11 @@
       "import": "./dist/time-picker.mjs",
       "default": "./dist/time-picker.mjs"
     },
+    "./color-picker": {
+      "types": "./dist/color-picker.d.mts",
+      "import": "./dist/color-picker.mjs",
+      "default": "./dist/color-picker.mjs"
+    },
     "./file-upload": {
       "types": "./dist/file-upload.d.mts",
       "import": "./dist/file-upload.mjs",

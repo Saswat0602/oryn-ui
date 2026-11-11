@@ -55,3 +55,4 @@ export interface ThemeConfig {
   isCustom: boolean
   activePresetId?: string
 }
+
