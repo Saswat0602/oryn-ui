@@ -214,6 +214,16 @@ export const componentManifest: ComponentMeta[] = [
     description: 'Combined date and time picker input with dropdown selection.'
   },
   {
+    name: 'color-picker',
+    title: 'Color Picker',
+    category: 'forms',
+    status: 'stable',
+    subpath: './color-picker',
+    sourceFile: 'src/components/forms/color-picker.tsx',
+    exports: ['ColorPicker', 'ColorPickerProps', 'ColorPickerTrigger', 'ColorPickerContent'],
+    description: 'Interactive color picker with saturation/brightness canvas, hue slider, eye-dropper, and HEX/RGB/HSL conversion.'
+  },
+  {
     name: 'input-otp',
     title: 'Input OTP',
     category: 'forms',

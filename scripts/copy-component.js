@@ -35,6 +35,7 @@ const COMPONENT_REGISTRY = {
   'breadcrumbs': { path: 'src/components/forms/breadcrumbs.tsx', category: 'Forms', description: 'Navigational trail linking hierarchy levels.' },
   'calendar': { path: 'src/components/forms/calendar.tsx', category: 'Forms', description: 'Accessible date grid picker with single/range selection.' },
   'datetime-picker': { path: 'src/components/forms/datetime-picker.tsx', category: 'Forms', description: 'Unified date and time selector popup.' },
+  'color-picker': { path: 'src/components/forms/color-picker.tsx', category: 'Forms', description: 'Interactive color picker with 2D canvas, hue slider, and eye-dropper.' },
   'input-otp': { path: 'src/components/forms/input-otp.tsx', category: 'Forms', description: 'Multi-slot verification pin and one-time password input.' },
   'radio-group': { path: 'src/components/forms/radio-group.tsx', category: 'Forms', description: 'Radio button group container with keyboard navigation.' },
   'form': { path: 'src/components/forms/form.tsx', category: 'Forms', description: 'Composable form context linking labels, controls, and error alerts.' },
@@ -215,7 +216,7 @@ Options:
 }
 
 function listComponents() {
-  console.log('\n📦 Mad UI Available Components (75 Total):\n');
+  console.log(`\n📦 ORYN UI Available Components (${Object.keys(COMPONENT_REGISTRY).length} Total):\n`);
   const categories = {};
   for (const [name, info] of Object.entries(COMPONENT_REGISTRY)) {
     if (!categories[info.category]) categories[info.category] = [];
@@ -323,7 +324,7 @@ function copyFileSafe(src, dest, overwrite, dryRun, transform = null) {
 }
 
 function initProject(options, rootDir) {
-  console.log('\n🚀 Initializing Mad UI in your project...\n');
+  console.log('\n🚀 Initializing ORYN UI in your project...\n');
   const cwd = process.cwd();
 
   // 1. Ensure lib/utils.ts exists
