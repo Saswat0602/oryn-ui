@@ -31,6 +31,8 @@ export function SelectControl({ control, value, onChange }: SelectControlProps) 
     typeof control.defaultValue !== 'object'
 
   const stringValue = value !== undefined && value !== null ? String(value) : String(control.defaultValue ?? '')
+  const selectedOption = options.find((opt) => String(opt.value) === stringValue)
+  const displayLabel = selectedOption ? selectedOption.label : stringValue
 
   return (
     <div className="space-y-1.5 w-full">
@@ -60,9 +62,11 @@ export function SelectControl({ control, value, onChange }: SelectControlProps) 
         }}
       >
         <SelectTrigger className="w-full h-9 rounded-lg border-border/70 bg-background/90 hover:bg-muted/40 text-xs font-medium px-3 shadow-2xs transition-colors">
-          <SelectValue placeholder={`Select ${control.label.toLowerCase()}...`} />
+          <SelectValue placeholder={`Select ${control.label.toLowerCase()}...`}>
+            {displayLabel}
+          </SelectValue>
         </SelectTrigger>
-        <SelectContent className="max-h-60 rounded-xl border-border/80 bg-popover/95 backdrop-blur-md shadow-xl p-1 z-[80]">
+        <SelectContent className="max-h-60 rounded-xl border-border/80 bg-popover/95 backdrop-blur-md shadow-2xl p-1 z-[9999]">
           {options.map((option) => (
             <SelectItem 
               key={String(option.value)} 

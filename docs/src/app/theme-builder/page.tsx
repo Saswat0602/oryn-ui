@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import {
   Button,
   Card,
@@ -19,7 +19,12 @@ import {
   TabsList,
   TabsTrigger,
   TabsContent,
-  Alert
+  Alert,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem
 } from 'oryn-ui'
 import { 
   Palette, 
@@ -33,157 +38,235 @@ import {
   ShieldCheck, 
   Zap, 
   Info,
+  Download,
+  Share2,
+  Sun,
+  Moon,
+  Type,
+  TrendingUp,
+  Activity,
+  Layers,
+  ArrowUpRight,
+  Search,
   CheckCircle2
 } from 'lucide-react'
 import { CodeBlock } from '@/components/CodeBlock'
-
-interface PresetTheme {
-  id: string
-  name: string
-  description: string
-  colorBadge: string
-  light: {
-    primary: string
-    primaryForeground: string
-  }
-  dark: {
-    primary: string
-    primaryForeground: string
-  }
-}
-
-const PRESETS: PresetTheme[] = [
-  {
-    id: 'zinc',
-    name: 'Zinc',
-    description: 'Crisp, industrial monochrome aesthetic',
-    colorBadge: 'bg-zinc-900 dark:bg-zinc-100',
-    light: { primary: '240 5.9% 10%', primaryForeground: '0 0% 98%' },
-    dark: { primary: '0 0% 98%', primaryForeground: '240 5.9% 10%' }
-  },
-  {
-    id: 'indigo',
-    name: 'Indigo',
-    description: 'Enterprise cloud and modern SaaS standard',
-    colorBadge: 'bg-indigo-600',
-    light: { primary: '226 70% 55.5%', primaryForeground: '0 0% 100%' },
-    dark: { primary: '226 70% 62%', primaryForeground: '0 0% 100%' }
-  },
-  {
-    id: 'emerald',
-    name: 'Emerald',
-    description: 'Fintech, growth, and sustainability',
-    colorBadge: 'bg-emerald-600',
-    light: { primary: '158 64% 40%', primaryForeground: '0 0% 100%' },
-    dark: { primary: '158 64% 48%', primaryForeground: '0 0% 100%' }
-  },
-  {
-    id: 'rose',
-    name: 'Rose',
-    description: 'Consumer luxury, warmth, and hospitality',
-    colorBadge: 'bg-rose-600',
-    light: { primary: '346 77% 49.8%', primaryForeground: '0 0% 100%' },
-    dark: { primary: '346 77% 58%', primaryForeground: '0 0% 100%' }
-  },
-  {
-    id: 'ocean',
-    name: 'Ocean',
-    description: 'High-tech cyan, devtools, and data systems',
-    colorBadge: 'bg-cyan-600',
-    light: { primary: '199 89% 48%', primaryForeground: '0 0% 100%' },
-    dark: { primary: '199 89% 54%', primaryForeground: '0 0% 100%' }
-  },
-  {
-    id: 'violet',
-    name: 'Violet',
-    description: 'Creative intelligence, studio, and deep tech',
-    colorBadge: 'bg-violet-600',
-    light: { primary: '262 83% 58%', primaryForeground: '0 0% 100%' },
-    dark: { primary: '262 83% 66%', primaryForeground: '0 0% 100%' }
-  }
-]
-
-const RADIUS_OPTIONS = [
-  { label: '0px', value: '0rem', name: 'Sharp' },
-  { label: '4px', value: '0.25rem', name: 'Small' },
-  { label: '8px', value: '0.5rem', name: 'Medium (Default)' },
-  { label: '12px', value: '0.75rem', name: 'Large' },
-  { label: '16px', value: '1rem', name: 'X-Large' },
-  { label: 'Full', value: '9999px', name: 'Pill' }
-]
+import {
+  BaseColorName,
+  RadiusValue,
+  FontFamily,
+  ThemeConfig,
+  COLOR_PRESETS,
+  BASE_PALETTES,
+  RADIUS_OPTIONS,
+  FONT_OPTIONS,
+  isValidHex,
+  normalizeHex,
+  hexToHslString,
+  getLuminance,
+  hexToRgb,
+  deriveThemeTokensFromHex,
+  generateCssVariables,
+  generateTailwindV3,
+  generateTailwindV4,
+  generateJsonTokens
+} from '@/lib/theme-builder'
 
 export default function ThemeBuilderPage() {
-  const [selectedPreset, setSelectedPreset] = useState<PresetTheme>(PRESETS[1]) // Indigo default
-  const [radius, setRadius] = useState<string>('0.5rem')
-  const [previewMode, setPreviewMode] = useState<'canvas' | 'code'>('canvas')
-  const [codeTab, setCodeTab] = useState<'css' | 'tailwind'>('css')
-  const [copied, setCopied] = useState(false)
+  // Theme State
+  const [primaryHex, setPrimaryHex] = useState<string>('#4f46e5') // Indigo
+  const [hexInput, setHexInput] = useState<string>('#4f46e5')
+  const [baseColor, setBaseColor] = useState<BaseColorName>('zinc')
+  const [radius, setRadius] = useState<RadiusValue>('0.5rem')
+  const [font, setFont] = useState<FontFamily>('sans')
+  const [isCustom, setIsCustom] = useState<boolean>(false)
+  const [activePresetId, setActivePresetId] = useState<string>('indigo')
 
-  // Interactive sample state
-  const [inputVal, setInputVal] = useState('enterprise-workspace')
-  const [twoFactor, setTwoFactor] = useState(true)
-  const [autoSave, setAutoSave] = useState(true)
-  const [sliderVal, setSliderVal] = useState<number>(65)
+  // Preview & Export State
+  const [sandboxMode, setSandboxMode] = useState<'inherit' | 'light' | 'dark'>('inherit')
+  const [previewTab, setPreviewTab] = useState<'canvas' | 'code'>('canvas')
+  const [exportFormat, setExportFormat] = useState<'css' | 'tailwind-v4' | 'tailwind-v3' | 'json'>('css')
+  const [copied, setCopied] = useState<boolean>(false)
+  const [shareCopied, setShareCopied] = useState<boolean>(false)
 
+  // Interactive Form Sample State
+  const [inputVal, setInputVal] = useState<string>('enterprise-workspace')
+  const [twoFactor, setTwoFactor] = useState<boolean>(true)
+  const [autoSave, setAutoSave] = useState<boolean>(true)
+  const [sliderVal, setSliderVal] = useState<number>(68)
+  const [clusterRegion, setClusterRegion] = useState<string>('us-east-1')
+
+  // Derive theme tokens dynamically
+  const activeTokens = useMemo(() => {
+    return deriveThemeTokensFromHex(primaryHex)
+  }, [primaryHex])
+
+  const activeBasePalette = useMemo(() => {
+    return BASE_PALETTES.find((b) => b.id === baseColor) || BASE_PALETTES[0]
+  }, [baseColor])
+
+  const themeConfig: ThemeConfig = useMemo(() => ({
+    primaryHex,
+    baseColor,
+    radius,
+    font,
+    isCustom,
+    activePresetId
+  }), [primaryHex, baseColor, radius, font, isCustom, activePresetId])
+
+  // Contrast calculations for accessibility feedback
+  const contrastInfo = useMemo(() => {
+    const rgb = hexToRgb(primaryHex)
+    const lum = getLuminance(rgb)
+    const contrastRatio = lum > 0.5 ? ((lum + 0.05) / (0 + 0.05)) : ((1 + 0.05) / (lum + 0.05))
+    const rounded = Math.round(contrastRatio * 10) / 10
+    const passesAA = rounded >= 4.5
+    const passesAAA = rounded >= 7.0
+    return {
+      ratio: `${rounded}:1`,
+      passesAA,
+      passesAAA,
+      badgeText: passesAAA ? 'WCAG AAA' : passesAA ? 'WCAG AA' : 'WCAG Large'
+    }
+  }, [primaryHex])
+
+  // Generated Snippets
   const cssVariablesSnippet = useMemo(() => {
-    return `/* Add to your globals.css */
-:root {
-  --primary: ${selectedPreset.light.primary};
-  --primary-foreground: ${selectedPreset.light.primaryForeground};
-  --radius: ${radius};
-}
+    return generateCssVariables(themeConfig, activeTokens, activeBasePalette)
+  }, [themeConfig, activeTokens, activeBasePalette])
 
-.dark {
-  --primary: ${selectedPreset.dark.primary};
-  --primary-foreground: ${selectedPreset.dark.primaryForeground};
-}`
-  }, [selectedPreset, radius])
+  const tailwindV4Snippet = useMemo(() => {
+    return generateTailwindV4(themeConfig, activeTokens)
+  }, [themeConfig, activeTokens])
 
-  const tailwindSnippet = useMemo(() => {
-    return `// In your tailwind.config.js
-module.exports = {
-  theme: {
-    extend: {
-      colors: {
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-      },
-    },
-  },
-}`
+  const tailwindV3Snippet = useMemo(() => {
+    return generateTailwindV3()
   }, [])
 
+  const jsonSnippet = useMemo(() => {
+    return generateJsonTokens(themeConfig, activeTokens)
+  }, [themeConfig, activeTokens])
+
+  // Select Preset Handler
+  const handleSelectPreset = (presetId: string) => {
+    const preset = COLOR_PRESETS.find((p) => p.id === presetId)
+    if (!preset) return
+    setActivePresetId(preset.id)
+    setIsCustom(false)
+    setPrimaryHex(preset.hex)
+    setHexInput(preset.hex)
+  }
+
+  // Custom Color Input Handler
+  const handleHexChange = (value: string) => {
+    setHexInput(value)
+    if (isValidHex(value)) {
+      const normalized = normalizeHex(value)
+      setPrimaryHex(normalized)
+      setIsCustom(true)
+      setActivePresetId('')
+    }
+  }
+
+  // Reset to default
+  const handleReset = () => {
+    handleSelectPreset('indigo')
+    setBaseColor('zinc')
+    setRadius('0.5rem')
+    setFont('sans')
+  }
+
+  // Copy code handler
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
 
-  const handleReset = () => {
-    setSelectedPreset(PRESETS[0])
-    setRadius('0.5rem')
+  // Download CSS file handler
+  const handleDownloadCss = () => {
+    const blob = new Blob([cssVariablesSnippet], { type: 'text/css' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `oryn-theme-${isCustom ? 'custom' : activePresetId}.css`
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(url)
   }
+
+  // Share link handler
+  const handleShare = () => {
+    const params = new URLSearchParams({
+      primary: primaryHex,
+      radius,
+      base: baseColor,
+      font
+    })
+    const shareUrl = `${window.location.origin}${window.location.pathname}#${params.toString()}`
+    navigator.clipboard.writeText(shareUrl)
+    setShareCopied(true)
+    setTimeout(() => setShareCopied(false), 2000)
+  }
+
+  // Parse URL hash on mount or hashchange
+  useEffect(() => {
+    const applyHash = () => {
+      if (typeof window === 'undefined' || !window.location.hash) return
+      try {
+        const hash = window.location.hash.replace(/^#/, '')
+        const params = new URLSearchParams(hash)
+        const primary = params.get('primary')
+        const rad = params.get('radius') as RadiusValue | null
+        const base = params.get('base') as BaseColorName | null
+        const fnt = params.get('font') as FontFamily | null
+
+        if (primary && isValidHex(primary)) {
+          const norm = normalizeHex(primary)
+          setPrimaryHex(norm)
+          setHexInput(norm)
+          setIsCustom(true)
+        }
+        if (rad && RADIUS_OPTIONS.some((r) => r.value === rad)) {
+          setRadius(rad)
+        }
+        if (base && BASE_PALETTES.some((b) => b.id === base)) {
+          setBaseColor(base)
+        }
+        if (fnt && FONT_OPTIONS.some((f) => f.id === fnt)) {
+          setFont(fnt)
+        }
+      } catch {
+        // Fallback safely
+      }
+    }
+
+    // Schedule on animation frame to avoid synchronous cascading render warning
+    const frameId = requestAnimationFrame(applyHash)
+    window.addEventListener('hashchange', applyHash)
+    return () => {
+      cancelAnimationFrame(frameId)
+      window.removeEventListener('hashchange', applyHash)
+    }
+  }, [])
 
   return (
     <div className="min-h-screen bg-background text-foreground pb-20">
-      {/* Dynamic CSS Injection for Preview */}
+      {/* Live Sandbox CSS Token Injection */}
       <style dangerouslySetInnerHTML={{
         __html: `
           #theme-preview-sandbox {
-            --primary: ${selectedPreset.light.primary};
-            --primary-foreground: ${selectedPreset.light.primaryForeground};
+            --primary: ${activeTokens.light.primary};
+            --primary-foreground: ${activeTokens.light.primaryForeground};
+            --ring: ${activeTokens.light.primary};
             --radius: ${radius};
           }
-          .dark #theme-preview-sandbox {
-            --primary: ${selectedPreset.dark.primary};
-            --primary-foreground: ${selectedPreset.dark.primaryForeground};
+          #theme-preview-sandbox.theme-sandbox-dark,
+          .dark #theme-preview-sandbox:not(.theme-sandbox-light) {
+            --primary: ${activeTokens.dark.primary};
+            --primary-foreground: ${activeTokens.dark.primaryForeground};
+            --ring: ${activeTokens.dark.primary};
             --radius: ${radius};
           }
           #theme-preview-sandbox button,
@@ -197,208 +280,461 @@ module.exports = {
 
       {/* Hero Header */}
       <div className="border-b border-border/40 bg-zinc-50/50 dark:bg-zinc-950/50 backdrop-blur-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div>
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-3">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-3">
                 <Palette className="h-3.5 w-3.5" />
                 <span>Interactive Theme Builder</span>
               </div>
               <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
                 Tailor ORYN UI to Your Brand
               </h1>
-              <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
-                Customize primary accents, border radii, and visual density. Preview live components instantly and copy zero-runtime CSS tokens into your application.
+              <p className="mt-2 text-sm text-muted-foreground max-w-2xl leading-relaxed">
+                Configure primary brand accents, neutral base tones, border radii, and typography. Preview live React components in real time and copy zero-runtime CSS tokens.
               </p>
             </div>
 
-            <div className="flex items-center gap-3">
+            {/* Quick Actions Bar */}
+            <div className="flex flex-wrap items-center gap-2.5">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleShare}
+                className="gap-1.5 text-xs"
+                title="Copy shareable theme URL"
+              >
+                {shareCopied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Share2 className="h-3.5 w-3.5" />}
+                <span>{shareCopied ? 'Link Copied' : 'Share Theme'}</span>
+              </Button>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDownloadCss}
+                className="gap-1.5 text-xs"
+                title="Download theme.css file"
+              >
+                <Download className="h-3.5 w-3.5" />
+                <span>Download CSS</span>
+              </Button>
+
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleReset}
                 className="gap-1.5 text-xs"
+                title="Reset theme to defaults"
               >
                 <RotateCcw className="h-3.5 w-3.5" />
-                Reset
+                <span>Reset</span>
               </Button>
+
               <Button
                 size="sm"
-                onClick={() => handleCopy(codeTab === 'css' ? cssVariablesSnippet : tailwindSnippet)}
-                className="gap-1.5 text-xs"
+                onClick={() => handleCopy(
+                  exportFormat === 'css' ? cssVariablesSnippet : 
+                  exportFormat === 'tailwind-v4' ? tailwindV4Snippet : 
+                  exportFormat === 'tailwind-v3' ? tailwindV3Snippet : 
+                  jsonSnippet
+                )}
+                className="gap-1.5 text-xs font-semibold"
               >
                 {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-                {copied ? 'Copied Tokens' : 'Export Theme'}
+                <span>{copied ? 'Copied Tokens' : 'Export Tokens'}</span>
               </Button>
             </div>
           </div>
         </div>
       </div>
 
+      {/* Main Grid Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Left Column: Configuration Controls */}
-          <div className="lg:col-span-4 space-y-6">
+          {/* Left Column: Theme Customization Controls (5 cols) */}
+          <div className="lg:col-span-5 space-y-6">
             
-            {/* Presets Selection */}
-            <div className="p-5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-primary" />
-                  Color Presets
-                </h2>
-                <Badge variant="outline" className="text-[10px] uppercase font-mono">
-                  {selectedPreset.name}
-                </Badge>
+            {/* Custom Brand Color Picker & Swatch Input */}
+            <div className="p-5 rounded-2xl border border-border/70 bg-card shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                <div className="flex items-center gap-2">
+                  <Palette className="h-4 w-4 text-primary" />
+                  <h2 className="text-sm font-semibold text-foreground">
+                    Primary Brand Color
+                  </h2>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge 
+                    variant={contrastInfo.passesAA ? 'outline' : 'secondary'} 
+                    className="text-[10px] font-mono px-2 py-0.5"
+                    title={`Contrast Ratio: ${contrastInfo.ratio}`}
+                  >
+                    {contrastInfo.badgeText} ({contrastInfo.ratio})
+                  </Badge>
+                </div>
+              </div>
+
+              {/* Direct Color Picker & Hex Input Box */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 p-3 rounded-xl border border-border/60 bg-muted/20">
+                  {/* Native Color Picker Swatch */}
+                  <label 
+                    className="relative w-11 h-11 rounded-xl border border-black/20 dark:border-white/20 shadow-xs cursor-pointer shrink-0 overflow-hidden flex items-center justify-center transition-transform hover:scale-105 active:scale-95"
+                    style={{ backgroundColor: primaryHex }}
+                    title="Click to open color picker"
+                  >
+                    <input
+                      type="color"
+                      value={primaryHex}
+                      onChange={(e) => handleHexChange(e.target.value)}
+                      className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                    />
+                  </label>
+
+                  {/* Hex Text Input */}
+                  <div className="min-w-0 flex-1 space-y-1">
+                    <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                      Custom Color (Hex)
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        value={hexInput}
+                        onChange={(e) => handleHexChange(e.target.value)}
+                        placeholder="#4f46e5"
+                        className="h-8 font-mono text-xs uppercase"
+                        maxLength={7}
+                      />
+                      <span className="text-[11px] font-mono text-muted-foreground/80 shrink-0 bg-muted px-2 py-1 rounded-md border border-border/40">
+                        {hexToHslString(primaryHex)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Select any custom color via the picker, paste a hex code, or choose from the curated designer palettes below.
+                </p>
+              </div>
+
+              {/* Designer Presets Palette Grid */}
+              <div className="pt-2 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-semibold text-foreground">
+                    Curated Designer Presets
+                  </span>
+                  {isCustom && (
+                    <span className="text-[10px] font-mono text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                      Custom Color Active
+                    </span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                  {COLOR_PRESETS.map((preset) => {
+                    const isSelected = !isCustom && activePresetId === preset.id
+                    return (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        onClick={() => handleSelectPreset(preset.id)}
+                        className={`group relative flex flex-col items-center gap-1.5 p-2 rounded-xl border text-center transition-all cursor-pointer ${
+                          isSelected
+                            ? 'border-primary bg-primary/10 ring-2 ring-primary ring-offset-1 shadow-xs'
+                            : 'border-border/60 hover:bg-muted/40 hover:border-border'
+                        }`}
+                        title={`${preset.name} (${preset.hex})`}
+                      >
+                        <span 
+                          className="w-5 h-5 rounded-full shadow-2xs transition-transform group-hover:scale-110 flex items-center justify-center"
+                          style={{ backgroundColor: preset.hex }}
+                        >
+                          {isSelected && <Check className="w-3 h-3 text-white drop-shadow-xs" />}
+                        </span>
+                        <span className="text-[11px] font-medium text-foreground truncate w-full">
+                          {preset.name}
+                        </span>
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+
+            {/* Base Neutral Palette */}
+            <div className="p-5 rounded-2xl border border-border/70 bg-card shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                <div className="flex items-center gap-2">
+                  <Layers className="h-4 w-4 text-primary" />
+                  <h2 className="text-sm font-semibold text-foreground">
+                    Base Neutral Palette
+                  </h2>
+                </div>
+                <span className="text-xs font-mono text-muted-foreground uppercase">{baseColor}</span>
               </div>
 
               <div className="grid grid-cols-2 gap-2.5">
-                {PRESETS.map((preset) => {
-                  const isSelected = selectedPreset.id === preset.id
+                {BASE_PALETTES.map((base) => {
+                  const isSelected = baseColor === base.id
                   return (
                     <button
-                      key={preset.id}
-                      onClick={() => setSelectedPreset(preset)}
-                      className={`flex items-center gap-3 p-2.5 rounded-lg border text-left transition-all ${
-                        isSelected 
-                          ? 'border-primary bg-primary/5 ring-1 ring-primary' 
-                          : 'border-border/60 hover:bg-muted/50'
+                      key={base.id}
+                      type="button"
+                      onClick={() => setBaseColor(base.id)}
+                      className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                        isSelected
+                          ? 'border-primary bg-primary/5 ring-1 ring-primary shadow-2xs font-semibold'
+                          : 'border-border/60 hover:bg-muted/40 text-muted-foreground hover:text-foreground'
                       }`}
                     >
-                      <div className={`h-4 w-4 rounded-full shrink-0 shadow-2xs ${preset.colorBadge}`} />
-                      <div className="min-w-0">
-                        <p className="text-xs font-medium text-foreground truncate">{preset.name}</p>
-                      </div>
+                      <p className="text-xs font-semibold text-foreground">{base.name}</p>
+                      <p className="text-[10px] text-muted-foreground line-clamp-1 mt-0.5 leading-snug">
+                        {base.description}
+                      </p>
                     </button>
                   )
                 })}
               </div>
-
-              <p className="text-[11px] text-muted-foreground pt-1">
-                {selectedPreset.description}.
-              </p>
             </div>
 
-            {/* Radius Selector */}
-            <div className="p-5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
+            {/* Border Radius Options */}
+            <div className="p-5 rounded-2xl border border-border/70 bg-card shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                <div className="flex items-center gap-2">
                   <Sliders className="h-4 w-4 text-primary" />
-                  Border Radius
-                </h2>
-                <span className="text-xs font-mono text-muted-foreground">{radius}</span>
+                  <h2 className="text-sm font-semibold text-foreground">
+                    Border Radius
+                  </h2>
+                </div>
+                <span className="text-xs font-mono font-medium text-muted-foreground">{radius}</span>
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                 {RADIUS_OPTIONS.map((opt) => {
                   const isSelected = radius === opt.value
                   return (
                     <button
                       key={opt.value}
+                      type="button"
                       onClick={() => setRadius(opt.value)}
-                      className={`px-3 py-2 text-xs font-medium rounded-lg border transition-all text-center ${
+                      className={`px-3 py-2 text-xs font-medium rounded-xl border transition-all text-center cursor-pointer ${
                         isSelected
-                          ? 'border-primary bg-primary/10 text-primary font-semibold'
-                          : 'border-border/60 text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+                          ? 'border-primary bg-primary/10 text-primary font-semibold shadow-2xs'
+                          : 'border-border/60 text-muted-foreground hover:bg-muted/40 hover:text-foreground'
                       }`}
                     >
-                      {opt.label}
+                      <span className="block font-semibold">{opt.label}</span>
+                      <span className="text-[10px] opacity-75">{opt.name}</span>
                     </button>
                   )
                 })}
               </div>
             </div>
 
-            {/* Quick Export Panel */}
-            <div className="p-5 rounded-xl border border-border/60 bg-card shadow-2xs space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-foreground">Active CSS Token</span>
-                <button
-                  onClick={() => handleCopy(`--primary: ${selectedPreset.light.primary}; --radius: ${radius};`)}
-                  className="text-xs text-primary hover:underline flex items-center gap-1"
-                >
-                  <Copy className="h-3 w-3" />
-                  Copy inline
-                </button>
+            {/* Typography Selection */}
+            <div className="p-5 rounded-2xl border border-border/70 bg-card shadow-xs space-y-4">
+              <div className="flex items-center justify-between border-b border-border/40 pb-3">
+                <div className="flex items-center gap-2">
+                  <Type className="h-4 w-4 text-primary" />
+                  <h2 className="text-sm font-semibold text-foreground">
+                    Typography Style
+                  </h2>
+                </div>
+                <span className="text-xs font-mono text-muted-foreground capitalize">{font}</span>
               </div>
-              <div className="p-2.5 rounded-lg bg-zinc-950 text-zinc-300 font-mono text-[11px] overflow-x-auto">
-                <code>--primary: {selectedPreset.light.primary};</code>
-                <br />
-                <code>--radius: {radius};</code>
+
+              <div className="grid grid-cols-3 gap-2">
+                {FONT_OPTIONS.map((f) => {
+                  const isSelected = font === f.id
+                  return (
+                    <button
+                      key={f.id}
+                      type="button"
+                      onClick={() => setFont(f.id)}
+                      className={`p-2.5 text-center rounded-xl border transition-all cursor-pointer ${
+                        isSelected
+                          ? 'border-primary bg-primary/10 text-primary font-semibold shadow-2xs'
+                          : 'border-border/60 text-muted-foreground hover:bg-muted/40 hover:text-foreground'
+                      }`}
+                    >
+                      <span className={`text-base block font-medium ${f.className}`}>Ag</span>
+                      <span className="text-xs font-medium block mt-0.5">{f.label}</span>
+                    </button>
+                  )
+                })}
               </div>
             </div>
 
           </div>
 
-          {/* Right Column: Live Showcase Sandbox & Code Output */}
-          <div className="lg:col-span-8 space-y-6">
+          {/* Right Column: Live Showcase & Export Hub (7 cols) */}
+          <div className="lg:col-span-7 space-y-6">
             
-            {/* Segmented View Mode Toggle */}
-            <div className="flex items-center justify-between border-b border-border/60 pb-3">
-              <div className="flex items-center gap-1 bg-muted/60 p-1 rounded-lg">
+            {/* View Mode & In-Canvas Sandbox Mode Header */}
+            <div className="flex items-center justify-between border-b border-border/60 pb-3.5 flex-wrap gap-3">
+              {/* Segmented Mode: Live Preview vs Export */}
+              <div className="inline-flex items-center p-1 rounded-xl bg-muted/60 border border-border/50 text-xs">
                 <button
-                  onClick={() => setPreviewMode('canvas')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                    previewMode === 'canvas'
+                  type="button"
+                  onClick={() => setPreviewTab('canvas')}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium text-xs transition-all cursor-pointer ${
+                    previewTab === 'canvas'
                       ? 'bg-background text-foreground shadow-2xs font-semibold'
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   <Eye className="h-3.5 w-3.5" />
-                  Live Preview Canvas
+                  <span>Live Sandbox</span>
                 </button>
+
                 <button
-                  onClick={() => setPreviewMode('code')}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                    previewMode === 'code'
+                  type="button"
+                  onClick={() => setPreviewTab('code')}
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium text-xs transition-all cursor-pointer ${
+                    previewTab === 'code'
                       ? 'bg-background text-foreground shadow-2xs font-semibold'
                       : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   <Code2 className="h-3.5 w-3.5" />
-                  Export Configuration
+                  <span>Export Code</span>
                 </button>
               </div>
 
-              {previewMode === 'code' && (
-                <div className="flex items-center gap-1">
+              {/* In-Canvas Theme Preview (Light / Dark Switcher) */}
+              {previewTab === 'canvas' && (
+                <div className="inline-flex items-center p-1 rounded-xl bg-muted/60 border border-border/50 text-xs">
                   <button
-                    onClick={() => setCodeTab('css')}
-                    className={`px-2.5 py-1 rounded text-xs font-medium ${
-                      codeTab === 'css' ? 'bg-primary/10 text-primary font-semibold' : 'text-muted-foreground'
+                    type="button"
+                    onClick={() => setSandboxMode('light')}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                      sandboxMode === 'light'
+                        ? 'bg-background text-foreground shadow-2xs font-semibold'
+                        : 'text-muted-foreground hover:text-foreground'
                     }`}
+                    title="Simulate light theme"
                   >
-                    globals.css
+                    <Sun className="h-3 w-3" />
+                    <span>Light</span>
                   </button>
                   <button
-                    onClick={() => setCodeTab('tailwind')}
-                    className={`px-2.5 py-1 rounded text-xs font-medium ${
-                      codeTab === 'tailwind' ? 'bg-primary/10 text-primary font-semibold' : 'text-muted-foreground'
+                    type="button"
+                    onClick={() => setSandboxMode('dark')}
+                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                      sandboxMode === 'dark'
+                        ? 'bg-background text-foreground shadow-2xs font-semibold'
+                        : 'text-muted-foreground hover:text-foreground'
                     }`}
+                    title="Simulate dark theme"
                   >
-                    tailwind.config.js
+                    <Moon className="h-3 w-3" />
+                    <span>Dark</span>
                   </button>
+                  <button
+                    type="button"
+                    onClick={() => setSandboxMode('inherit')}
+                    className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                      sandboxMode === 'inherit'
+                        ? 'bg-background text-foreground shadow-2xs font-semibold'
+                        : 'text-muted-foreground hover:text-foreground'
+                    }`}
+                    title="Inherit current page theme"
+                  >
+                    <span>Auto</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Code Export Format Switcher */}
+              {previewTab === 'code' && (
+                <div className="inline-flex items-center p-1 rounded-xl bg-muted/60 border border-border/50 text-xs">
+                  {(['css', 'tailwind-v4', 'tailwind-v3', 'json'] as const).map((fmt) => (
+                    <button
+                      key={fmt}
+                      type="button"
+                      onClick={() => setExportFormat(fmt)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                        exportFormat === fmt
+                          ? 'bg-background text-foreground shadow-2xs font-semibold'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      {fmt === 'css' ? 'globals.css' : fmt === 'tailwind-v4' ? 'Tailwind v4' : fmt === 'tailwind-v3' ? 'Tailwind v3' : 'JSON'}
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
 
-            {/* Canvas View */}
-            {previewMode === 'canvas' && (
-              <div id="theme-preview-sandbox" className="space-y-6">
+            {/* LIVE PREVIEW CANVAS */}
+            {previewTab === 'canvas' && (
+              <div 
+                id="theme-preview-sandbox" 
+                className={`space-y-6 ${
+                  sandboxMode === 'dark' 
+                    ? 'theme-sandbox-dark dark bg-[#09090b] text-zinc-100 p-6 rounded-2xl border border-zinc-800' 
+                    : sandboxMode === 'light' 
+                    ? 'theme-sandbox-light bg-white text-zinc-900 p-6 rounded-2xl border border-zinc-200' 
+                    : ''
+                } ${font === 'serif' ? 'font-serif' : font === 'mono' ? 'font-mono' : 'font-sans'}`}
+              >
                 
-                {/* Enterprise Dashboard Card */}
+                {/* 1. Quick Stats Metric Cards Row */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="p-4 rounded-xl border border-border/70 bg-card shadow-2xs space-y-1.5">
+                    <div className="flex items-center justify-between text-muted-foreground">
+                      <span className="text-xs font-medium">Monthly Active</span>
+                      <TrendingUp className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="text-2xl font-bold tracking-tight text-foreground">
+                      84,230
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-500">
+                      <ArrowUpRight className="h-3 w-3" />
+                      <span>+14.2% vs last month</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-xl border border-border/70 bg-card shadow-2xs space-y-1.5">
+                    <div className="flex items-center justify-between text-muted-foreground">
+                      <span className="text-xs font-medium">API Throughput</span>
+                      <Activity className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="text-2xl font-bold tracking-tight text-foreground">
+                      99.98%
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-500">
+                      <CheckCircle2 className="h-3 w-3" />
+                      <span>All regions healthy</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-xl border border-border/70 bg-card shadow-2xs space-y-1.5">
+                    <div className="flex items-center justify-between text-muted-foreground">
+                      <span className="text-xs font-medium">Active Quota</span>
+                      <Sparkles className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="text-2xl font-bold tracking-tight text-foreground">
+                      {sliderVal}%
+                    </div>
+                    <div className="pt-0.5">
+                      <Progress value={sliderVal} className="h-1.5" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Enterprise Dashboard Container Card */}
                 <Card className="shadow-xs border-border/80">
                   <CardHeader className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 pb-4">
                     <div>
                       <div className="flex items-center gap-2">
                         <CardTitle className="text-lg">Workspace Preferences</CardTitle>
-                        <Badge variant="outline" className="text-[10px]">
-                          Production
+                        <Badge variant="outline" className="text-[10px] font-mono">
+                          Enterprise
                         </Badge>
                       </div>
                       <CardDescription className="text-xs mt-1">
-                        Configure deployment policies and notification hooks for this cluster.
+                        Configure deployment policies, cluster clusters, and security policies.
                       </CardDescription>
                     </div>
                     <div className="flex items-center gap-2 self-start sm:self-auto">
@@ -414,7 +750,7 @@ module.exports = {
 
                   <CardContent className="space-y-6 pt-2">
                     
-                    {/* Tabs */}
+                    {/* Modern Tabs */}
                     <Tabs defaultValue="general" className="w-full">
                       <TabsList className="grid w-full grid-cols-3">
                         <TabsTrigger value="general">General</TabsTrigger>
@@ -422,70 +758,95 @@ module.exports = {
                         <TabsTrigger value="billing">Billing</TabsTrigger>
                       </TabsList>
                       
+                      {/* General Tab */}
                       <TabsContent value="general" className="space-y-4 pt-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-foreground">Workspace Identifier</label>
+                            <label className="text-xs font-semibold text-foreground">
+                              Workspace Identifier
+                            </label>
                             <Input
                               value={inputVal}
                               onChange={(e) => setInputVal(e.target.value)}
                               placeholder="workspace-slug"
                             />
                           </div>
+
                           <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-foreground">Environment Tier</label>
-                            <Input value="Enterprise High-Availability (EU-West)" readOnly />
+                            <label className="text-xs font-semibold text-foreground">
+                              Primary Cluster Region
+                            </label>
+                            <Select value={clusterRegion} onValueChange={setClusterRegion}>
+                              <SelectTrigger className="w-full h-9 text-xs">
+                                <SelectValue placeholder="Select region" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="us-east-1">US East (N. Virginia)</SelectItem>
+                                <SelectItem value="eu-west-1">Europe (Frankfurt)</SelectItem>
+                                <SelectItem value="ap-southeast-1">Asia Pacific (Singapore)</SelectItem>
+                              </SelectContent>
+                            </Select>
                           </div>
                         </div>
 
-                        {/* Interactive Sliders and Progress */}
+                        {/* Interactive Range Slider */}
                         <div className="space-y-2 pt-2">
                           <div className="flex justify-between text-xs text-muted-foreground">
                             <span>Resource Utilization Quota</span>
-                            <span className="font-mono text-foreground font-medium">{sliderVal}%</span>
+                            <span className="font-mono text-foreground font-semibold">{sliderVal}%</span>
                           </div>
-                          <Progress value={sliderVal} />
+                          <Slider
+                            value={sliderVal}
+                            onChange={(val: number | number[]) => setSliderVal(typeof val === 'number' ? val : (Array.isArray(val) ? val[0] : 50))}
+                            min={10}
+                            max={100}
+                            step={1}
+                          />
                         </div>
                       </TabsContent>
 
+                      {/* Security Tab */}
                       <TabsContent value="security" className="space-y-4 pt-4">
                         <div className="space-y-3">
-                          <div className="flex items-center justify-between p-3 rounded-lg border border-border/60 bg-muted/20">
-                            <div>
-                              <p className="text-xs font-medium text-foreground">Enforce Multi-Factor Authentication</p>
-                              <p className="text-[11px] text-muted-foreground">Require hardware key or TOTP on login</p>
+                          <div className="flex items-center justify-between p-3.5 rounded-xl border border-border/60 bg-muted/20">
+                            <div className="space-y-0.5">
+                              <p className="text-xs font-semibold text-foreground">Enforce Hardware Key / 2FA</p>
+                              <p className="text-[11px] text-muted-foreground">Require WebAuthn or TOTP on every login</p>
                             </div>
                             <Switch checked={twoFactor} onCheckedChange={setTwoFactor} />
                           </div>
 
-                          <div className="flex items-center justify-between p-3 rounded-lg border border-border/60 bg-muted/20">
-                            <div>
-                              <p className="text-xs font-medium text-foreground">Automated Session Invalidation</p>
-                              <p className="text-[11px] text-muted-foreground">Log out dormant connections after 30 minutes</p>
+                          <div className="flex items-center justify-between p-3.5 rounded-xl border border-border/60 bg-muted/20">
+                            <div className="space-y-0.5">
+                              <p className="text-xs font-semibold text-foreground">Automated Session Invalidation</p>
+                              <p className="text-[11px] text-muted-foreground">Log out dormant sessions after 30 minutes</p>
                             </div>
                             <Checkbox checked={autoSave} onCheckedChange={(c) => setAutoSave(!!c)} />
                           </div>
                         </div>
                       </TabsContent>
 
+                      {/* Billing Tab */}
                       <TabsContent value="billing" className="space-y-3 pt-4">
                         <Alert className="text-xs">
                           <Info className="h-4 w-4" />
-                          <span>Enterprise billing renewal occurs on November 1st, 2026.</span>
+                          <span>Enterprise billing cycle renews on November 1st, 2026. Custom token allocation applies.</span>
                         </Alert>
                       </TabsContent>
                     </Tabs>
 
-                    {/* Button Showcase Matrix */}
-                    <div className="pt-2 border-t border-border/60 space-y-2">
-                      <p className="text-xs font-medium text-foreground">Button Hierarchy & Variants</p>
+                    {/* Button Hierarchy Matrix */}
+                    <div className="pt-3 border-t border-border/60 space-y-2.5">
+                      <p className="text-xs font-semibold text-foreground">
+                        Button Hierarchy &amp; Action States
+                      </p>
                       <div className="flex flex-wrap gap-2.5">
                         <Button size="sm">Primary Action</Button>
                         <Button variant="secondary" size="sm">Secondary</Button>
                         <Button variant="outline" size="sm">Outlined</Button>
                         <Button variant="ghost" size="sm">Ghost</Button>
                         <Button variant="destructive" size="sm">Destructive</Button>
-                        <Button size="sm" loading>Syncing</Button>
+                        <Button size="sm" loading>Processing</Button>
                       </div>
                     </div>
 
@@ -494,10 +855,10 @@ module.exports = {
                   <CardFooter className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-t border-border/60 pt-4 text-xs text-muted-foreground">
                     <span className="flex items-center gap-1.5">
                       <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
-                      <span>Zero-runtime design tokens compiled directly into CSS custom properties</span>
+                      <span>Zero-runtime tokens compiled into standard CSS custom properties</span>
                     </span>
                     <Badge variant="secondary" className="text-[10px] shrink-0">
-                      React 19 Native
+                      Live React 19 Engine
                     </Badge>
                   </CardFooter>
                 </Card>
@@ -505,27 +866,40 @@ module.exports = {
               </div>
             )}
 
-            {/* Code Output View */}
-            {previewMode === 'code' && (
+            {/* CODE EXPORT VIEW */}
+            {previewTab === 'code' && (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <p className="text-xs text-muted-foreground">
-                    Copy this snippet directly into your project to apply the active theme tokens.
+                    {exportFormat === 'css' && 'Paste into your globals.css to apply custom CSS variables across light and dark modes.'}
+                    {exportFormat === 'tailwind-v4' && 'Next.js 16 + Tailwind CSS v4 @theme declaration block.'}
+                    {exportFormat === 'tailwind-v3' && 'Classic Tailwind v3 config extend block.'}
+                    {exportFormat === 'json' && 'Raw design tokens JSON for programmatic tooling and design systems.'}
                   </p>
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => handleCopy(codeTab === 'css' ? cssVariablesSnippet : tailwindSnippet)}
-                    className="gap-1.5 text-xs"
+                    onClick={() => handleCopy(
+                      exportFormat === 'css' ? cssVariablesSnippet : 
+                      exportFormat === 'tailwind-v4' ? tailwindV4Snippet : 
+                      exportFormat === 'tailwind-v3' ? tailwindV3Snippet : 
+                      jsonSnippet
+                    )}
+                    className="gap-1.5 text-xs font-semibold shrink-0"
                   >
-                    {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-                    {copied ? 'Copied to Clipboard' : 'Copy Snippet'}
+                    {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
+                    <span>{copied ? 'Copied to Clipboard' : 'Copy Snippet'}</span>
                   </Button>
                 </div>
 
                 <CodeBlock
-                  language={codeTab === 'css' ? 'css' : 'javascript'}
-                  code={codeTab === 'css' ? cssVariablesSnippet : tailwindSnippet}
+                  language={exportFormat === 'json' ? 'json' : exportFormat === 'css' || exportFormat === 'tailwind-v4' ? 'css' : 'javascript'}
+                  code={
+                    exportFormat === 'css' ? cssVariablesSnippet : 
+                    exportFormat === 'tailwind-v4' ? tailwindV4Snippet : 
+                    exportFormat === 'tailwind-v3' ? tailwindV3Snippet : 
+                    jsonSnippet
+                  }
                 />
               </div>
             )}
@@ -537,4 +911,3 @@ module.exports = {
     </div>
   )
 }
-

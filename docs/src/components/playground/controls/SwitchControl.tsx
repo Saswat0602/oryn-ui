@@ -14,7 +14,10 @@ export function SwitchControl({ control, value, onChange }: SwitchControlProps) 
   const isChecked = Boolean(value)
 
   return (
-    <div className="flex items-start justify-between gap-3.5 p-3 rounded-xl border border-border/50 bg-card/50 hover:bg-muted/30 transition-colors w-full">
+    <div 
+      onClick={() => onChange(!isChecked)}
+      className="flex items-start justify-between gap-3 p-3 rounded-xl border border-border/60 bg-muted/20 hover:bg-muted/40 transition-colors w-full cursor-pointer select-none"
+    >
       <div className="space-y-1 min-w-0 flex-1">
         <div className="flex items-center gap-1.5 flex-wrap">
           <code className="font-mono text-primary bg-primary/10 px-1.5 py-0.5 rounded text-[11px] font-semibold">
@@ -31,7 +34,7 @@ export function SwitchControl({ control, value, onChange }: SwitchControlProps) 
         )}
       </div>
 
-      <div className="pt-0.5 shrink-0">
+      <div className="pt-0.5 shrink-0" onClick={(e) => e.stopPropagation()}>
         <Switch
           checked={isChecked}
           onCheckedChange={onChange}

@@ -195,24 +195,17 @@ export function ComponentDocumentation({ slug, component }: ComponentDocumentati
       <div className="pt-4">
         <AnimatePresence mode="wait">
           {activeTab === 'examples' && (
-            <div key="examples" className="space-y-12 sm:space-y-14">
+            <div key="examples" className="space-y-8 sm:space-y-10">
               {examples.length > 0 ? (
                 examples.map((example, index) => (
-                  <section key={index} className="space-y-3.5 pt-4 first:pt-0">
-                    <div className="flex flex-col gap-1.5 pb-1">
-                      <h2 className="text-base sm:text-lg font-bold tracking-tight text-foreground">
-                        {example.title}
-                      </h2>
-                      {example.description && (
-                        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed max-w-2xl">
-                          {example.description}
-                        </p>
-                      )}
-                    </div>
-                    <ComponentPreview code={example.code}>
-                      {example.preview}
-                    </ComponentPreview>
-                  </section>
+                  <ComponentPreview 
+                    key={index}
+                    title={example.title}
+                    description={example.description}
+                    code={example.code}
+                  >
+                    {example.preview}
+                  </ComponentPreview>
                 ))
               ) : (
                 <div className="text-center py-12 border border-dashed border-border/50 rounded-lg">

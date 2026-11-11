@@ -285,11 +285,13 @@ export function ComponentPlayground({ config, className = '' }: ComponentPlaygro
                 </div>
               </div>
 
-              {/* Informational Sub-label */}
-              <div className="mt-auto pt-4 text-center">
-                <span className="text-[11px] font-mono text-muted-foreground/60">
-                  Real React {config.title} component rendering
+              {/* Informational Sub-label / Live Status */}
+              <div className="mt-auto pt-6 w-full flex items-center justify-between text-[11px] font-mono text-muted-foreground/60 border-t border-border/30 px-1">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  Live {config.title} instance
                 </span>
+                <span>{Object.keys(currentProps).length} active props</span>
               </div>
             </div>
           ) : (
@@ -324,8 +326,8 @@ export function ComponentPlayground({ config, className = '' }: ComponentPlaygro
         {/* Right/Bottom: Property Configuration Panel */}
         <div className="lg:col-span-5 xl:col-span-5 bg-card/60 backdrop-blur-sm p-5 sm:p-6 flex flex-col justify-between max-h-[580px] overflow-y-auto scrollbar-thin">
           <div className="space-y-5">
-            {/* Controls Panel Header */}
-            <div className="flex items-center justify-between border-b border-border/40 pb-3">
+            {/* Sticky Controls Panel Header */}
+            <div className="sticky top-0 bg-card/95 backdrop-blur-md z-10 flex items-center justify-between border-b border-border/40 pb-3 -mt-1 pt-1">
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="w-3.5 h-3.5 text-primary" />
                 <span className="text-xs font-semibold text-foreground tracking-wide">
