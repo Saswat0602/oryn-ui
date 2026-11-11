@@ -1,21 +1,21 @@
-# Mad UI Library Audit & Evolution Report
+# ORYN UI Library Audit & Evolution Report
 
-> **Current Version**: `mad-ui-components@3.0.0`  
+> **Current Version**: `oryn-ui@3.2.1`  
 > **Initial Audit Date**: October 28, 2026 (`v2.15.15`)  
-> **Status Update**: **Phases 0 through 5 Complete** (v3.0.0 Production Release)  
+> **Status Update**: **Phases 0 through 5 Complete** (v3.2.1 Production Release)  
 > **Active Focus**: Phase 6 — Catalog Expansion (Tier 1 Components & Enterprise Kit)
 
 ---
 
 ## 📌 Executive Summary
 
-An exhaustive audit of `mad-ui-components` was conducted at version `2.15.15`. Following that audit, an engineering overhaul (**Phases 0 through 5**) was executed:
+An exhaustive audit of the component library was conducted at version `2.15.15`. Following that audit, an engineering overhaul (**Phases 0 through 5**) was executed:
 
 1. **Packaging & Exports**: All 64 subpath exports are 100% valid and verified via `publint`. `"use client";` banners are injected into all distribution bundles. The theme and design tokens are built and exported as `./theme.css` and `./styles.css`.
 2. **Pure Standalone Primitives**: Replaced third-party UI dependencies with native, lightweight headless primitives (`Slot`, `Portal`, `FocusScope`, `Presence`, `useControllableState`, `useClickOutside`) with zero `@radix-ui/*` dependencies.
 3. **Composable Form System**: Implemented an accessible context-driven form system (`Form`, `FormField`, `FormItem`, `FormLabel`, `FormControl`, `FormMessage`) with automatic ARIA ID wiring, `aria-describedby` chaining, and dual standalone / `react-hook-form` + `zod` compatibility.
 4. **Advanced DataTable**: Built a semantic `DataTable` featuring multi-column sorting, search filtering, checkbox row selection, pagination, and high-performance virtualization (`useVirtualizer`).
-5. **Theme Builder & Developer Experience**: Shipped an interactive Theme Builder at `/theme-builder`, 100% comprehensive TypeScript props tables across all 55 components, and a smart CLI component adder (`npx mad-ui-components add <component>`).
+5. **Theme Builder & Developer Experience**: Shipped an interactive Theme Builder at `/theme-builder`, 100% comprehensive TypeScript props tables across all 55 components, and a smart CLI component adder (`npx oryn-ui add <component>`).
 6. **Testing & Quality Assurance**: Zero TypeScript errors (`tsc --noEmit`), 49 passing Vitest tests with `axe-core` accessibility verification (0 violations), and 65 static documentation pages generated under Next.js 16.4.3.
 
 ---

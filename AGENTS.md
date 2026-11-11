@@ -17,7 +17,8 @@ Welcome to the **ORYN UI** repository. This document provides a comprehensive gu
 ## 2. Directory Structure
 
 ```
-mad-ui/
+oryn-ui/
+├── .agents/skills/            # Agent skills (oryn-ui-component, oryn-ui-verify, etc.)
 ├── .github/workflows/ci.yml   # GitHub Actions CI workflow (build, typecheck, lint)
 ├── AGENTS.md                  # This guide and engineering rules
 ├── CHANGELOG.md               # Version changelog
