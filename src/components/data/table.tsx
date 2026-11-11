@@ -373,7 +373,7 @@ function Table<T extends Record<string, unknown>>({
 
 Table.displayName = "Table"
 
-// Declarative Radix / Shadcn compatible subcomponents
+// Declarative composable subcomponents
 const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => (
     <thead ref={ref} className={cn("[&_tr]:border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/75 dark:bg-zinc-900/75", className)} {...props} />

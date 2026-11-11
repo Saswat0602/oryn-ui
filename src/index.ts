@@ -210,7 +210,7 @@ export { Banner } from './components/feedback/banner'
 export { MessageBubble } from './components/feedback/message-bubble'
 export { ReasoningDisclosure } from './components/feedback/reasoning-disclosure'
 export { ToolCallCard } from './components/feedback/tool-call-card'
-export { Sonner } from './components/feedback/sonner'
+export { Sonner, sonnerToast } from './components/feedback/sonner'
 export { 
   Toast, 
   ToastTitle, 

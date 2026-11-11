@@ -498,7 +498,7 @@ export const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
           {/* Active Series Indicator Dots */}
           {hoverIndex !== null &&
             seriesPaths.map(({ category, color, points }) => {
-              const pt = points[hoverIndex]
+              const pt = points?.[hoverIndex]
               if (!pt) return null
               return (
                 <circle

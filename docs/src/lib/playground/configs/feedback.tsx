@@ -22,23 +22,24 @@ import {
 import { PlaygroundConfig } from '@/components/playground/types'
 
 // Interactive Sonner trigger wrapper
-function SonnerPlaygroundWrapper({ type, title, description }: any) {
+function SonnerPlaygroundWrapper({ type, title, description, duration }: any) {
   return (
     <div className="flex flex-col items-center gap-3">
       <Button
         onClick={() => {
+          const opts = { description, duration: Number(duration) || 4000 }
           if (type === 'success') {
-            toast.success(title || 'Changes deployed successfully!', { description })
+            toast.success(title || 'Changes deployed successfully!', opts)
           } else if (type === 'error') {
-            toast.error(title || 'Failed to authenticate request', { description })
+            toast.error(title || 'Failed to authenticate request', opts)
           } else if (type === 'warning') {
-            toast.warning(title || 'High memory pressure detected', { description })
+            toast.warning(title || 'High memory pressure detected', opts)
           } else {
-            toast(title || 'Deployment queued', { description })
+            toast(title || 'Deployment queued', opts)
           }
         }}
       >
-        Trigger Sonner Toast ({type})
+        Trigger Sonner Notification ({type})
       </Button>
       <Sonner />
     </div>
@@ -46,23 +47,24 @@ function SonnerPlaygroundWrapper({ type, title, description }: any) {
 }
 
 // Interactive Toast trigger wrapper
-function ToastPlaygroundWrapper({ variant, title, description }: any) {
-  const { toast: radixToast } = useToast()
+function ToastPlaygroundWrapper({ variant, title, description, duration }: any) {
+  const { toast: showToast } = useToast()
   return (
     <div className="flex flex-col items-center gap-3">
       <Button
         variant="outline"
         onClick={() => {
+          const opts = { description, duration: Number(duration) || 4000 }
           if (variant === 'destructive') {
-            radixToast.error(title || 'Build failed with exit code 1', { description })
+            showToast.error(title || 'Build failed with exit code 1', opts)
           } else if (variant === 'success') {
-            radixToast.success(title || 'Deployment ready on Edge', { description })
+            showToast.success(title || 'Deployment ready on Edge', opts)
           } else {
-            radixToast(title || 'Snapshot created', { description })
+            showToast(title || 'Snapshot created', opts)
           }
         }}
       >
-        Show Radix Toast ({variant})
+        Show Toast Notification ({variant})
       </Button>
       <Toaster />
     </div>
@@ -286,7 +288,8 @@ export const feedbackPlaygrounds: Record<string, PlaygroundConfig> = {
     defaultProps: {
       type: 'success',
       title: 'Deployment Ready',
-      description: 'Your changes are live across 300+ Edge points of presence.'
+      description: 'Your changes are live across 300+ Edge points of presence.',
+      duration: 4000
     },
     controls: [
       {
@@ -302,6 +305,17 @@ export const feedbackPlaygrounds: Record<string, PlaygroundConfig> = {
         ],
         category: 'appearance',
         description: 'Status physics and badge icon'
+      },
+      {
+        name: 'duration',
+        label: 'Auto-Close Duration (ms)',
+        type: 'slider',
+        defaultValue: 4000,
+        min: 1000,
+        max: 10000,
+        step: 500,
+        category: 'options',
+        description: 'Time in milliseconds before notification auto-dismisses'
       },
       {
         name: 'title',
@@ -325,6 +339,7 @@ export const feedbackPlaygrounds: Record<string, PlaygroundConfig> = {
         type={props.type}
         title={props.title}
         description={props.description}
+        duration={props.duration}
       />
     )
   },
@@ -369,7 +384,8 @@ export const feedbackPlaygrounds: Record<string, PlaygroundConfig> = {
     defaultProps: {
       variant: 'default',
       title: 'Project Settings Updated',
-      description: 'Environment variables synchronized with preview workers.'
+      description: 'Environment variables synchronized with preview workers.',
+      duration: 4000
     },
     controls: [
       {
@@ -383,7 +399,18 @@ export const feedbackPlaygrounds: Record<string, PlaygroundConfig> = {
           { label: 'Destructive', value: 'destructive' }
         ],
         category: 'appearance',
-        description: 'Radix toast styling'
+        description: 'Toast notification styling'
+      },
+      {
+        name: 'duration',
+        label: 'Auto-Close Duration (ms)',
+        type: 'slider',
+        defaultValue: 4000,
+        min: 1000,
+        max: 10000,
+        step: 500,
+        category: 'options',
+        description: 'Time in milliseconds before notification auto-dismisses'
       },
       {
         name: 'title',
@@ -407,6 +434,7 @@ export const feedbackPlaygrounds: Record<string, PlaygroundConfig> = {
         variant={props.variant}
         title={props.title}
         description={props.description}
+        duration={props.duration}
       />
     )
   },

@@ -421,7 +421,7 @@ export function PaginationExample() {
     },
     {
       title: 'Composable Compound Pagination',
-      description: 'Declarative Radix and shadcn styled compound pagination component with semantic list semantics',
+      description: 'Declarative compound pagination component with semantic list semantics',
       code: `import { 
   Pagination, 
   PaginationContent, 

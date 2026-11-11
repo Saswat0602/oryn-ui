@@ -86,7 +86,7 @@ class SonnerObserver {
   }
 }
 
-const sonnerObserver = new SonnerObserver()
+export const sonnerObserver = new SonnerObserver()
 
 export interface SonnerToastFunction {
   (message: React.ReactNode, data?: Partial<Omit<SonnerToast, "id" | "title">>): string

@@ -397,7 +397,7 @@ function InteractiveScrollAreaDemo() {
         </div>
         <ScrollArea orientation="horizontal" scrollbarVariant="subtle" scrollbarSize="sm" className="w-full pb-2">
           <div className="flex gap-2 w-max pb-1">
-            {['React 19', 'Next.js 16', 'TypeScript 5', 'Tailwind CSS v4', 'Turbopack', 'WAI-ARIA', 'Radix Parity', 'Zero Bloat'].map((topic) => (
+            {['React 19', 'Next.js 16', 'TypeScript 5', 'Tailwind CSS v4', 'Turbopack', 'WAI-ARIA', 'Custom Primitives', 'Zero Bloat'].map((topic) => (
               <span key={topic} className="px-2.5 py-1 rounded-md bg-muted text-xs font-medium text-foreground shrink-0 border border-border/60">
                 {topic}
               </span>
@@ -563,7 +563,7 @@ export function ModalDemo() {
 
   popover: [
     {
-      title: 'Composable Popover (Radix / shadcn Style)',
+      title: 'Composable Popover',
       description: 'Floating contextual popover anchored to a trigger button with automatic viewport flipping',
       code: `import { Popover, PopoverTrigger, PopoverContent, Button, Input } from 'oryn-ui'
 

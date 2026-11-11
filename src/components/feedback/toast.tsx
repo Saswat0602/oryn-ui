@@ -4,6 +4,7 @@ import * as React from "react"
 import { cn } from "../../lib/utils"
 import { Portal } from "../../lib/portal"
 import { CheckCircle2, AlertCircle, AlertTriangle, Info, X } from "../../icons"
+import { sonnerObserver } from "./sonner"
 
 // --- Global Toast Store & State Machine ---
 
@@ -171,13 +172,71 @@ function baseToast(
 
   const id = toastPayload.id || genId()
 
-  const update = (updatedProps: Partial<ToastData>) =>
+  const dismiss = () => {
+    dispatch({ type: "DISMISS_TOAST", toastId: id })
+    try {
+      sonnerObserver.dismiss(id)
+    } catch {
+      // safe fallback
+    }
+  }
+
+  const update = (updatedProps: Partial<ToastData>) => {
     dispatch({
       type: "UPDATE_TOAST",
       toast: { ...updatedProps, id },
     })
+    try {
+      const variant = updatedProps.variant ?? toastPayload.variant
+      const sonnerType =
+        updatedProps.type ||
+        (variant === "destructive"
+          ? "error"
+          : variant === "success"
+          ? "success"
+          : variant === "warning"
+          ? "warning"
+          : variant === "info"
+          ? "info"
+          : "default")
+      sonnerObserver.create({
+        id,
+        title: updatedProps.title ?? updatedProps.message ?? toastPayload.title ?? toastPayload.message,
+        description: updatedProps.description ?? toastPayload.description,
+        type: sonnerType as any,
+        duration: updatedProps.duration ?? toastPayload.duration ?? 4000,
+        action: (updatedProps.action ?? toastPayload.action) as any,
+      })
+    } catch {
+      // safe fallback
+    }
+  }
 
-  const dismiss = () => dispatch({ type: "DISMISS_TOAST", toastId: id })
+  // Also broadcast to sonnerObserver so <Sonner /> instances receive toast dispatches
+  try {
+    const sonnerType =
+      toastPayload.type ||
+      (toastPayload.variant === "destructive"
+        ? "error"
+        : toastPayload.variant === "success"
+        ? "success"
+        : toastPayload.variant === "warning"
+        ? "warning"
+        : toastPayload.variant === "info"
+        ? "info"
+        : "default")
+
+    sonnerObserver.create({
+      id,
+      title: toastPayload.title ?? toastPayload.message,
+      description: toastPayload.description,
+      type: sonnerType as any,
+      duration: toastPayload.duration ?? 4000,
+      action: toastPayload.action as any,
+    })
+  } catch {
+    // safe fallback
+  }
 
   dispatch({
     type: "ADD_TOAST",
@@ -210,7 +269,14 @@ baseToast.warning = (title: React.ReactNode, options?: Partial<Omit<ToastData, "
 baseToast.info = (title: React.ReactNode, options?: Partial<Omit<ToastData, "id">>) =>
   baseToast(title, { variant: "info", ...options })
 
-baseToast.dismiss = (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId })
+baseToast.dismiss = (toastId?: string) => {
+  dispatch({ type: "DISMISS_TOAST", toastId })
+  try {
+    sonnerObserver.dismiss(toastId)
+  } catch {
+    // safe fallback
+  }
+}
 
 export const toast: ToastFn = baseToast as unknown as ToastFn
 

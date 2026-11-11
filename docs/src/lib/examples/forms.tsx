@@ -602,7 +602,7 @@ export function CollapsedBreadcrumbsDemo() {
     },
     {
       title: 'Declarative Compound Breadcrumb',
-      description: 'Radix & shadcn compatible composable compound breadcrumbs with active page and semantic list semantics',
+      description: 'Composable compound breadcrumbs with active page and semantic list semantics',
       code: `import { 
   Breadcrumb, 
   BreadcrumbList, 
@@ -806,7 +806,7 @@ export function RadioGroupExample() {
 
   tabs: [
     {
-      title: 'Compound Tabs (Radix / shadcn Style)',
+      title: 'Compound Tabs',
       description: 'Composable tabs with accessible keyboard roving focus, TabPanels, and form cards',
       code: `import { Tabs, TabsList, TabsTrigger, TabsContent, Input, Button } from 'oryn-ui'
 

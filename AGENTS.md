@@ -92,7 +92,10 @@ All UI contributions must reflect senior-level engineering quality:
    - Component cards must be compact, minimal, and scannable with clear typography and subtle hover states.
 3. **No Childish Emojis in Professional UI**:
    - Navigation tabs, buttons, and badges must use clean, semantic Lucide vector icons (`Eye`, `Code2`, `Terminal`, `BookOpen`), NEVER raw emojis (`🎨`, `📝`, `⚡`, `💡`).
-4. **Header & Navigation Layout**:
+4. **Zero Third-Party Library Names or Legacy Copy in UI**:
+   - ORYN UI is an independent, custom-built component library with zero external UI runtime dependencies.
+   - NEVER reference "Radix", "Radix UI", "TanStack", or other 3rd-party library names in component labels, playground titles, descriptions, buttons, or docs. Use clean, professional nomenclature (e.g., "Toast Notification", "Split Pane", "Data Table").
+5. **Header & Navigation Layout**:
    - Header must be sleek (`h-14` / 56px), with sticky positioning, backdrop-blur, and crisp bottom border.
    - Header must feature direct links to the official GitHub repository (`https://github.com/Saswat0602/oryn-ui`) and npm package (`https://www.npmjs.com/package/oryn-ui`).
    - Documentation must always feature a persistent, sticky left sidebar (`w-64`) with category grouping and instant component search.
@@ -111,26 +114,36 @@ All UI contributions must reflect senior-level engineering quality:
 
 ---
 
-## 5. Build & Verification Workflows
+## 5. Strict Pre-Push Build & Verification Pipeline (MANDATORY)
 
-Before committing any changes or concluding a task, run the following verification pipeline:
+Before committing, creating tags, or pushing ANY code to git, you MUST run and pass all 6 steps of the verification pipeline with **0 errors and 0 warnings**:
 
 ```bash
-# 1. Build the root library (must succeed with 0 errors)
+# 1. Run strict TypeScript typecheck on root library (MANDATORY: 0 type errors)
+npm run typecheck
+
+# 2. Run all unit and accessibility smoke test suites (MANDATORY: 77/77 tests pass)
+npm test
+
+# 3. Build the root library (bundles ESM, DTS declarations, and optimized CSS)
 npm run build
 
-# 2. Build the documentation site (must succeed with 0 errors and generate all static pages)
-cd docs
-npm run build
-cd ..
+# 4. Verify package exports & component manifest integrity
+npm run check:pkg
+npm run check:manifest
 
-# 3. Check for lint errors in docs
-cd docs
-npm run lint
-cd ..
+# 5. Build the documentation site with Turbopack & React 19 (MANDATORY: all static routes generate)
+npm --prefix docs run build
+
+# 6. Check for ESLint errors in documentation
+npm --prefix docs run lint
 ```
 
-> **IMPORTANT**: The `docs` application imports directly from `dist/` of the root package via symlink. Whenever you edit components in `src/`, you **must** run `npm run build` in root for the changes to reflect in `docs`.
+> **CRITICAL ZERO-ERROR PUSH RULE**:
+> - NEVER push code, commit half-finished changes, or create release tags without running `npm run typecheck` (`tsc --noEmit`) first.
+> - GitHub Actions CI runs `npm run typecheck` on every commit and push, failing immediately if even a single type error exists.
+> - If ANY step fails in the local shell, DO NOT commit, DO NOT tag, and DO NOT push. Fix the error first and re-verify from Step 1.
+> - The `docs` application imports directly from `dist/` of the root package via symlink. Whenever you edit components in `src/`, you **must** run `npm run build` in root before building `docs`.
 
 ---
 
@@ -138,9 +151,9 @@ cd ..
 
 When executing multi-phase updates:
 1. Complete each phase cleanly (code changes, styling, and tests).
-2. Verify that `npm run build` passes in both root and `docs`.
-3. Make a targeted git commit for that phase with a descriptive message (e.g., `feat(docs): add sticky sidebar layout and clean component cards`).
-4. Never leave broken build states or uncommitted experimental scratch code in working branches.
+2. Execute the full pre-push verification pipeline (`npm run typecheck && npm test && npm run build && npm --prefix docs run build`).
+3. Only make a targeted git commit when the verification pipeline passes with 0 errors.
+4. Never leave broken build states, type errors, or uncommitted experimental scratch code in working branches.
 
 ---
 
