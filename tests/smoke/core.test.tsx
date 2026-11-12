@@ -54,6 +54,7 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
         <Textarea 
           placeholder="Enter biography" 
           aria-label="Biography"
+          error
         />
       </StrictMode>
     )
@@ -61,6 +62,9 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
     expect(input).toBeDefined()
     fireEvent.change(input, { target: { value: 'alice' } })
     expect(text).toBe('alice')
+
+    const textarea = getByPlaceholderText('Enter biography')
+    expect(textarea.getAttribute('aria-invalid')).toBe('true')
 
     const ssr = renderToString(<Input placeholder="SSR Input" />)
     expect(ssr).toContain('SSR Input')

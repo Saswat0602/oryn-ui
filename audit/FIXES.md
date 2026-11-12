@@ -355,3 +355,7 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **TB-02 (Major)**: Automatically wired `aria-controls` on `TabsTrigger` pointing directly to the corresponding `TabsContent` panel ID.
   - **TB-04 (Minor)**: Bound `aria-labelledby` on `TabsContent` pointing to the matching `TabsTrigger` ID.
   - Added unit and keyboard tests in `tests/smoke/forms.test.tsx` verifying arrow navigation and `aria-controls`/`aria-labelledby` IDs.
+
+- **`Textarea`** (`src/components/core/textarea.tsx`):
+  - **TA-02 (Major)**: Automatically propagate `aria-invalid={isError ? "true" : undefined}` when `error` prop is set so assistive technologies announce invalid input states.
+  - Added unit test in `tests/smoke/core.test.tsx` asserting `aria-invalid="true"` on error state.

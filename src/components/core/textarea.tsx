@@ -10,7 +10,7 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, error, success, resize = "vertical", fullWidth = true, ...props }, ref) => {
-    const isError = error || props["aria-invalid"] === true || props["aria-invalid"] === "true"
+    const isError = Boolean(error || props["aria-invalid"] === true || props["aria-invalid"] === "true")
     const state = isError ? "error" : success ? "success" : "default"
 
     return (
@@ -29,6 +29,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         )}
         ref={ref}
         {...props}
+        aria-invalid={props["aria-invalid"] !== undefined ? props["aria-invalid"] : (isError ? "true" : undefined)}
       />
     )
   }
