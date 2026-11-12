@@ -119,10 +119,12 @@ export const AlertDialogOverlay = React.forwardRef<HTMLDivElement, AlertDialogOv
 )
 AlertDialogOverlay.displayName = "AlertDialogOverlay"
 
-export interface AlertDialogContentProps extends React.HTMLAttributes<HTMLDivElement> {}
+export interface AlertDialogContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  closeOnEscape?: boolean
+}
 
 export const AlertDialogContent = React.forwardRef<HTMLDivElement, AlertDialogContentProps>(
-  ({ className, children, ...props }, forwardedRef) => {
+  ({ className, children, closeOnEscape = true, ...props }, forwardedRef) => {
     const { open, setOpen, titleId, descriptionId } = useAlertDialogContext()
     const contentRef = React.useRef<HTMLDivElement | null>(null)
 
@@ -141,7 +143,7 @@ export const AlertDialogContent = React.forwardRef<HTMLDivElement, AlertDialogCo
 
     // Escape key
     React.useEffect(() => {
-      if (!open) return
+      if (!open || !closeOnEscape) return
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
           e.preventDefault()
@@ -150,7 +152,7 @@ export const AlertDialogContent = React.forwardRef<HTMLDivElement, AlertDialogCo
       }
       window.addEventListener("keydown", handleKeyDown)
       return () => window.removeEventListener("keydown", handleKeyDown)
-    }, [open, setOpen])
+    }, [open, setOpen, closeOnEscape])
 
     return (
       <AlertDialogPortal>

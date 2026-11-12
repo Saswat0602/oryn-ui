@@ -78,6 +78,23 @@ describe('Overlay Domain Smoke & Accessibility Suite', () => {
     expect(results.violations).toEqual([])
   })
 
+  it('supports closeOnEscape={false} on AlertDialogContent', async () => {
+    let openState = true
+    render(
+      <StrictMode>
+        <AlertDialog open={openState} onOpenChange={(val) => { openState = val }}>
+          <AlertDialogContent closeOnEscape={false}>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Critical Confirm</AlertDialogTitle>
+            </AlertDialogHeader>
+          </AlertDialogContent>
+        </AlertDialog>
+      </StrictMode>
+    )
+    fireEvent.keyDown(window, { key: 'Escape' })
+    expect(openState).toBe(true)
+  })
+
   it('renders DropdownMenu and ContextMenu trigger elements', async () => {
     const handleSelect = vi.fn()
     const { container, getByText } = render(

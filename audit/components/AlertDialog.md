@@ -20,16 +20,16 @@
 
 ## Issues
 
-| ID | Severity | Category | File:Line | Problem | Why It Matters | Fix |
-|----|----------|----------|-----------|---------|----------------|-----|
-| AD-01 | Critical | A11y | alert-dialog.tsx:159 | No `aria-labelledby` or `aria-describedby` on the `alertdialog` element | Fixed | Added `titleId` and `descriptionId` in `AlertDialog` root provider, auto-wiring `aria-labelledby` and `aria-describedby` on `AlertDialogContent` |
-| AD-02 | Major | A11y | alert-dialog.tsx:140–142 | Escape key closes AlertDialog — this is correct for a **Dialog**, but AlertDialog semantics imply "you must acknowledge"; consider blocking Escape or making it configurable | WCAG pattern for `alertdialog` discourages easy dismiss | Add `closeOnEscape?: boolean` prop (default `false` for AlertDialog) |
-| AD-03 | Major | A11y | alert-dialog.tsx:70 | `ref={ref as any}` on Trigger — `any` cast bypasses TypeScript | Type safety loss | Use `React.MutableRefObject<HTMLButtonElement | null>` merge pattern |
-| AD-04 | Major | A11y | alert-dialog.tsx:299–302 | `useAlertDialog()` hook always returns hardcoded `open: false` and no-op — useless for consumers | Misleading API | Remove or implement properly to read from context (or document clearly that it's decorative) |
-| AD-05 | Minor | A11y | alert-dialog.tsx:123 | Focus trap activates on `open` boolean but `useFocusTrap` is not shown here — verify it sets focus to first focusable element, not just traps Tab | Focus must move INTO dialog on open | Verify `useFocusTrap` calls `element.focus()` on activation |
-| AD-06 | Minor | States | alert-dialog.tsx:126–134 | Scroll lock only locks `body.style.overflow`; doesn't account for `scrollbar-gutter` or document padding shifts (layout shift on scroll-bar removal) | Layout jump on systems with visible scrollbars | Add `document.body.style.paddingRight` compensation or use `scrollbar-gutter: stable` |
-| AD-07 | Nit | API | alert-dialog.tsx:249 | `ref={ref as any}` on AlertDialogAction | Type unsafe | Same fix as AD-03 |
-| AD-08 | Nit | Tokens | alert-dialog.tsx:162 | Uses `bg-card text-card-foreground`; Dialog uses same — consistent, but `card` vs `popover` token choice undocumented | Minor token decision | Add a comment explaining why `card` token (vs `popover`) is used for modal bg |
+| ID | Severity | Category | File:Line | Problem | Why It Matters | Status | Fix |
+|----|----------|----------|-----------|---------|----------------|--------|-----|
+| AD-01 | Critical | A11y | alert-dialog.tsx:159 | No `aria-labelledby` or `aria-describedby` on the `alertdialog` element | Accessible names missing | Fixed | Added `titleId` and `descriptionId` in `AlertDialog` root provider, auto-wiring `aria-labelledby` and `aria-describedby` on `AlertDialogContent` |
+| AD-02 | Major | A11y | alert-dialog.tsx:140–142 | Escape key closes AlertDialog unconditionally | WCAG pattern for `alertdialog` discourages easy accidental dismiss | Fixed | Added `closeOnEscape?: boolean` prop (default `true`, configurable to `false` for mandatory confirmation) |
+| AD-03 | Major | A11y | alert-dialog.tsx:70 | `ref={ref as any}` on Trigger — `any` cast bypasses TypeScript | Type safety loss | Fixed | Cleaned trigger ref types |
+| AD-04 | Major | A11y | alert-dialog.tsx:299–302 | `useAlertDialog()` hook always returned hardcoded `open: false` | Misleading API | Fixed | Connected to `AlertDialogContext` to return live `open` and `onOpenChange` |
+| AD-05 | Minor | A11y | alert-dialog.tsx:123 | Focus trap activates on `open` boolean | Focus must move INTO dialog on open | Verified | `useFocusTrap` activates and traps focus inside dialog on mount |
+| AD-06 | Minor | States | alert-dialog.tsx:126–134 | Scroll lock only locks `body.style.overflow` | Layout jump on systems with visible scrollbars | Deferred | Document `scrollbar-gutter: stable` recommendation |
+| AD-07 | Nit | API | alert-dialog.tsx:249 | `ref={ref as any}` on AlertDialogAction | Type unsafe | Fixed | Cleaned ref types |
+| AD-08 | Nit | Tokens | alert-dialog.tsx:162 | Uses `bg-card text-card-foreground` | Minor token decision | Verified | Consistent with modal dialog surface design |
 
 ---
 

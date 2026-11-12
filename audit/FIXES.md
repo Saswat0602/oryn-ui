@@ -26,9 +26,10 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
 
 - **`AlertDialog`** (`src/components/overlay/alert-dialog.tsx`):
   - **AD-01 (Critical)**: Implemented automatic `titleId` and `descriptionId` generation in `AlertDialog` root provider, auto-wiring `aria-labelledby` and `aria-describedby` on `AlertDialogContent` to `AlertDialogTitle` and `AlertDialogDescription`.
+  - **AD-02 (Major)**: Added configurable `closeOnEscape?: boolean` prop (default `true`) allowing developers to disable Escape key dismissal on critical/destructive acknowledgment dialogs.
   - **AD-03 & AD-07 (Major/Nit)**: Cleaned ref forwarding without unsafe `(ref as any)` casts.
   - **AD-04 (Major)**: Updated `useAlertDialog()` hook to safely read active state and `onOpenChange` handler from `AlertDialogContext`.
-  - Added automated test in `tests/smoke/overlay.test.tsx` asserting `aria-labelledby` binds directly to title ID.
+  - Added automated tests in `tests/smoke/overlay.test.tsx` asserting `aria-labelledby` binds directly to title ID and `closeOnEscape={false}` blocks Escape dismissal.
 
 
 - **`Calendar`** (`src/components/forms/calendar.tsx`):
