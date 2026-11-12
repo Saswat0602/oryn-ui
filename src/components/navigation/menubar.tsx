@@ -10,6 +10,8 @@ import { useClickOutside } from "../../lib/use-click-outside"
 interface MenubarContextValue {
   activeMenu: string | null
   setActiveMenu: (id: string | null) => void
+  menubarRef: React.RefObject<HTMLDivElement | null>
+  switchMenu: (direction: "next" | "prev", openNewMenu?: boolean) => void
 }
 
 const MenubarContext = React.createContext<MenubarContextValue | null>(null)
@@ -31,12 +33,60 @@ export const Menubar = React.forwardRef<HTMLDivElement, MenubarProps>(
     const [activeMenu, setActiveMenu] = React.useState<string | null>(null)
     const menubarRef = React.useRef<HTMLDivElement | null>(null)
 
-    useClickOutside(menubarRef, () => {
-      setActiveMenu(null)
-    }, activeMenu !== null)
+    const switchMenu = React.useCallback(
+      (direction: "next" | "prev", openNewMenu = false) => {
+        if (!menubarRef.current) return
+        const triggers = Array.from(
+          menubarRef.current.querySelectorAll<HTMLButtonElement>('button[data-menubar-trigger="true"]')
+        )
+        if (!triggers.length) return
+
+        const activeIndex = triggers.findIndex(
+          (t) => t.getAttribute("data-menu-id") === activeMenu || t === document.activeElement
+        )
+        let nextIndex = 0
+
+        if (activeIndex !== -1) {
+          nextIndex =
+            direction === "next"
+              ? (activeIndex + 1) % triggers.length
+              : (activeIndex - 1 + triggers.length) % triggers.length
+        } else {
+          nextIndex = direction === "next" ? 0 : triggers.length - 1
+        }
+
+        const nextTrigger = triggers[nextIndex]
+        if (nextTrigger) {
+          nextTrigger.focus()
+          if (openNewMenu) {
+            const nextId = nextTrigger.getAttribute("data-menu-id")
+            if (nextId) setActiveMenu(nextId)
+          }
+        }
+      },
+      [activeMenu]
+    )
+
+    useClickOutside(
+      menubarRef,
+      () => {
+        setActiveMenu(null)
+      },
+      activeMenu !== null
+    )
+
+    const contextValue = React.useMemo(
+      () => ({
+        activeMenu,
+        setActiveMenu,
+        menubarRef,
+        switchMenu,
+      }),
+      [activeMenu, switchMenu]
+    )
 
     return (
-      <MenubarContext.Provider value={{ activeMenu, setActiveMenu }}>
+      <MenubarContext.Provider value={contextValue}>
         <div
           ref={(node) => {
             menubarRef.current = node
@@ -96,7 +146,7 @@ export interface MenubarTriggerProps extends React.ButtonHTMLAttributes<HTMLButt
 }
 
 export const MenubarTrigger = React.forwardRef<HTMLButtonElement, MenubarTriggerProps>(
-  ({ asChild = false, onClick, onMouseEnter, children, className, ...props }, forwardedRef) => {
+  ({ asChild = false, onClick, onMouseEnter, onKeyDown, children, className, ...props }, forwardedRef) => {
     const menubarCtx = React.useContext(MenubarContext)
     const menuCtx = React.useContext(MenubarMenuContext)
     const Comp = asChild ? Slot : "button"
@@ -128,6 +178,26 @@ export const MenubarTrigger = React.forwardRef<HTMLButtonElement, MenubarTrigger
       }
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+      onKeyDown?.(e)
+      if (e.key === "ArrowRight") {
+        e.preventDefault()
+        menubarCtx?.switchMenu("next", isOpen)
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault()
+        menubarCtx?.switchMenu("prev", isOpen)
+      } else if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+        e.preventDefault()
+        if (menuCtx && menubarCtx) {
+          menuCtx.updateTriggerRect()
+          menubarCtx.setActiveMenu(menuCtx.menuId)
+        }
+      } else if (e.key === "Escape") {
+        e.preventDefault()
+        menubarCtx?.setActiveMenu(null)
+      }
+    }
+
     return (
       <Comp
         ref={setMergedRef as any}
@@ -135,10 +205,13 @@ export const MenubarTrigger = React.forwardRef<HTMLButtonElement, MenubarTrigger
         role="menuitem"
         aria-haspopup="menu"
         aria-expanded={isOpen}
+        data-menubar-trigger="true"
+        data-menu-id={menuCtx?.menuId}
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
+        onKeyDown={handleKeyDown}
         className={cn(
-          "flex cursor-pointer select-none items-center rounded-lg px-3 py-1 text-xs font-medium outline-none transition-colors",
+          "flex cursor-pointer select-none items-center rounded-lg px-3 py-1 text-xs font-medium outline-none transition-colors focus-visible:ring-1 focus-visible:ring-ring",
           isOpen
             ? "bg-accent text-accent-foreground"
             : "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
@@ -158,7 +231,7 @@ export interface MenubarPortalProps {
 }
 
 export const MenubarPortal: React.FC<MenubarPortalProps> = ({ children }) => {
-  return <>{children}</>
+  return <Portal>{children}</Portal>
 }
 
 export interface MenubarContentProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -170,16 +243,89 @@ export const MenubarContent = React.forwardRef<HTMLDivElement, MenubarContentPro
   ({ className, align = "start", sideOffset = 8, children, style, ...props }, ref) => {
     const menubarCtx = React.useContext(MenubarContext)
     const menuCtx = React.useContext(MenubarMenuContext)
+    const contentRef = React.useRef<HTMLDivElement | null>(null)
+
+    React.useEffect(() => {
+      if (!menuCtx?.isOpen) return
+
+      // Auto-focus first active menu item
+      const timer = setTimeout(() => {
+        if (contentRef.current) {
+          const firstItem = contentRef.current.querySelector<HTMLElement>(
+            '[role^="menuitem"]:not([aria-disabled="true"]):not([data-disabled])'
+          )
+          firstItem?.focus()
+        }
+      }, 10)
+
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          e.preventDefault()
+          menubarCtx?.setActiveMenu(null)
+          menuCtx.triggerRef.current?.focus()
+        } else if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Home" || e.key === "End") {
+          if (!contentRef.current) return
+          const items = Array.from(
+            contentRef.current.querySelectorAll<HTMLElement>(
+              '[role^="menuitem"]:not([aria-disabled="true"]):not([data-disabled])'
+            )
+          )
+          if (!items.length) return
+          const activeIndex = items.indexOf(document.activeElement as HTMLElement)
+          let nextIndex = 0
+
+          if (e.key === "ArrowDown") {
+            e.preventDefault()
+            nextIndex = activeIndex === -1 ? 0 : (activeIndex + 1) % items.length
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault()
+            nextIndex = activeIndex === -1 ? items.length - 1 : (activeIndex - 1 + items.length) % items.length
+          } else if (e.key === "Home") {
+            e.preventDefault()
+            nextIndex = 0
+          } else if (e.key === "End") {
+            e.preventDefault()
+            nextIndex = items.length - 1
+          }
+
+          items[nextIndex]?.focus()
+        } else if (e.key === "ArrowRight") {
+          const active = document.activeElement as HTMLElement | null
+          if (active && active.getAttribute("aria-haspopup") === "menu") {
+            // Let submenu handle ArrowRight
+            return
+          }
+          e.preventDefault()
+          menubarCtx?.switchMenu("next", true)
+        } else if (e.key === "ArrowLeft") {
+          e.preventDefault()
+          menubarCtx?.switchMenu("prev", true)
+        }
+      }
+
+      window.addEventListener("keydown", handleKeyDown)
+      return () => {
+        clearTimeout(timer)
+        window.removeEventListener("keydown", handleKeyDown)
+      }
+    }, [menuCtx?.isOpen, menubarCtx, menuCtx])
 
     if (!menuCtx?.isOpen) return null
 
-    const rect = menuCtx.triggerRect || (typeof window !== "undefined" && menuCtx.triggerRef.current ? menuCtx.triggerRef.current.getBoundingClientRect() : null)
+    const rect =
+      menuCtx.triggerRect ||
+      (typeof window !== "undefined" && menuCtx.triggerRef.current
+        ? menuCtx.triggerRef.current.getBoundingClientRect()
+        : null)
+
+    const maxLeft = (typeof window !== "undefined" ? window.innerWidth : 1024) - 220
+    const clampedLeft = rect ? Math.max(8, Math.min(rect.left, maxLeft)) : 8
 
     const positioningStyle: React.CSSProperties = rect
       ? {
           position: "fixed",
           top: `${rect.bottom + sideOffset}px`,
-          left: align === "end" ? `${rect.right}px` : align === "center" ? `${rect.left + rect.width / 2}px` : `${rect.left}px`,
+          left: align === "end" ? `${rect.right}px` : align === "center" ? `${rect.left + rect.width / 2}px` : `${clampedLeft}px`,
           transform: align === "end" ? "translateX(-100%)" : align === "center" ? "translateX(-50%)" : undefined,
           zIndex: 70,
         }
@@ -188,7 +334,11 @@ export const MenubarContent = React.forwardRef<HTMLDivElement, MenubarContentPro
     return (
       <Portal>
         <div
-          ref={ref}
+          ref={(node) => {
+            contentRef.current = node
+            if (typeof ref === "function") ref(node)
+            else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node
+          }}
           role="menu"
           aria-orientation="vertical"
           style={{ ...positioningStyle, ...style }}
@@ -214,8 +364,9 @@ export interface MenubarItemProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const MenubarItem = React.forwardRef<HTMLDivElement, MenubarItemProps>(
-  ({ className, inset, disabled = false, asChild = false, onSelect, onClick, ...props }, ref) => {
+  ({ className, inset, disabled = false, asChild = false, onSelect, onClick, onKeyDown, ...props }, ref) => {
     const menubarCtx = React.useContext(MenubarContext)
+    const menuCtx = React.useContext(MenubarMenuContext)
 
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
       if (disabled) return
@@ -223,6 +374,18 @@ export const MenubarItem = React.forwardRef<HTMLDivElement, MenubarItemProps>(
       if (!e.defaultPrevented) {
         onSelect?.()
         menubarCtx?.setActiveMenu(null)
+        menuCtx?.triggerRef.current?.focus()
+      }
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (disabled) return
+      onKeyDown?.(e)
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault()
+        onSelect?.()
+        menubarCtx?.setActiveMenu(null)
+        menuCtx?.triggerRef.current?.focus()
       }
     }
 
@@ -232,13 +395,15 @@ export const MenubarItem = React.forwardRef<HTMLDivElement, MenubarItemProps>(
       <Comp
         ref={ref}
         role="menuitem"
-        aria-disabled={disabled}
+        tabIndex={disabled ? -1 : 0}
+        aria-disabled={disabled ? true : undefined}
         data-disabled={disabled ? "" : undefined}
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
         className={cn(
-          "relative flex cursor-pointer select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+          "relative flex cursor-pointer select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:ring-1 focus-visible:ring-ring",
           inset && "pl-8",
-          disabled && "pointer-events-none opacity-50",
+          disabled && "pointer-events-none opacity-50 cursor-not-allowed",
           className
         )}
         {...props}
@@ -255,8 +420,9 @@ export interface MenubarCheckboxItemProps extends React.HTMLAttributes<HTMLDivEl
 }
 
 export const MenubarCheckboxItem = React.forwardRef<HTMLDivElement, MenubarCheckboxItemProps>(
-  ({ className, children, checked = false, disabled = false, onCheckedChange, onClick, ...props }, ref) => {
+  ({ className, children, checked = false, disabled = false, onCheckedChange, onClick, onKeyDown, ...props }, ref) => {
     const menubarCtx = React.useContext(MenubarContext)
+    const menuCtx = React.useContext(MenubarMenuContext)
 
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
       if (disabled) return
@@ -264,6 +430,18 @@ export const MenubarCheckboxItem = React.forwardRef<HTMLDivElement, MenubarCheck
       if (!e.defaultPrevented) {
         onCheckedChange?.(!checked)
         menubarCtx?.setActiveMenu(null)
+        menuCtx?.triggerRef.current?.focus()
+      }
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (disabled) return
+      onKeyDown?.(e)
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault()
+        onCheckedChange?.(!checked)
+        menubarCtx?.setActiveMenu(null)
+        menuCtx?.triggerRef.current?.focus()
       }
     }
 
@@ -271,19 +449,22 @@ export const MenubarCheckboxItem = React.forwardRef<HTMLDivElement, MenubarCheck
       <div
         ref={ref}
         role="menuitemcheckbox"
+        tabIndex={disabled ? -1 : 0}
         aria-checked={checked}
-        aria-disabled={disabled}
+        aria-disabled={disabled ? true : undefined}
+        data-disabled={disabled ? "" : undefined}
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
         className={cn(
-          "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-          disabled && "pointer-events-none opacity-50",
+          "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:ring-1 focus-visible:ring-ring",
+          disabled && "pointer-events-none opacity-50 cursor-not-allowed",
           className
         )}
         {...props}
       >
         {checked && (
           <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-            <Check className="h-3.5 w-3.5" />
+            <Check className="h-3.5 w-3.5" aria-hidden="true" />
           </span>
         )}
         {children}
@@ -301,8 +482,9 @@ export interface MenubarRadioItemProps extends React.HTMLAttributes<HTMLDivEleme
 }
 
 export const MenubarRadioItem = React.forwardRef<HTMLDivElement, MenubarRadioItemProps>(
-  ({ className, children, checked = false, disabled = false, onSelect, onClick, ...props }, ref) => {
+  ({ className, children, checked = false, disabled = false, onSelect, onClick, onKeyDown, ...props }, ref) => {
     const menubarCtx = React.useContext(MenubarContext)
+    const menuCtx = React.useContext(MenubarMenuContext)
 
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
       if (disabled) return
@@ -310,6 +492,18 @@ export const MenubarRadioItem = React.forwardRef<HTMLDivElement, MenubarRadioIte
       if (!e.defaultPrevented) {
         onSelect?.()
         menubarCtx?.setActiveMenu(null)
+        menuCtx?.triggerRef.current?.focus()
+      }
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (disabled) return
+      onKeyDown?.(e)
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault()
+        onSelect?.()
+        menubarCtx?.setActiveMenu(null)
+        menuCtx?.triggerRef.current?.focus()
       }
     }
 
@@ -317,19 +511,22 @@ export const MenubarRadioItem = React.forwardRef<HTMLDivElement, MenubarRadioIte
       <div
         ref={ref}
         role="menuitemradio"
+        tabIndex={disabled ? -1 : 0}
         aria-checked={checked}
-        aria-disabled={disabled}
+        aria-disabled={disabled ? true : undefined}
+        data-disabled={disabled ? "" : undefined}
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
         className={cn(
-          "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-          disabled && "pointer-events-none opacity-50",
+          "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:ring-1 focus-visible:ring-ring",
+          disabled && "pointer-events-none opacity-50 cursor-not-allowed",
           className
         )}
         {...props}
       >
         {checked && (
           <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-            <Circle className="h-2 w-2 fill-current" />
+            <Circle className="h-2 w-2 fill-current" aria-hidden="true" />
           </span>
         )}
         {children}
@@ -364,6 +561,7 @@ export const MenubarSeparator = React.forwardRef<HTMLDivElement, MenubarSeparato
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
+      role="separator"
       className={cn("-mx-1 my-1 h-px bg-border", className)}
       {...props}
     />
@@ -392,12 +590,32 @@ export const MenubarGroup = React.forwardRef<HTMLDivElement, MenubarGroupProps>(
 )
 MenubarGroup.displayName = "MenubarGroup"
 
+// Submenus
+interface MenubarSubContextValue {
+  subOpen: boolean
+  setSubOpen: (open: boolean) => void
+}
+
+const MenubarSubContext = React.createContext<MenubarSubContextValue | null>(null)
+
 export interface MenubarSubProps {
   children?: React.ReactNode
 }
 
 export const MenubarSub: React.FC<MenubarSubProps> = ({ children }) => {
-  return <div className="relative">{children}</div>
+  const [subOpen, setSubOpen] = React.useState(false)
+
+  return (
+    <MenubarSubContext.Provider value={{ subOpen, setSubOpen }}>
+      <div
+        className="relative"
+        onMouseEnter={() => setSubOpen(true)}
+        onMouseLeave={() => setSubOpen(false)}
+      >
+        {children}
+      </div>
+    </MenubarSubContext.Provider>
+  )
 }
 
 export interface MenubarSubTriggerProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -405,36 +623,75 @@ export interface MenubarSubTriggerProps extends React.HTMLAttributes<HTMLDivElem
 }
 
 export const MenubarSubTrigger = React.forwardRef<HTMLDivElement, MenubarSubTriggerProps>(
-  ({ className, inset, children, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "flex cursor-default select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-        inset && "pl-8",
-        className
-      )}
-      {...props}
-    >
-      {children}
-      <ChevronRight className="ml-auto h-3.5 w-3.5" />
-    </div>
-  )
+  ({ className, inset, children, onKeyDown, ...props }, ref) => {
+    const subContext = React.useContext(MenubarSubContext)
+    const subOpen = subContext?.subOpen ?? false
+    const setSubOpen = subContext?.setSubOpen
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      onKeyDown?.(e)
+      if (e.key === "ArrowRight") {
+        e.preventDefault()
+        setSubOpen?.(true)
+      }
+    }
+
+    return (
+      <div
+        ref={ref}
+        role="menuitem"
+        tabIndex={0}
+        aria-haspopup="menu"
+        aria-expanded={subOpen}
+        onKeyDown={handleKeyDown}
+        className={cn(
+          "flex cursor-default select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:ring-1 focus-visible:ring-ring",
+          inset && "pl-8",
+          className
+        )}
+        {...props}
+      >
+        {children}
+        <ChevronRight className="ml-auto h-3.5 w-3.5" aria-hidden="true" />
+      </div>
+    )
+  }
 )
 MenubarSubTrigger.displayName = "MenubarSubTrigger"
 
 export interface MenubarSubContentProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const MenubarSubContent = React.forwardRef<HTMLDivElement, MenubarSubContentProps>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "z-50 min-w-[8rem] overflow-hidden rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-xl duration-150 animate-in fade-in-0 zoom-in-95",
-        className
-      )}
-      {...props}
-    />
-  )
+  ({ className, onKeyDown, ...props }, ref) => {
+    const subContext = React.useContext(MenubarSubContext)
+    const subOpen = subContext?.subOpen ?? false
+    const setSubOpen = subContext?.setSubOpen
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      onKeyDown?.(e)
+      if (e.key === "ArrowLeft" || e.key === "Escape") {
+        e.preventDefault()
+        e.stopPropagation()
+        setSubOpen?.(false)
+      }
+    }
+
+    if (!subOpen) return null
+
+    return (
+      <div
+        ref={ref}
+        role="menu"
+        aria-orientation="vertical"
+        onKeyDown={handleKeyDown}
+        className={cn(
+          "absolute left-full top-0 z-[70] min-w-[8rem] overflow-hidden rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-xl duration-150 animate-in fade-in-0 zoom-in-95",
+          className
+        )}
+        {...props}
+      />
+    )
+  }
 )
 MenubarSubContent.displayName = "MenubarSubContent"
 

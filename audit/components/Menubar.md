@@ -1,6 +1,6 @@
 # Menubar — Audit Report
 
-## Score: 5.5 / 10 — Mouse interactions work well, but zero keyboard navigation
+## Score: 9.5 / 10 — Status: Fixed (Full WAI-ARIA Menubar Keyboard Management & Submenus)
 
 ---
 
@@ -10,18 +10,22 @@
 - Correct ARIA markup structure: `role="menubar"`, `role="menuitem"`, `aria-haspopup="menu"`, `aria-expanded`, `role="menu"`, `aria-orientation="vertical"`, `role="menuitemcheckbox"`, `role="menuitemradio"`, `role="group"`.
 - Renders dropdown panels via `<Portal>` to avoid clipping.
 - Design tokens: `bg-background`, `border-border`, `bg-popover`, `text-popover-foreground`, `hover:bg-accent`, `hover:text-accent-foreground`.
+- Full WAI-ARIA roving keyboard manager: Left/Right switches top-level menus, Down/Enter/Space opens and auto-focuses first item, Up/Down cycles items, Home/End jumps to ends.
+- Escape closes the active menu and returns focus to the active trigger button.
+- Fully functional submenus (`MenubarSub`, `MenubarSubTrigger`, `MenubarSubContent`) with hover open/close, `ArrowRight` to open, and `ArrowLeft`/`Escape` to close.
+- Viewport boundary clamping prevents dropdown clipping on narrow viewports.
 
 ---
 
-## Issues
+## Remediated Issues
 
-| ID | Severity | Category | File:Line | Problem | Why It Matters | Fix |
-|----|----------|----------|-----------|---------|----------------|-----|
-| MB-01 | Critical | A11y | menubar.tsx:169–205 | Complete lack of keyboard arrow navigation (`ArrowLeft`/`ArrowRight`/`ArrowUp`/`ArrowDown`) across menubar triggers and dropdown items | Violates the foundational WAI-ARIA Menubar specification; keyboard users cannot navigate the menubar | Implement full menubar keyboard manager: Left/Right switches menus, Down opens and moves focus into items, Up/Down cycles items |
-| MB-02 | Critical | A11y | menubar.tsx:169–205 | No `Escape` key handler to close active menubar menus and return focus | Users who open a menu via keyboard cannot dismiss it without clicking outside | Add `keydown` handler on active menu for `Escape` that calls `setActiveMenu(null)` and focuses trigger |
-| MB-03 | Critical | A11y | menubar.tsx:216–340 | `MenubarItem`, `MenubarCheckboxItem`, and `MenubarRadioItem` lack `onKeyDown` handlers (Enter/Space) and `tabIndex` | Keyboard users cannot activate any item in the menubar dropdowns | Add `tabIndex={-1}`, `onKeyDown` to execute selection and close the menu bar on Enter/Space |
-| MB-04 | Critical | Feature | menubar.tsx:395–439 | Submenus (`MenubarSub`, `MenubarSubTrigger`, `MenubarSubContent`) are non-functional stubs without state or visibility toggling | Nested submenus render statically or brokenly | Implement nested submenu state machine with hover and arrow navigation (`ArrowRight` opens submenu, `ArrowLeft` returns to parent) |
-| MB-05 | Major | Layout | menubar.tsx:178–187 | Fixed positioning without viewport collision detection or boundary checks | Menubar content overflowing right/bottom edge of the browser viewport gets clipped | Add boundary flipping logic or clamp coordinates against `window.innerWidth` |
+| ID | Severity | Category | File:Line | Problem | Status |
+|----|----------|----------|-----------|---------|--------|
+| MB-01 | Critical | A11y | menubar.tsx:169–205 | Complete lack of keyboard arrow navigation across menubar triggers and dropdown items | Fixed |
+| MB-02 | Critical | A11y | menubar.tsx:169–205 | No `Escape` key handler to close active menubar menus and return focus | Fixed |
+| MB-03 | Critical | A11y | menubar.tsx:216–340 | `MenubarItem`, `MenubarCheckboxItem`, and `MenubarRadioItem` lack `onKeyDown` handlers and `tabIndex` | Fixed |
+| MB-04 | Critical | Feature | menubar.tsx:395–439 | Submenus (`MenubarSub`, `MenubarSubTrigger`, `MenubarSubContent`) non-functional | Fixed |
+| MB-05 | Major | Layout | menubar.tsx:178–187 | Fixed positioning without viewport collision detection | Fixed |
 | MB-06 | Nit | TypeScript | menubar.tsx:454–468 | Monkey-patching compound components with `(Menubar as any).Menu = ...` | Bypasses TypeScript type checks for attached properties | Use compound component typing interface intersection |
 
 ---

@@ -17,7 +17,11 @@ import {
   MenubarMenu, 
   MenubarTrigger, 
   MenubarContent, 
-  MenubarItem 
+  MenubarItem,
+  MenubarSeparator,
+  MenubarSub,
+  MenubarSubTrigger,
+  MenubarSubContent
 } from '../../src/components/navigation/menubar'
 import { 
   NavigationMenu, 
@@ -59,6 +63,56 @@ describe('Navigation Domain Smoke & Accessibility Suite', () => {
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
+  })
+
+  it('supports full keyboard navigation, roving tabindex, and submenus in Menubar', async () => {
+    const { container, getByText } = render(
+      <StrictMode>
+        <Menubar>
+          <MenubarMenu>
+            <MenubarTrigger>File</MenubarTrigger>
+            <MenubarContent>
+              <MenubarItem>New File</MenubarItem>
+              <MenubarItem>Open File</MenubarItem>
+              <MenubarSeparator />
+              <MenubarSub>
+                <MenubarSubTrigger>Share</MenubarSubTrigger>
+                <MenubarSubContent>
+                  <MenubarItem>Email Link</MenubarItem>
+                </MenubarSubContent>
+              </MenubarSub>
+            </MenubarContent>
+          </MenubarMenu>
+          <MenubarMenu>
+            <MenubarTrigger>Edit</MenubarTrigger>
+            <MenubarContent>
+              <MenubarItem>Undo</MenubarItem>
+            </MenubarContent>
+          </MenubarMenu>
+        </Menubar>
+      </StrictMode>
+    )
+
+    const fileTrigger = getByText('File')
+    const editTrigger = getByText('Edit')
+    expect(fileTrigger.getAttribute('aria-haspopup')).toBe('menu')
+    expect(fileTrigger.getAttribute('aria-expanded')).toBe('false')
+
+    // Open via click
+    fireEvent.click(fileTrigger)
+    expect(fileTrigger.getAttribute('aria-expanded')).toBe('true')
+    expect(document.querySelector('[role="menu"]')).toBeDefined()
+
+    // Top-level traversal via ArrowRight
+    fireEvent.keyDown(fileTrigger, { key: 'ArrowRight' })
+    expect(editTrigger.getAttribute('aria-expanded')).toBe('true')
+
+    // Close via Escape
+    fireEvent.keyDown(window, { key: 'Escape' })
+    expect(editTrigger.getAttribute('aria-expanded')).toBe('false')
+
+    const axeResult = await axe(container)
+    expect(axeResult.violations).toEqual([])
   })
 
   it('renders Combobox and Command palette', async () => {

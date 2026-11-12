@@ -86,3 +86,10 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **CM-07 (Minor)**: Ensured `aria-disabled` is strictly set on disabled menu items.
   - **CM-08 (Nit)**: Cleaned up ref forwarding in `ContextMenuTrigger`.
   - Added unit, keyboard activation, and axe tests in `tests/smoke/overlay.test.tsx`.
+
+- **`Menubar`** (`src/components/navigation/menubar.tsx`):
+  - **MB-01 & MB-02 (Critical)**: Implemented full WAI-ARIA roving keyboard navigation loop: `ArrowRight`/`ArrowLeft` cycles through top-level menubar triggers, `ArrowDown`/`Enter`/`Space` opens the menu and auto-focuses the first active item, `ArrowDown`/`ArrowUp`/`Home`/`End` roves between dropdown items, and `Escape` closes the menu and returns focus to the active trigger.
+  - **MB-03 (Critical)**: Added `tabIndex={disabled ? -1 : 0}`, `onKeyDown` handlers for `Enter` and `Space` on `MenubarItem`, `MenubarCheckboxItem`, and `MenubarRadioItem` to activate items and close the menubar.
+  - **MB-04 (Critical)**: Implemented functional submenus via `MenubarSubContext` with nested open state, hover open/close, `ArrowRight` to open submenu, and `ArrowLeft`/`Escape` to return to parent.
+  - **MB-05 (Major)**: Added viewport boundary clamping preventing menubar dropdowns from rendering off-screen.
+  - Added unit, keyboard navigation, and axe tests in `tests/smoke/navigation.test.tsx`.
