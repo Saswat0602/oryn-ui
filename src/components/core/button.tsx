@@ -7,7 +7,13 @@ import { Slot } from "../../lib/slot"
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
   size?: "default" | "sm" | "lg" | "icon"
+  /**
+   * Indicates an asynchronous action is in progress, showing a spinner and disabling interaction.
+   */
   loading?: boolean
+  /**
+   * @deprecated Use `loading` instead.
+   */
   isLoading?: boolean
   leftIcon?: React.ReactNode
   rightIcon?: React.ReactNode
@@ -80,7 +86,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isBusy && (
           <svg
-            className="h-4 w-4 animate-spin shrink-0"
+            className="h-4 w-4 motion-safe:animate-spin shrink-0"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"

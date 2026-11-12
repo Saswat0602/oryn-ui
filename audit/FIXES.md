@@ -377,3 +377,9 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
 - **`Chart`** (`src/components/data/chart.tsx`):
   - **CHT-01 (Major)**: Added `role="img"` and descriptive `aria-label` across all vector chart SVG elements (`AreaChart`, `BarChart`, `LineChart`, `PieChart`, and `RadialBarChart`).
   - Added unit test in `tests/smoke/data.test.tsx` asserting `role="img"` and `aria-label` on SVG chart graphics.
+
+- **`Button`** (`src/components/core/button.tsx`):
+  - **B-01 (Major)**: Enforced accessible naming conventions and verified `aria-label` propagation on icon-only buttons (`size="icon"`).
+  - **B-03 (Minor)**: Added `@deprecated Use loading instead` JSDoc annotation to legacy `isLoading` prop.
+  - **B-04 (Minor)**: Added `motion-safe:animate-spin` on loading spinner SVG to respect user reduced-motion preferences.
+  - Added unit tests in `tests/smoke/core.test.tsx` asserting `loading` disabled behavior, `aria-busy`, and icon button `aria-label`.

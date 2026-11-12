@@ -23,17 +23,32 @@ import { InputGroup, InputGroupAddon } from '../../src/components/core/input-gro
 describe('Core Domain Smoke & Accessibility Suite', () => {
   it('renders Button with variants and handles click events', async () => {
     let clicked = false
-    const { container, getByRole } = render(
+    let loadingClicked = false
+    const { container, getByRole, getByLabelText } = render(
       <StrictMode>
         <Button variant="default" onClick={() => { clicked = true }}>
           Click Action
         </Button>
+        <Button size="icon" aria-label="Settings action">
+          ⚙️
+        </Button>
+        <Button loading onClick={() => { loadingClicked = true }}>
+          Loading Action
+        </Button>
       </StrictMode>
     )
-    const btn = getByRole('button')
+    const btn = getByRole('button', { name: 'Click Action' })
     expect(btn).toBeDefined()
     fireEvent.click(btn)
     expect(clicked).toBe(true)
+
+    const iconBtn = getByLabelText('Settings action')
+    expect(iconBtn).toBeDefined()
+
+    const loadingBtn = getByRole('button', { name: 'Loading Action' })
+    expect(loadingBtn.getAttribute('aria-busy')).toBe('true')
+    fireEvent.click(loadingBtn)
+    expect(loadingClicked).toBe(false)
 
     // SSR
     const ssr = renderToString(<Button variant="outline">SSR Button</Button>)
