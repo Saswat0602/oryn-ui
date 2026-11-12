@@ -17,7 +17,7 @@ import { Slider } from '../../src/components/core/slider'
 import { Rating } from '../../src/components/core/rating'
 import { Skeleton } from '../../src/components/core/skeleton'
 import { Textarea } from '../../src/components/core/textarea'
-import { ButtonGroup } from '../../src/components/core/button-group'
+import { ButtonGroup, ButtonGroupItem } from '../../src/components/core/button-group'
 import { InputGroup, InputGroupAddon } from '../../src/components/core/input-group'
 
 describe('Core Domain Smoke & Accessibility Suite', () => {
@@ -191,6 +191,29 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
     expect(getByText('Right')).toBeDefined()
     expect(getByPlaceholderText('example.com')).toBeDefined()
 
+    const results = await axe(container)
+    expect(results.violations).toEqual([])
+  })
+
+  it('supports segmented mode, roving tabindex, and arrow navigation in ButtonGroup', async () => {
+    const handleValueChange = vi.fn()
+    const { container, getByText } = render(
+      <StrictMode>
+        <ButtonGroup segmented defaultValue="month" onValueChange={handleValueChange} aria-label="Billing frequency">
+          <ButtonGroupItem value="day">Day</ButtonGroupItem>
+          <ButtonGroupItem value="month">Month</ButtonGroupItem>
+          <ButtonGroupItem value="year">Year</ButtonGroupItem>
+        </ButtonGroup>
+      </StrictMode>
+    )
+    const monthItem = getByText('Month')
+    const yearItem = getByText('Year')
+    expect(monthItem.getAttribute('role')).toBe('radio')
+    expect(monthItem.getAttribute('aria-checked')).toBe('true')
+    expect(monthItem.getAttribute('tabindex')).toBe('0')
+    fireEvent.keyDown(monthItem, { key: 'ArrowRight' })
+    expect(handleValueChange).toHaveBeenCalledWith('year')
+    expect(yearItem.getAttribute('aria-checked')).toBe('true')
     const results = await axe(container)
     expect(results.violations).toEqual([])
   })

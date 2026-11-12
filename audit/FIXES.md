@@ -132,3 +132,12 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **RG-05 (Minor)**: Removed redundant label `onClick` handler, allowing native `htmlFor` activation to function without duplicate state calls.
   - **RG-06 (Nit)**: Added `aria-hidden="true"` to decorative `Circle` radio indicator.
   - Added unit, arrow key navigation, and axe tests in `tests/smoke/forms.test.tsx`.
+
+- **`ButtonGroup`** (`src/components/core/button-group.tsx`):
+  - **BG-01 (Critical)**: Removed redundant `role="button"` on native button elements to eliminate screen reader double-announcement.
+  - **BG-02 (Critical)**: Implemented full roving tabindex and 2D Arrow key navigation (`ArrowDown`/`ArrowRight`/`ArrowUp`/`ArrowLeft`) for segmented `role="radiogroup"` items.
+  - **BG-03 (Major)**: Added strict generic type parameter `<T = any>` to `ButtonGroupProps`, `ButtonGroupItemProps`, and `ButtonGroupContextValue`, removing pervasive `any` types.
+  - **BG-04 (Major)**: Fixed ARIA attributes compliance so `aria-orientation` is only rendered on supported `role="radiogroup"` containers, avoiding critical axe `aria-allowed-attr` violations on `role="group"`.
+  - **BG-05 (Minor)**: Added `cursor-not-allowed` to disabled button group items.
+  - **BG-06 (Minor)**: Updated active border token to `border-primary` for consistent contrast across dark and light themes.
+  - Added unit, roving tabindex, arrow navigation, and axe tests in `tests/smoke/core.test.tsx`.

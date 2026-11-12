@@ -3,25 +3,28 @@
 import * as React from "react"
 import { cn } from "../../lib/utils"
 
-export interface ButtonGroupContextValue {
+export interface ButtonGroupContextValue<T = any> {
   size?: "default" | "sm" | "lg" | "icon"
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
   disabled?: boolean
   orientation?: "horizontal" | "vertical"
   attached?: boolean
   segmented?: boolean
-  value?: any
-  onItemSelect?: (val: any) => void
-  isItemActive?: (val: any) => boolean
+  value?: T
+  firstItemValue?: T
+  registerItemValue?: (val: T) => void
+  onItemSelect?: (val: T) => void
+  isItemActive?: (val: T) => boolean
 }
 
 const ButtonGroupContext = React.createContext<ButtonGroupContextValue | null>(null)
 
-export function useButtonGroupContext() {
-  return React.useContext(ButtonGroupContext)
+export function useButtonGroupContext<T = any>() {
+  return React.useContext(ButtonGroupContext) as ButtonGroupContextValue<T> | null
 }
 
-export interface ButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ButtonGroupProps<T = any>
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "defaultValue"> {
   orientation?: "horizontal" | "vertical"
   attached?: boolean
   segmented?: boolean
@@ -30,14 +33,15 @@ export interface ButtonGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"
   disabled?: boolean
   type?: "single" | "multiple"
-  value?: any
-  defaultValue?: any
-  onValueChange?: (value: any) => void
+  value?: T
+  defaultValue?: T
+  onValueChange?: (value: T) => void
   children?: React.ReactNode
 }
 
-export interface ButtonGroupItemProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  value?: any
+export interface ButtonGroupItemProps<T = any>
+  extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "value"> {
+  value?: T
   isActive?: boolean
   children?: React.ReactNode
 }
@@ -50,12 +54,20 @@ export const ButtonGroupItem = React.forwardRef<HTMLButtonElement, ButtonGroupIt
       className,
       disabled: itemDisabled,
       onClick,
+      onKeyDown,
       children,
+      tabIndex,
       ...props
     },
     ref
   ) => {
     const context = useButtonGroupContext()
+
+    React.useEffect(() => {
+      if (value !== undefined) {
+        context?.registerItemValue?.(value)
+      }
+    }, [context, value])
 
     const active =
       isActiveProp !== undefined
@@ -83,22 +95,63 @@ export const ButtonGroupItem = React.forwardRef<HTMLButtonElement, ButtonGroupIt
       }
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+      onKeyDown?.(e)
+      if (e.key === " " || e.key === "Enter") {
+        e.preventDefault()
+        if (!disabled && context?.onItemSelect && value !== undefined) {
+          context.onItemSelect(value)
+        }
+      } else if (
+        isSegmented &&
+        (e.key === "ArrowRight" ||
+          e.key === "ArrowDown" ||
+          e.key === "ArrowLeft" ||
+          e.key === "ArrowUp")
+      ) {
+        e.preventDefault()
+        const root = (e.currentTarget.closest('[role="radiogroup"]') || document) as HTMLElement
+        const radios = Array.from(
+          root.querySelectorAll<HTMLButtonElement>('[role="radio"]:not([disabled]):not([aria-disabled="true"])')
+        )
+        if (!radios.length) return
+        const currentIndex = radios.indexOf(e.currentTarget)
+        let nextIndex = 0
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+          nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % radios.length
+        } else {
+          nextIndex = currentIndex === -1 ? radios.length - 1 : (currentIndex - 1 + radios.length) % radios.length
+        }
+        const nextRadio = radios[nextIndex]
+        if (nextRadio) {
+          nextRadio.focus()
+          nextRadio.click()
+        }
+      }
+    }
+
     if (isSegmented) {
+      const isRovingFocusable =
+        active || (!context?.value && context?.firstItemValue === value)
+
       return (
         <button
           ref={ref}
           type="button"
           role="radio"
           aria-checked={active}
+          aria-disabled={disabled}
           disabled={disabled}
+          tabIndex={tabIndex ?? (isRovingFocusable ? 0 : -1)}
           onClick={handleClick}
+          onKeyDown={handleKeyDown}
           className={cn(
             "inline-flex items-center justify-center font-medium transition-all duration-150 rounded-md select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
             sizeClasses[size],
             active
               ? "bg-background text-foreground shadow-xs font-semibold"
               : "text-muted-foreground hover:text-foreground hover:bg-background/50",
-            disabled && "pointer-events-none opacity-50",
+            disabled && "cursor-not-allowed pointer-events-none opacity-50",
             className
           )}
           {...props}
@@ -112,17 +165,19 @@ export const ButtonGroupItem = React.forwardRef<HTMLButtonElement, ButtonGroupIt
       <button
         ref={ref}
         type="button"
-        role="button"
         aria-pressed={active}
+        aria-disabled={disabled}
         disabled={disabled}
+        tabIndex={tabIndex}
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
         className={cn(
           "inline-flex items-center justify-center font-medium transition-colors select-none cursor-pointer border border-input focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:z-10 hover:z-10 active:z-10",
           sizeClasses[size],
           active
-            ? "bg-accent text-accent-foreground font-semibold border-primary/40 z-10"
+            ? "bg-accent text-accent-foreground font-semibold border-primary z-10"
             : "bg-background text-foreground hover:bg-accent hover:text-accent-foreground",
-          disabled && "pointer-events-none opacity-50",
+          disabled && "cursor-not-allowed pointer-events-none opacity-50",
           className
         )}
         {...props}
@@ -167,6 +222,11 @@ export const ButtonGroup = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
     )
 
     const currentValue = controlledValue !== undefined ? controlledValue : internalValue
+    const [firstItemValue, setFirstItemValue] = React.useState<any>(undefined)
+
+    const registerItemValue = React.useCallback((val: any) => {
+      setFirstItemValue((prev: any) => prev ?? val)
+    }, [])
 
     const handleItemSelect = React.useCallback(
       (itemVal: any) => {
@@ -215,6 +275,8 @@ export const ButtonGroup = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
           attached,
           segmented,
           value: currentValue,
+          firstItemValue,
+          registerItemValue,
           onItemSelect: handleItemSelect,
           isItemActive,
         }}
@@ -223,6 +285,7 @@ export const ButtonGroup = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
           ref={ref}
           role={segmented ? "radiogroup" : "group"}
           aria-orientation={segmented ? orientation : undefined}
+          aria-disabled={disabled ? true : undefined}
           className={cn(
             "inline-flex",
             isVertical ? "flex-col" : "flex-row",
