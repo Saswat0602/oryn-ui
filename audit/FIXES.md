@@ -389,3 +389,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **I-03 (Minor)**: Added `aria-hidden="true"` and `pointer-events-none` to `leftIcon` and `rightIcon` wrapper containers so decorative icons don't pollute screen reader output.
   - **I-04 (Minor)**: Added `min-w-0` to the icon wrapper container `<div>` to eliminate overflow when placed in flexbox layouts.
   - Added unit test in `tests/smoke/core.test.tsx` asserting `aria-invalid="true"` propagation on error state.
+
+- **`InputGroup`** (`src/components/core/input-group.tsx`):
+  - **IG-01 (Major)**: Wired `size` prop ("sm" | "default" | "lg") via `InputGroupContext` so padding and font size adjust automatically on `InputGroupAddon`.
+  - **IG-02 (Major)**: Added semantic default `role="group"` on `InputGroup` container to establish accessible control grouping for screen readers.
+  - Added unit test in `tests/smoke/core.test.tsx` verifying `role="group"` and `data-size` propagation.

@@ -257,7 +257,7 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders ButtonGroup and InputGroup composites', async () => {
-    const { container, getByText, getByPlaceholderText } = render(
+    const { container, getByText, getByPlaceholderText, getByRole } = render(
       <StrictMode>
         <ButtonGroup>
           <Button variant="outline">Left</Button>
@@ -265,7 +265,7 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
           <Button variant="outline">Right</Button>
         </ButtonGroup>
 
-        <InputGroup>
+        <InputGroup size="sm" aria-label="Website domain input group">
           <InputGroupAddon>https://</InputGroupAddon>
           <Input placeholder="example.com" aria-label="Domain" />
         </InputGroup>
@@ -275,6 +275,10 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
     expect(getByText('Middle')).toBeDefined()
     expect(getByText('Right')).toBeDefined()
     expect(getByPlaceholderText('example.com')).toBeDefined()
+
+    const group = getByRole('group', { name: 'Website domain input group' })
+    expect(group).toBeDefined()
+    expect(group.getAttribute('data-size')).toBe('sm')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
