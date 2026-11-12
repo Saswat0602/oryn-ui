@@ -53,3 +53,15 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **CP-08 (Minor)**: Added accessible `aria-label` to EyeDropper and Copy buttons.
   - **CP-10 (Nit)**: Configured window scroll listener with `{ passive: true, capture: true }`.
   - Added smoke and accessibility tests in `tests/smoke/forms.test.tsx` verifying sliders, dialog, keyboard interaction, and axe score.
+
+- **`DateTimePicker`** (`src/components/forms/datetime-picker.tsx`):
+  - **DTP-04 (Critical)**: Replaced defective local `cn` with official `cn` helper from `../../lib/utils`.
+  - **DTP-01 & DTP-03 (Critical)**: Added full locale date `aria-label`, `aria-selected`, `aria-current="date"`, roving `tabIndex`, and full 2D keyboard navigation (`ArrowLeft`/`ArrowRight`/`ArrowUp`/`ArrowDown`, `Home`/`End`, `PageUp`/`PageDown`, `Enter`/`Space`).
+  - **DTP-02 (Critical)**: Added `role="dialog"`, `aria-label="Date and time picker"`, and `aria-modal="true"` to floating portal popover with Escape key handler.
+  - **DTP-05 (Major)**: Bound `aria-haspopup="dialog"`, `aria-expanded={isOpen}`, `aria-controls={dialogId}`, and keyboard trigger activation (`Enter`/`Space`/`ArrowDown`).
+  - **DTP-06 (Major)**: Added `role="tablist"`, `role="tab"`, `aria-selected`, and `role="tabpanel"` for mode switcher tabs.
+  - **DTP-07 (Major)**: Added `role="dialog"` and `aria-modal="true"` to year and month selection modals.
+  - **DTP-08 (Major)**: Synchronized `viewDate` and `focusedDate` whenever external `value` prop changes.
+  - **DTP-09 (Minor)**: Added accessible `aria-label`s to month navigation buttons.
+  - **DTP-11 (Nit)**: Guarded click-outside handler with `if (!isOpen) return` and added `{ passive: true, capture: true }` to window scroll listener.
+  - Added unit, dialog semantics, and axe accessibility smoke tests in `tests/smoke/forms.test.tsx`.

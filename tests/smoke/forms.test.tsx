@@ -135,6 +135,47 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
     expect(results.violations).toEqual([])
   })
 
+  it('renders DateTimePicker with full dialog semantics and mode tabs', async () => {
+    const handleDateTimeChange = vi.fn()
+    const { container, getByRole } = render(
+      <StrictMode>
+        <DateTimePicker 
+          value={new Date(2026, 9, 31, 14, 30)} 
+          onChange={handleDateTimeChange} 
+        />
+      </StrictMode>
+    )
+
+    const trigger = getByRole('button')
+    expect(trigger.getAttribute('aria-haspopup')).toBe('dialog')
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+
+    // Open DateTimePicker dialog
+    fireEvent.click(trigger)
+    expect(trigger.getAttribute('aria-expanded')).toBe('true')
+
+    const dialog = document.querySelector('[role="dialog"]')
+    expect(dialog).toBeDefined()
+    expect(dialog?.getAttribute('aria-modal')).toBe('true')
+
+    // Tabs should be present in mode="both"
+    const tablist = document.querySelector('[role="tablist"]')
+    expect(tablist).toBeDefined()
+
+    const dateTab = document.querySelector('[role="tab"][aria-selected="true"]')
+    expect(dateTab).toBeDefined()
+
+    // Escape closes dialog
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+
+    const ssr = renderToString(<DateTimePicker value={new Date(2026, 9, 31, 14, 30)} />)
+    expect(ssr).toBeDefined()
+
+    const results = await axe(container)
+    expect(results.violations).toEqual([])
+  })
+
   it('renders InputOTP and RadioGroup', async () => {
     const { container, getByLabelText } = render(
       <StrictMode>
