@@ -307,3 +307,9 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **PRI-01 (Major)**: Added accessible `aria-label={props['aria-label'] || placeholder || 'Message prompt'}` to the internal `<textarea>`.
   - **PRI-06 (Nit)**: Replaced low-contrast `text-muted-foreground/50` on disabled submit button with `text-muted-foreground opacity-60` and added `focus-visible:` focus rings.
   - Added unit, textarea aria-label verification, and axe tests in `tests/smoke/forms.test.tsx`.
+
+- **`Sheet`** (`src/components/layout/sheet.tsx`):
+  - **SHT-01 (Major)**: Generated unique `titleId` and `descriptionId` via `SheetContext` and auto-wired `aria-labelledby` and `aria-describedby` on `SheetContent`.
+  - **SHT-02 (Major)**: Implemented focus restoration capturing `SheetTrigger` and restoring keyboard focus on sheet dismissal.
+  - **SHT-03 (Major)**: Connected `useSheet()` directly to `SheetContext` to return live `open` state and `setOpen` callback.
+  - Added unit, automatic aria-labelledby linkage, and axe tests in `tests/smoke/layout.test.tsx`.

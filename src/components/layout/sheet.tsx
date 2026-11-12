@@ -12,6 +12,9 @@ import { useControllableState } from "../../lib/use-controllable-state"
 interface SheetContextValue {
   open: boolean
   setOpen: (open: boolean) => void
+  titleId: string
+  descriptionId: string
+  triggerRef: React.MutableRefObject<HTMLButtonElement | null>
 }
 
 const SheetContext = React.createContext<SheetContextValue | null>(null)
@@ -43,8 +46,13 @@ export const Sheet: React.FC<SheetProps> = ({
     onChange: onOpenChange,
   })
 
+  const uniqueId = React.useId()
+  const titleId = `sheet-title-${uniqueId}`
+  const descriptionId = `sheet-desc-${uniqueId}`
+  const triggerRef = React.useRef<HTMLButtonElement | null>(null)
+
   return (
-    <SheetContext.Provider value={{ open, setOpen }}>
+    <SheetContext.Provider value={{ open, setOpen, titleId, descriptionId, triggerRef }}>
       {children}
     </SheetContext.Provider>
   )
@@ -55,8 +63,8 @@ export interface SheetTriggerProps extends React.ButtonHTMLAttributes<HTMLButton
 }
 
 export const SheetTrigger = React.forwardRef<HTMLButtonElement, SheetTriggerProps>(
-  ({ asChild = false, onClick, children, ...props }, ref) => {
-    const { setOpen } = useSheetContext()
+  ({ asChild = false, onClick, children, ...props }, forwardedRef) => {
+    const { setOpen, triggerRef } = useSheetContext()
     const Comp = asChild ? Slot : "button"
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -68,7 +76,11 @@ export const SheetTrigger = React.forwardRef<HTMLButtonElement, SheetTriggerProp
 
     return (
       <Comp
-        ref={ref as any}
+        ref={(node: HTMLButtonElement | null) => {
+          triggerRef.current = node
+          if (typeof forwardedRef === "function") forwardedRef(node)
+          else if (forwardedRef) (forwardedRef as React.MutableRefObject<HTMLButtonElement | null>).current = node
+        }}
         type={asChild ? undefined : "button"}
         onClick={handleClick}
         {...props}
@@ -169,10 +181,19 @@ export interface SheetContentProps extends React.HTMLAttributes<HTMLDivElement> 
 
 export const SheetContent = React.forwardRef<HTMLDivElement, SheetContentProps>(
   ({ side = "right", className, children, showCloseButton = true, ...props }, forwardedRef) => {
-    const { open, setOpen } = useSheetContext()
+    const { open, setOpen, titleId, descriptionId, triggerRef } = useSheetContext()
     const contentRef = React.useRef<HTMLDivElement | null>(null)
 
     useFocusTrap(contentRef as React.RefObject<HTMLElement>, open)
+
+    // Focus restoration
+    const prevOpenRef = React.useRef(open)
+    React.useEffect(() => {
+      if (prevOpenRef.current && !open) {
+        triggerRef.current?.focus()
+      }
+      prevOpenRef.current = open
+    }, [open, triggerRef])
 
     // Body scroll lock
     React.useEffect(() => {
@@ -209,6 +230,8 @@ export const SheetContent = React.forwardRef<HTMLDivElement, SheetContentProps>(
           }}
           role="dialog"
           aria-modal="true"
+          aria-labelledby={props["aria-labelledby"] || titleId}
+          aria-describedby={props["aria-describedby"] || descriptionId}
           data-state={open ? "open" : "closed"}
           className={cn(
             "fixed z-[60] gap-4 bg-background text-foreground border-border p-6 shadow-2xl transition ease-in-out duration-300",
@@ -270,33 +293,52 @@ SheetFooter.displayName = "SheetFooter"
 export interface SheetTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {}
 
 export const SheetTitle = React.forwardRef<HTMLHeadingElement, SheetTitleProps>(
-  ({ className, ...props }, ref) => (
-    <h2
-      ref={ref}
-      className={cn("text-base font-semibold text-foreground", className)}
-      {...props}
-    />
-  )
+  ({ className, id, ...props }, ref) => {
+    const context = React.useContext(SheetContext)
+    const titleId = id || context?.titleId
+    return (
+      <h2
+        ref={ref}
+        id={titleId}
+        className={cn("text-base font-semibold text-foreground", className)}
+        {...props}
+      />
+    )
+  }
 )
 SheetTitle.displayName = "SheetTitle"
 
 export interface SheetDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {}
 
 export const SheetDescription = React.forwardRef<HTMLParagraphElement, SheetDescriptionProps>(
-  ({ className, ...props }, ref) => (
-    <p
-      ref={ref}
-      className={cn("text-xs text-muted-foreground leading-relaxed", className)}
-      {...props}
-    />
-  )
+  ({ className, id, ...props }, ref) => {
+    const context = React.useContext(SheetContext)
+    const descriptionId = id || context?.descriptionId
+    return (
+      <p
+        ref={ref}
+        id={descriptionId}
+        className={cn("text-xs text-muted-foreground leading-relaxed", className)}
+        {...props}
+      />
+    )
+  }
 )
 SheetDescription.displayName = "SheetDescription"
 
-export const useSheet = () => ({
-  open: false,
-  setOpen: () => {},
-})
+export const useSheet = () => {
+  const context = React.useContext(SheetContext)
+  if (context) {
+    return {
+      open: context.open,
+      setOpen: context.setOpen,
+    }
+  }
+  return {
+    open: false,
+    setOpen: () => {},
+  }
+}
 
 // Compound component pattern attachment
 export type SheetComponent = typeof Sheet & {

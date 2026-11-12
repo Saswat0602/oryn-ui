@@ -141,7 +141,11 @@ describe('Layout Domain Smoke & Accessibility Suite', () => {
         </Resizable>
       </StrictMode>
     )
-    expect(getByText('Environment Variables')).toBeDefined()
+    const title = getByText('Environment Variables')
+    expect(title).toBeDefined()
+    const dialog = document.querySelector('[role="dialog"]')!
+    expect(dialog).toBeDefined()
+    expect(dialog.getAttribute('aria-labelledby')).toBe(title.getAttribute('id'))
     expect(getByText('Panel Left')).toBeDefined()
     expect(getByText('Panel Right')).toBeDefined()
 
