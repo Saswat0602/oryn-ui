@@ -38,12 +38,22 @@ describe('Layout Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders Navbar with logo and navigation links', async () => {
-    const { container, getByText, getAllByText } = render(
+    const { container, getByText, getAllByText, getByRole, getByLabelText } = render(
       <StrictMode>
         <Navbar
           brand="Mad UI"
+          showNotifications={true}
+          notificationCount={3}
+          showProfile={true}
           navItems={[
-            { id: '1', label: 'Documentation' },
+            {
+              id: '1',
+              label: 'Documentation',
+              dropdown: [
+                { label: 'Getting Started', action: () => {} },
+                { label: 'Installation', action: () => {} }
+              ]
+            },
             { id: '2', label: 'Components' }
           ]}
         />
@@ -51,6 +61,24 @@ describe('Layout Domain Smoke & Accessibility Suite', () => {
     )
     expect(getByText('Mad UI')).toBeDefined()
     expect(getAllByText('Documentation')[0]).toBeDefined()
+
+    // Test mobile menu toggle aria attributes
+    const mobileToggle = getByLabelText('Toggle navigation menu')
+    expect(mobileToggle.getAttribute('aria-expanded')).toBe('false')
+    expect(mobileToggle.getAttribute('aria-controls')).toBe('navbar-mobile-menu')
+
+    fireEvent.click(mobileToggle)
+    expect(mobileToggle.getAttribute('aria-expanded')).toBe('true')
+
+    // Test notification menu toggle and escape dismissal
+    const notifBtn = getByLabelText('Notifications')
+    expect(notifBtn.getAttribute('aria-expanded')).toBe('false')
+    fireEvent.click(notifBtn)
+    expect(notifBtn.getAttribute('aria-expanded')).toBe('true')
+    expect(getByRole('dialog', { name: 'Notifications' })).toBeDefined()
+
+    fireEvent.keyDown(window, { key: 'Escape' })
+    expect(notifBtn.getAttribute('aria-expanded')).toBe('false')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

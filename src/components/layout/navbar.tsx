@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import {
   Search,
   Bell,
@@ -8,9 +8,6 @@ import {
   Menu,
   X,
   ChevronDown,
-  Sun,
-  Moon,
-  Globe,
   Settings,
   LogOut,
 } from "../../icons"
@@ -111,6 +108,16 @@ export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
   onBrandClick?: () => void
 }
 
+const renderIcon = (icon: any, className = "w-3.5 h-3.5 shrink-0") => {
+  if (!icon) return null
+  if (React.isValidElement(icon)) return icon
+  if (typeof icon === "function") {
+    const IconComponent = icon
+    return <IconComponent className={className} />
+  }
+  return null
+}
+
 const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
   (
     {
@@ -177,6 +184,13 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(showMobileMenu)
     const [activeDropdown, setActiveDropdown] = useState<number | null>(null)
 
+    const notificationBtnRef = useRef<HTMLButtonElement>(null)
+    const notificationMenuRef = useRef<HTMLDivElement>(null)
+    const profileBtnRef = useRef<HTMLButtonElement>(null)
+    const profileMenuRef = useRef<HTMLDivElement>(null)
+    const dropdownTriggerRefs = useRef<Map<number, HTMLButtonElement>>(new Map())
+    const dropdownContentRefs = useRef<Map<number, HTMLDivElement>>(new Map())
+
     useEffect(() => {
       if (hideOnScroll || shrinkOnScroll) {
         const handleScroll = () => {
@@ -186,6 +200,77 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
         return () => window.removeEventListener("scroll", handleScroll)
       }
     }, [hideOnScroll, shrinkOnScroll])
+
+    // Global Escape key and Outside Click dismissal
+    useEffect(() => {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          if (showNotificationMenu) {
+            setShowNotificationMenu(false)
+            notificationBtnRef.current?.focus()
+          }
+          if (showProfileMenu) {
+            setShowProfileMenu(false)
+            profileBtnRef.current?.focus()
+          }
+          if (activeDropdown !== null) {
+            const trigger = dropdownTriggerRefs.current.get(activeDropdown)
+            setActiveDropdown(null)
+            trigger?.focus()
+          }
+          if (isMobileMenuOpen) {
+            setIsMobileMenuOpen(false)
+            onMobileToggle(false)
+          }
+        }
+      }
+
+      const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+        const target = e.target as Node
+
+        if (
+          showNotificationMenu &&
+          notificationMenuRef.current &&
+          !notificationMenuRef.current.contains(target) &&
+          notificationBtnRef.current &&
+          !notificationBtnRef.current.contains(target)
+        ) {
+          setShowNotificationMenu(false)
+        }
+
+        if (
+          showProfileMenu &&
+          profileMenuRef.current &&
+          !profileMenuRef.current.contains(target) &&
+          profileBtnRef.current &&
+          !profileBtnRef.current.contains(target)
+        ) {
+          setShowProfileMenu(false)
+        }
+
+        if (activeDropdown !== null) {
+          const contentEl = dropdownContentRefs.current.get(activeDropdown)
+          const triggerEl = dropdownTriggerRefs.current.get(activeDropdown)
+          if (
+            contentEl &&
+            !contentEl.contains(target) &&
+            triggerEl &&
+            !triggerEl.contains(target)
+          ) {
+            setActiveDropdown(null)
+          }
+        }
+      }
+
+      window.addEventListener("keydown", handleKeyDown)
+      document.addEventListener("mousedown", handleClickOutside)
+      document.addEventListener("touchstart", handleClickOutside, { passive: true })
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown)
+        document.removeEventListener("mousedown", handleClickOutside)
+        document.removeEventListener("touchstart", handleClickOutside)
+      }
+    }, [showNotificationMenu, showProfileMenu, activeDropdown, isMobileMenuOpen, onMobileToggle])
 
     const handleMobileToggle = () => {
       const next = !isMobileMenuOpen
@@ -273,9 +358,9 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                     )}
                   >
                     {navItems.map((item, index) => {
-                      const Icon = item.icon
                       const hasDropdown = item.dropdown && item.dropdown.length > 0
                       const isDropdownOpen = activeDropdown === index
+                      const dropdownId = `navbar-dropdown-${item.id || index}`
 
                       return (
                         <div
@@ -285,10 +370,30 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                           onMouseLeave={() => hasDropdown && setActiveDropdown(null)}
                         >
                           <button
+                            ref={(el) => {
+                              if (el) dropdownTriggerRefs.current.set(index, el)
+                              else dropdownTriggerRefs.current.delete(index)
+                            }}
                             type="button"
+                            aria-haspopup={hasDropdown ? "menu" : undefined}
+                            aria-expanded={hasDropdown ? isDropdownOpen : undefined}
+                            aria-controls={hasDropdown && isDropdownOpen ? dropdownId : undefined}
                             onClick={() => {
                               onItemClick(item, index)
                               if (hasDropdown) setActiveDropdown(isDropdownOpen ? null : index)
+                            }}
+                            onKeyDown={(e) => {
+                              if (hasDropdown) {
+                                if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+                                  e.preventDefault()
+                                  setActiveDropdown(index)
+                                  setTimeout(() => {
+                                    const contentEl = dropdownContentRefs.current.get(index)
+                                    const firstBtn = contentEl?.querySelector<HTMLButtonElement>("button")
+                                    firstBtn?.focus()
+                                  }, 10)
+                                }
+                              }
                             }}
                             className={cn(
                               "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer select-none",
@@ -298,7 +403,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                               itemCustomClasses
                             )}
                           >
-                            {Icon && <Icon className="w-3.5 h-3.5 shrink-0" />}
+                            {renderIcon(item.icon)}
                             <span>{item.label}</span>
                             {item.badge && (
                               <span className="ml-1 px-1.5 py-0.2 text-[10px] font-mono rounded-full bg-muted text-muted-foreground border border-border/50">
@@ -307,6 +412,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                             )}
                             {hasDropdown && (
                               <ChevronDown
+                                aria-hidden="true"
                                 className={cn(
                                   "w-3 h-3 text-muted-foreground transition-transform duration-150",
                                   isDropdownOpen && "rotate-180 text-foreground"
@@ -317,25 +423,54 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
 
                           {/* Dropdown Menu */}
                           {hasDropdown && isDropdownOpen && (
-                            <div className="absolute top-full left-0 mt-1.5 w-48 rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-xl z-50 duration-150 animate-in fade-in-0 zoom-in-95">
+                            <div
+                              id={dropdownId}
+                              role="menu"
+                              aria-orientation="vertical"
+                              ref={(el) => {
+                                if (el) dropdownContentRefs.current.set(index, el)
+                                else dropdownContentRefs.current.delete(index)
+                              }}
+                              className="absolute top-full left-0 mt-1.5 w-48 rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-xl z-50 duration-150 animate-in fade-in-0 zoom-in-95"
+                            >
                               {item.dropdown?.map((dropItem, dropIndex) => {
-                                const DropIcon = dropItem.icon
                                 return (
                                   <button
                                     key={dropIndex}
                                     type="button"
+                                    role="menuitem"
                                     onClick={() => {
                                       dropItem.action?.()
                                       setActiveDropdown(null)
+                                      dropdownTriggerRefs.current.get(index)?.focus()
+                                    }}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Escape") {
+                                        e.preventDefault()
+                                        setActiveDropdown(null)
+                                        dropdownTriggerRefs.current.get(index)?.focus()
+                                      } else if (e.key === "ArrowDown") {
+                                        e.preventDefault()
+                                        const contentEl = dropdownContentRefs.current.get(index)
+                                        const btns = Array.from(contentEl?.querySelectorAll<HTMLButtonElement>("button") || [])
+                                        const nextIdx = (dropIndex + 1) % btns.length
+                                        btns[nextIdx]?.focus()
+                                      } else if (e.key === "ArrowUp") {
+                                        e.preventDefault()
+                                        const contentEl = dropdownContentRefs.current.get(index)
+                                        const btns = Array.from(contentEl?.querySelectorAll<HTMLButtonElement>("button") || [])
+                                        const prevIdx = (dropIndex - 1 + btns.length) % btns.length
+                                        btns[prevIdx]?.focus()
+                                      }
                                     }}
                                     className={cn(
                                       "w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium text-left transition-colors cursor-pointer",
                                       dropItem.danger
-                                        ? "text-red-500 hover:bg-red-500/10"
+                                        ? "text-destructive hover:bg-destructive/10"
                                         : "text-muted-foreground hover:bg-accent hover:text-foreground"
                                     )}
                                   >
-                                    {DropIcon && <DropIcon className="w-3.5 h-3.5 shrink-0" />}
+                                    {renderIcon(dropItem.icon)}
                                     <span>{dropItem.label}</span>
                                   </button>
                                 )
@@ -356,7 +491,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                 showSearch && (
                   <div className={cn("hidden md:block w-full", searchWidth)}>
                     <div className="relative">
-                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                      <Search aria-hidden="true" className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
                       <input
                         type="text"
                         placeholder={searchPlaceholder}
@@ -370,13 +505,14 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                       {searchQuery && (
                         <button
                           type="button"
+                          aria-label="Clear search"
                           onClick={() => {
                             setSearchQuery("")
                             onSearch("")
                           }}
                           className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                         >
-                          <X className="w-3.5 h-3.5" />
+                          <X aria-hidden="true" className="w-3.5 h-3.5" />
                         </button>
                       )}
                     </div>
@@ -393,7 +529,11 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                   {showNotifications && (
                     <div className="relative">
                       <button
+                        ref={notificationBtnRef}
                         type="button"
+                        aria-haspopup="dialog"
+                        aria-expanded={showNotificationMenu}
+                        aria-controls="navbar-notification-menu"
                         onClick={() => {
                           setShowNotificationMenu(!showNotificationMenu)
                           onNotificationClick()
@@ -401,16 +541,23 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                         className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors relative cursor-pointer"
                         aria-label="Notifications"
                       >
-                        <Bell className="w-4 h-4" />
+                        <Bell aria-hidden="true" className="w-4 h-4" />
                         {notificationCount > 0 && (
                           <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-primary text-primary-foreground text-[10px] font-mono flex items-center justify-center font-bold">
-                            {notificationCount > 9 ? "9+" : notificationCount}
+                            <span aria-hidden="true">{notificationCount > 9 ? "9+" : notificationCount}</span>
+                            <span className="sr-only"> ({notificationCount} unread notifications)</span>
                           </span>
                         )}
                       </button>
 
                       {showNotificationMenu && (
-                        <div className="absolute top-full right-0 mt-2 w-72 rounded-xl border border-border bg-popover p-2 text-popover-foreground shadow-xl z-50 duration-150 animate-in fade-in-0 zoom-in-95">
+                        <div
+                          id="navbar-notification-menu"
+                          role="dialog"
+                          aria-label="Notifications"
+                          ref={notificationMenuRef}
+                          className="absolute top-full right-0 mt-2 w-72 rounded-xl border border-border bg-popover p-2 text-popover-foreground shadow-xl z-50 duration-150 animate-in fade-in-0 zoom-in-95"
+                        >
                           <div className="px-2.5 py-1.5 border-b border-border/60 font-semibold text-xs text-foreground">
                             Notifications
                           </div>
@@ -445,7 +592,11 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                   {showProfile && (
                     <div className="relative">
                       <button
+                        ref={profileBtnRef}
                         type="button"
+                        aria-haspopup="menu"
+                        aria-expanded={showProfileMenu}
+                        aria-controls="navbar-profile-menu"
                         onClick={() => setShowProfileMenu(!showProfileMenu)}
                         className="flex items-center gap-2 p-1 pl-1.5 rounded-lg hover:bg-accent transition-colors cursor-pointer"
                       >
@@ -453,7 +604,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                           {profileImage ? (
                             <img src={profileImage} alt={profileName} className="w-full h-full object-cover" />
                           ) : (
-                            <User className="w-3.5 h-3.5 text-muted-foreground" />
+                            <User aria-hidden="true" className="w-3.5 h-3.5 text-muted-foreground" />
                           )}
                         </div>
                         <div className="hidden sm:flex flex-col text-left">
@@ -466,29 +617,53 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                             </span>
                           )}
                         </div>
-                        <ChevronDown className="w-3 h-3 text-muted-foreground hidden sm:block" />
+                        <ChevronDown aria-hidden="true" className="w-3 h-3 text-muted-foreground hidden sm:block" />
                       </button>
 
                       {showProfileMenu && (
-                        <div className="absolute top-full right-0 mt-2 w-48 rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-xl z-50 duration-150 animate-in fade-in-0 zoom-in-95">
+                        <div
+                          id="navbar-profile-menu"
+                          role="menu"
+                          aria-orientation="vertical"
+                          ref={profileMenuRef}
+                          className="absolute top-full right-0 mt-2 w-48 rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-xl z-50 duration-150 animate-in fade-in-0 zoom-in-95"
+                        >
                           {profileItems.map((item, index) => {
-                            const Icon = item.icon
                             return (
                               <button
                                 key={index}
                                 type="button"
+                                role="menuitem"
                                 onClick={() => {
                                   item.action?.()
                                   setShowProfileMenu(false)
+                                  profileBtnRef.current?.focus()
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Escape") {
+                                    e.preventDefault()
+                                    setShowProfileMenu(false)
+                                    profileBtnRef.current?.focus()
+                                  } else if (e.key === "ArrowDown") {
+                                    e.preventDefault()
+                                    const btns = Array.from(profileMenuRef.current?.querySelectorAll<HTMLButtonElement>("button") || [])
+                                    const nextIdx = (index + 1) % btns.length
+                                    btns[nextIdx]?.focus()
+                                  } else if (e.key === "ArrowUp") {
+                                    e.preventDefault()
+                                    const btns = Array.from(profileMenuRef.current?.querySelectorAll<HTMLButtonElement>("button") || [])
+                                    const prevIdx = (index - 1 + btns.length) % btns.length
+                                    btns[prevIdx]?.focus()
+                                  }
                                 }}
                                 className={cn(
                                   "w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium text-left transition-colors cursor-pointer",
                                   item.danger
-                                    ? "text-red-500 hover:bg-red-500/10"
+                                    ? "text-destructive hover:bg-destructive/10"
                                     : "text-muted-foreground hover:bg-accent hover:text-foreground"
                                 )}
                               >
-                                {Icon && <Icon className="w-3.5 h-3.5 shrink-0" />}
+                                {renderIcon(item.icon)}
                                 <span>{item.label}</span>
                               </button>
                             )
@@ -513,6 +688,8 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                   <button
                     type="button"
                     onClick={handleMobileToggle}
+                    aria-expanded={isMobileMenuOpen}
+                    aria-controls="navbar-mobile-menu"
                     className={cn(
                       "p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer",
                       mobileBreakpoint === "md"
@@ -523,7 +700,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                     )}
                     aria-label="Toggle navigation menu"
                   >
-                    {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                    {isMobileMenuOpen ? <X aria-hidden="true" className="w-5 h-5" /> : <Menu aria-hidden="true" className="w-5 h-5" />}
                   </button>
                 </>
               )}
@@ -534,6 +711,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
         {/* Mobile Slide-down Menu */}
         {isMobileMenuOpen && (
           <div
+            id="navbar-mobile-menu"
             className={cn(
               "border-t border-border bg-background px-4 py-4 space-y-3 duration-150 animate-in slide-in-from-top-2",
               mobileBreakpoint === "md"
@@ -545,7 +723,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
           >
             {showSearch && (
               <div className="relative">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                <Search aria-hidden="true" className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
                 <input
                   type="text"
                   placeholder={searchPlaceholder}
@@ -576,7 +754,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                   )}
                 >
                   <span className="flex items-center gap-2">
-                    {item.icon && <item.icon className="w-4 h-4" />}
+                    {renderIcon(item.icon, "w-4 h-4")}
                     {item.label}
                   </span>
                   {item.badge && (

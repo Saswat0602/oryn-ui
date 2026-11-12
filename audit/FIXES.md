@@ -242,3 +242,11 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **PR-03 (Major)**: Added accessible `aria-valuetext="Loading..."` during indeterminate loading and percentage readout during determinate progress.
   - **PR-04 (Minor)**: Added `barRef` prop to allow direct ref attachment to the progressbar element in labeled mode.
   - Added unit, aria-valuenow/aria-valuetext validation, and axe tests in `tests/smoke/core.test.tsx`.
+
+- **`Navbar`** (`src/components/layout/navbar.tsx`):
+  - **NAV-01 (Major)**: Added `aria-expanded={isMobileMenuOpen}` and `aria-controls="navbar-mobile-menu"` on mobile hamburger button and `id="navbar-mobile-menu"` on mobile menu container.
+  - **NAV-02 (Major)**: Added `aria-haspopup="menu"`, `aria-expanded={isDropdownOpen}`, `aria-controls`, `role="menu"`, and roving ArrowDown/ArrowUp keyboard navigation with Escape return to nav item dropdowns.
+  - **NAV-03 (Major)**: Implemented Escape key dismissal with focus restoration to trigger and outside click handling for notification and profile dropdowns.
+  - **NAV-04 (Minor)**: Added accessible screen reader context to notification count badge.
+  - **NAV-05 (Minor)**: Replaced hardcoded `text-red-500` with semantic token `text-destructive`.
+  - Added unit, mobile menu toggle, notification dialog, and axe tests in `tests/smoke/layout.test.tsx`.
