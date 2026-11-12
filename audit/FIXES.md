@@ -43,3 +43,13 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **C-10 (Minor)**: Added `aria-hidden="true"` to trigger icon.
   - **C-11 (Minor)**: Added `{ passive: true, capture: true }` to window scroll listener.
   - Added smoke and a11y tests in `tests/smoke/forms.test.tsx` for full keyboard navigation and axe verification.
+
+- **`ColorPicker`** (`src/components/forms/color-picker.tsx`):
+  - **CP-01 (Critical)**: Added `role="slider"`, `tabIndex={0}`, `aria-label="Color saturation and brightness"`, `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, `aria-valuetext`, and full 2D arrow key handlers (`ArrowLeft`/`ArrowRight`/`ArrowUp`/`ArrowDown`, `Home`/`End`, `PageUp`/`PageDown`).
+  - **CP-02 & CP-03 (Critical)**: Added `role="slider"`, `tabIndex={0}`, `aria-label`, min/max/valuenow/valuetext, and arrow key handlers to hue and alpha sliders.
+  - **CP-04 (Major)**: Bound `aria-label={\`Color picker, current color \${color}\`}`, `aria-controls={dialogId}`, and `onKeyDown` to trigger button.
+  - **CP-05 (Major)**: Added accessible `aria-label` and `aria-pressed` to preset color swatches.
+  - **CP-06 & CP-07 (Major)**: Added `role="dialog"`, `aria-label="Color picker"`, `aria-modal="true"` to floating popover, with Escape key listener restoring focus to trigger.
+  - **CP-08 (Minor)**: Added accessible `aria-label` to EyeDropper and Copy buttons.
+  - **CP-10 (Nit)**: Configured window scroll listener with `{ passive: true, capture: true }`.
+  - Added smoke and accessibility tests in `tests/smoke/forms.test.tsx` verifying sliders, dialog, keyboard interaction, and axe score.

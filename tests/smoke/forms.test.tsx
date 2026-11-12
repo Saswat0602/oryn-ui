@@ -322,14 +322,14 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
     expect(results.violations).toEqual([])
   })
 
-  it('renders ColorPicker trigger and supports inline mode without SSR errors', () => {
+  it('renders ColorPicker trigger and supports inline mode without SSR errors', async () => {
     // SSR Smoke Check
     const ssrHtml = renderToString(<ColorPicker value="#4f46e5" />)
     expect(ssrHtml).toContain('#4f46e5')
 
     // Client DOM Render
     let selectedColor = '#4f46e5'
-    const { getByRole, getByText, rerender } = render(
+    const { container, getByRole, getByText, rerender } = render(
       <StrictMode>
         <ColorPicker
           value={selectedColor}
@@ -341,10 +341,33 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
     expect(getByText('#4f46e5')).toBeDefined()
     const trigger = getByRole('button')
     expect(trigger.getAttribute('aria-expanded')).toBe('false')
+    expect(trigger.getAttribute('aria-label')).toContain('Color picker')
 
     // Click trigger to open floating popover
     fireEvent.click(trigger)
     expect(trigger.getAttribute('aria-expanded')).toBe('true')
+
+    const dialog = document.querySelector('[role="dialog"]')
+    expect(dialog).toBeDefined()
+    expect(dialog?.getAttribute('aria-modal')).toBe('true')
+
+    // Verify saturation & hue sliders have role="slider"
+    const satSlider = document.querySelector('[aria-label="Color saturation and brightness"]')
+    expect(satSlider?.getAttribute('role')).toBe('slider')
+    expect(satSlider?.getAttribute('tabIndex')).toBe('0')
+
+    const hueSlider = document.querySelector('[aria-label="Hue"]')
+    expect(hueSlider?.getAttribute('role')).toBe('slider')
+    expect(hueSlider?.getAttribute('tabIndex')).toBe('0')
+
+    // Test arrow key on hue slider
+    if (hueSlider) {
+      fireEvent.keyDown(hueSlider, { key: 'ArrowRight' })
+    }
+
+    // Escape key closes popover
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
 
     // Inline mode test
     rerender(
@@ -359,5 +382,8 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
     expect(getByText(/hex/i)).toBeDefined()
     expect(getByText(/rgb/i)).toBeDefined()
     expect(getByText(/hsl/i)).toBeDefined()
+
+    const results = await axe(container)
+    expect(results.violations).toEqual([])
   })
 })

@@ -259,6 +259,9 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
     const popoverRef = React.useRef<HTMLDivElement | null>(null)
     const [triggerRect, setTriggerRect] = React.useState<DOMRect | null>(null)
 
+    const generatedId = React.useId()
+    const dialogId = `color-picker-dialog-${generatedId}`
+
     // Formats: 'hex' | 'rgb' | 'hsl'
     const [activeFormat, setActiveFormat] = React.useState<"hex" | "rgb" | "hsl">(format)
     const [copied, setCopied] = React.useState(false)
@@ -274,13 +277,26 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
       if (!isOpen) return
       updateTriggerRect()
       const handleScrollOrResize = () => updateTriggerRect()
-      window.addEventListener("scroll", handleScrollOrResize, true)
+      window.addEventListener("scroll", handleScrollOrResize, { passive: true, capture: true })
       window.addEventListener("resize", handleScrollOrResize)
       return () => {
         window.removeEventListener("scroll", handleScrollOrResize, true)
         window.removeEventListener("resize", handleScrollOrResize)
       }
     }, [isOpen, updateTriggerRect])
+
+    React.useEffect(() => {
+      if (!isOpen) return
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          e.preventDefault()
+          setIsOpen(false)
+          triggerRef.current?.focus()
+        }
+      }
+      document.addEventListener("keydown", handleKeyDown)
+      return () => document.removeEventListener("keydown", handleKeyDown)
+    }, [isOpen])
 
     useClickOutside(
       popoverRef,
@@ -448,6 +464,93 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
     const rgb = React.useMemo(() => hsvToRgb(hsv.h, hsv.s, hsv.v, hsv.a), [hsv])
     const hsl = React.useMemo(() => hsvToHsl(hsv.h, hsv.s, hsv.v, hsv.a), [hsv])
 
+    // Keyboard handlers for sliders
+    const onSatKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const step = e.shiftKey ? 5 : 1
+      switch (e.key) {
+        case "ArrowLeft":
+          e.preventDefault()
+          updateFromHsv({ ...hsv, s: clamp(hsv.s - step, 0, 100) })
+          break
+        case "ArrowRight":
+          e.preventDefault()
+          updateFromHsv({ ...hsv, s: clamp(hsv.s + step, 0, 100) })
+          break
+        case "ArrowUp":
+          e.preventDefault()
+          updateFromHsv({ ...hsv, v: clamp(hsv.v + step, 0, 100) })
+          break
+        case "ArrowDown":
+          e.preventDefault()
+          updateFromHsv({ ...hsv, v: clamp(hsv.v - step, 0, 100) })
+          break
+        case "Home":
+          e.preventDefault()
+          updateFromHsv({ ...hsv, s: 0 })
+          break
+        case "End":
+          e.preventDefault()
+          updateFromHsv({ ...hsv, s: 100 })
+          break
+        case "PageUp":
+          e.preventDefault()
+          updateFromHsv({ ...hsv, v: 100 })
+          break
+        case "PageDown":
+          e.preventDefault()
+          updateFromHsv({ ...hsv, v: 0 })
+          break
+      }
+    }
+
+    const onHueKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const step = e.shiftKey ? 10 : 1
+      switch (e.key) {
+        case "ArrowLeft":
+        case "ArrowDown":
+          e.preventDefault()
+          updateFromHsv({ ...hsv, h: (hsv.h - step + 360) % 360 })
+          break
+        case "ArrowRight":
+        case "ArrowUp":
+          e.preventDefault()
+          updateFromHsv({ ...hsv, h: (hsv.h + step) % 360 })
+          break
+        case "Home":
+          e.preventDefault()
+          updateFromHsv({ ...hsv, h: 0 })
+          break
+        case "End":
+          e.preventDefault()
+          updateFromHsv({ ...hsv, h: 360 })
+          break
+      }
+    }
+
+    const onAlphaKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      const step = e.shiftKey ? 0.05 : 0.01
+      switch (e.key) {
+        case "ArrowLeft":
+        case "ArrowDown":
+          e.preventDefault()
+          updateFromHsv({ ...hsv, a: Number(clamp(hsv.a - step, 0, 1).toFixed(2)) })
+          break
+        case "ArrowRight":
+        case "ArrowUp":
+          e.preventDefault()
+          updateFromHsv({ ...hsv, a: Number(clamp(hsv.a + step, 0, 1).toFixed(2)) })
+          break
+        case "Home":
+          e.preventDefault()
+          updateFromHsv({ ...hsv, a: 0 })
+          break
+        case "End":
+          e.preventDefault()
+          updateFromHsv({ ...hsv, a: 1 })
+          break
+      }
+    }
+
     // Render Color Picker Inner Panel (used inline or in popover)
     const pickerPanel = (
       <div
@@ -460,9 +563,17 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
         {/* 1. 2D Saturation & Value Interactive Gradient Area */}
         <div
           ref={satAreaRef}
+          role="slider"
+          tabIndex={0}
+          aria-label="Color saturation and brightness"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={hsv.s}
+          aria-valuetext={`Saturation ${hsv.s}%, Brightness ${hsv.v}%`}
           onMouseDown={onSatMouseDown}
           onTouchStart={onSatTouchStart}
-          className="relative w-full h-36 rounded-lg cursor-crosshair overflow-hidden touch-none shadow-inner"
+          onKeyDown={onSatKeyDown}
+          className="relative w-full h-36 rounded-lg cursor-crosshair overflow-hidden touch-none shadow-inner focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           style={{ backgroundColor: `hsl(${hsv.h}, 100%, 50%)` }}
         >
           {/* White horizontal gradient overlay */}
@@ -501,8 +612,16 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
             {/* Rainbow Hue Track */}
             <div
               ref={hueTrackRef}
+              role="slider"
+              tabIndex={0}
+              aria-label="Hue"
+              aria-valuemin={0}
+              aria-valuemax={360}
+              aria-valuenow={hsv.h}
+              aria-valuetext={`${hsv.h} degrees`}
               onMouseDown={onHueMouseDown}
-              className="relative h-3 rounded-full cursor-pointer touch-none shadow-inner"
+              onKeyDown={onHueKeyDown}
+              className="relative h-3 rounded-full cursor-pointer touch-none shadow-inner focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               style={{
                 background:
                   "linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%)",
@@ -518,8 +637,16 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
             {showAlpha && (
               <div
                 ref={alphaTrackRef}
+                role="slider"
+                tabIndex={0}
+                aria-label="Alpha opacity"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(hsv.a * 100)}
+                aria-valuetext={`${Math.round(hsv.a * 100)}%`}
                 onMouseDown={onAlphaMouseDown}
-                className="relative h-3 rounded-full cursor-pointer touch-none shadow-inner overflow-hidden"
+                onKeyDown={onAlphaKeyDown}
+                className="relative h-3 rounded-full cursor-pointer touch-none shadow-inner overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <div
                   className="absolute inset-0"
@@ -572,8 +699,9 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
                 <button
                   type="button"
                   onClick={handleEyeDropper}
-                  className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors cursor-pointer"
+                  className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                   title="Pick color from screen"
+                  aria-label="Pick color from screen"
                 >
                   <Palette className="w-3.5 h-3.5" />
                 </button>
@@ -581,8 +709,9 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
               <button
                 type="button"
                 onClick={handleCopy}
-                className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors cursor-pointer"
+                className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 title="Copy color code"
+                aria-label={copied ? "Copied to clipboard" : "Copy color code"}
               >
                 {copied ? (
                   <Check className="w-3.5 h-3.5 text-emerald-500" />
@@ -684,7 +813,7 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
         {/* 4. Preset Color Swatches Palette */}
         {showPresets && presets && presets.length > 0 && (
           <div className="pt-2 border-t border-border/40">
-            <div className="grid grid-cols-8 gap-1.5">
+            <div className="grid grid-cols-8 gap-1.5" role="group" aria-label="Color presets">
               {presets.map((presetHex) => {
                 const isSelected =
                   (color || "").toLowerCase().slice(0, 7) === presetHex.toLowerCase().slice(0, 7)
@@ -697,13 +826,15 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
                       updateFromHsv(next)
                     }}
                     className={cn(
-                      "w-5 h-5 rounded-md transition-all cursor-pointer relative shrink-0 border border-black/10 dark:border-white/10 shadow-2xs",
+                      "w-5 h-5 rounded-md transition-all cursor-pointer relative shrink-0 border border-black/10 dark:border-white/10 shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                       isSelected
                         ? "ring-2 ring-primary ring-offset-1 scale-110 shadow-xs z-10"
                         : "hover:scale-105 opacity-85 hover:opacity-100"
                     )}
                     style={{ backgroundColor: presetHex }}
                     title={presetHex}
+                    aria-label={`Select color ${presetHex}`}
+                    aria-pressed={isSelected}
                   />
                 )
               })}
@@ -767,6 +898,14 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
               setIsOpen(!isOpen)
             }
           }}
+          onKeyDown={(e) => {
+            if (disabled) return
+            if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
+              e.preventDefault()
+              updateTriggerRect()
+              setIsOpen(true)
+            }
+          }}
           className={cn(
             "flex w-full items-center justify-between rounded-lg border border-input bg-background font-medium shadow-2xs transition-colors hover:bg-muted/40 focus:outline-hidden focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer",
             sizeClasses,
@@ -774,6 +913,8 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
           )}
           aria-expanded={isOpen}
           aria-haspopup="dialog"
+          aria-controls={isOpen ? dialogId : undefined}
+          aria-label={`Color picker, current color ${color || "#3b82f6"}`}
         >
           <div className="flex items-center gap-2 truncate">
             {/* Color Swatch Chip */}
@@ -783,6 +924,7 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
                 swatchSizes
               )}
               style={{ backgroundColor: color || "#3b82f6" }}
+              aria-hidden="true"
             />
             <span className="font-mono uppercase font-semibold text-foreground truncate">
               {color || "#3b82f6"}
@@ -794,13 +936,21 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
               "h-3.5 w-3.5 text-muted-foreground opacity-60 transition-transform duration-200 shrink-0",
               isOpen && "rotate-180"
             )}
+            aria-hidden="true"
           />
         </button>
 
         {/* Floating Portal Popover */}
         {isOpen && (
           <Portal>
-            <div style={popoverStyle} className="fixed z-[9999] animate-in fade-in-0 zoom-in-95">
+            <div
+              id={dialogId}
+              role="dialog"
+              aria-modal="true"
+              aria-label="Color picker"
+              style={popoverStyle}
+              className="fixed z-[9999] animate-in fade-in-0 zoom-in-95"
+            >
               {pickerPanel}
             </div>
           </Portal>
