@@ -1,5 +1,5 @@
 import React, { StrictMode } from 'react'
-import { render, fireEvent } from '@testing-library/react'
+import { render, fireEvent, act } from '@testing-library/react'
 import { renderToString } from 'react-dom/server'
 import { describe, it, expect, vi } from 'vitest'
 import { axe } from 'vitest-axe'
@@ -216,6 +216,44 @@ describe('Overlay Domain Smoke & Accessibility Suite', () => {
     expect(getByRole('button', { name: /toggle bold/i })).toBeDefined()
     expect(getByText('Center')).toBeDefined()
 
+    const results = await axe(container)
+    expect(results.violations).toEqual([])
+  })
+
+  it('supports keyboard focus and Escape dismissal on HoverCard', async () => {
+    vi.useFakeTimers()
+    const handleOpenChange = vi.fn()
+    const { container, getByRole, getByText } = render(
+      <StrictMode>
+        <HoverCard openDelay={0} closeDelay={0} onOpenChange={handleOpenChange}>
+          <HoverCardTrigger asChild>
+            <a href="#profile">@developer</a>
+          </HoverCardTrigger>
+          <HoverCardContent>
+            <p>Engineer Profile Card</p>
+          </HoverCardContent>
+        </HoverCard>
+      </StrictMode>
+    )
+
+    const trigger = getByRole('link', { name: '@developer' })
+    expect(trigger.getAttribute('data-state')).toBe('closed')
+
+    // Keyboard focus triggers open
+    act(() => {
+      fireEvent.focus(trigger)
+      vi.runAllTimers()
+    })
+    expect(handleOpenChange).toHaveBeenCalledWith(true)
+
+    // Escape dismisses
+    act(() => {
+      fireEvent.keyDown(document, { key: 'Escape' })
+      vi.runAllTimers()
+    })
+    expect(handleOpenChange).toHaveBeenCalledWith(false)
+
+    vi.useRealTimers()
     const results = await axe(container)
     expect(results.violations).toEqual([])
   })

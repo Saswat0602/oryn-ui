@@ -141,3 +141,12 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **BG-05 (Minor)**: Added `cursor-not-allowed` to disabled button group items.
   - **BG-06 (Minor)**: Updated active border token to `border-primary` for consistent contrast across dark and light themes.
   - Added unit, roving tabindex, arrow navigation, and axe tests in `tests/smoke/core.test.tsx`.
+
+- **`HoverCard`** (`src/components/overlay/hover-card.tsx`):
+  - **HC-01 (Critical)**: Added `onFocus` and `onBlur` listeners to `HoverCardTrigger`, enabling keyboard users to open and navigate hover cards.
+  - **HC-02 (Critical)**: Added global and element-level `Escape` key handlers satisfying WCAG 1.4.13 dismissibility requirements.
+  - **HC-03 (Major)**: Added accessible linkage between trigger and dialog content via `aria-describedby` and `data-state` without violating role-allowed attribute constraints on non-button elements.
+  - **HC-04 (Major)**: Added automatic viewport boundary collision detection to flip placement from `bottom` to `top` when screen space is constrained.
+  - **HC-05 (Major)**: Refactored internal state to `useControllableState` primitive.
+  - **HC-06 (Minor)**: Added auto-measurement effect to calculate trigger dimensions during programmatic / controlled `open={true}` and on window resize/scroll.
+  - Added unit, keyboard focus, Escape dismissal, and axe tests in `tests/smoke/overlay.test.tsx`.

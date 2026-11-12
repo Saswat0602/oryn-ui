@@ -4,6 +4,7 @@ import * as React from "react"
 import { cn } from "../../lib/utils"
 import { Portal } from "../../lib/portal"
 import { Slot } from "../../lib/slot"
+import { useControllableState } from "../../hooks/use-controllable-state"
 
 interface HoverCardContextValue {
   open: boolean
@@ -13,6 +14,7 @@ interface HoverCardContextValue {
   updateTriggerRect: () => void
   openDelay: number
   closeDelay: number
+  contentId: string
 }
 
 const HoverCardContext = React.createContext<HoverCardContextValue | null>(null)
@@ -42,23 +44,15 @@ export const HoverCard: React.FC<HoverCardProps> = ({
   closeDelay = 200,
   children,
 }) => {
-  const [open, setOpen] = React.useState<boolean>(controlledOpen ?? defaultOpen)
-
-  React.useEffect(() => {
-    if (controlledOpen !== undefined) {
-      setOpen(controlledOpen)
-    }
-  }, [controlledOpen])
-
-  const handleOpenChange = (nextOpen: boolean) => {
-    if (controlledOpen === undefined) {
-      setOpen(nextOpen)
-    }
-    onOpenChange?.(nextOpen)
-  }
+  const [open = false, setOpen] = useControllableState<boolean>({
+    prop: controlledOpen,
+    defaultProp: defaultOpen,
+    onChange: onOpenChange,
+  })
 
   const triggerRef = React.useRef<HTMLElement | null>(null)
   const [triggerRect, setTriggerRect] = React.useState<DOMRect | null>(null)
+  const contentId = React.useId()
 
   const updateTriggerRect = React.useCallback(() => {
     if (triggerRef.current) {
@@ -66,16 +60,44 @@ export const HoverCard: React.FC<HoverCardProps> = ({
     }
   }, [])
 
+  // Auto-measure trigger bounding box whenever open becomes true or changes
+  React.useEffect(() => {
+    if (open) {
+      updateTriggerRect()
+      const handleResize = () => updateTriggerRect()
+      const handleScroll = () => updateTriggerRect()
+      window.addEventListener("resize", handleResize, { passive: true })
+      window.addEventListener("scroll", handleScroll, { passive: true })
+      return () => {
+        window.removeEventListener("resize", handleResize)
+        window.removeEventListener("scroll", handleScroll)
+      }
+    }
+  }, [open, updateTriggerRect])
+
+  // Escape key listener (WCAG 1.4.13 Dismissible)
+  React.useEffect(() => {
+    if (!open) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setOpen(false)
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+  }, [open, setOpen])
+
   return (
     <HoverCardContext.Provider
       value={{
         open,
-        setOpen: handleOpenChange,
+        setOpen,
         triggerRef,
         triggerRect,
         updateTriggerRect,
         openDelay,
         closeDelay,
+        contentId,
       }}
     >
       {children}
@@ -88,9 +110,22 @@ export interface HoverCardTriggerProps extends React.HTMLAttributes<HTMLElement>
 }
 
 export const HoverCardTrigger = React.forwardRef<HTMLElement, HoverCardTriggerProps>(
-  ({ asChild = false, children, onMouseEnter, onMouseLeave, ...props }, forwardedRef) => {
-    const { setOpen, triggerRef, updateTriggerRect, openDelay, closeDelay } = useHoverCardContext()
-    const timerRef = React.useRef<any>(null)
+  (
+    {
+      asChild = false,
+      children,
+      onMouseEnter,
+      onMouseLeave,
+      onFocus,
+      onBlur,
+      onKeyDown,
+      ...props
+    },
+    forwardedRef
+  ) => {
+    const { open, setOpen, triggerRef, updateTriggerRect, openDelay, closeDelay, contentId } =
+      useHoverCardContext()
+    const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
     const Comp = asChild ? Slot : "a"
 
     const setMergedRef = React.useCallback(
@@ -99,14 +134,14 @@ export const HoverCardTrigger = React.forwardRef<HTMLElement, HoverCardTriggerPr
         if (typeof forwardedRef === "function") {
           forwardedRef(node)
         } else if (forwardedRef) {
-          (forwardedRef as React.MutableRefObject<any>).current = node
+          ;(forwardedRef as React.MutableRefObject<HTMLElement | null>).current = node
         }
       },
       [forwardedRef, triggerRef]
     )
 
     const handleEnter = () => {
-      clearTimeout(timerRef.current)
+      if (timerRef.current) clearTimeout(timerRef.current)
       timerRef.current = setTimeout(() => {
         updateTriggerRect()
         setOpen(true)
@@ -114,22 +149,45 @@ export const HoverCardTrigger = React.forwardRef<HTMLElement, HoverCardTriggerPr
     }
 
     const handleLeave = () => {
-      clearTimeout(timerRef.current)
+      if (timerRef.current) clearTimeout(timerRef.current)
       timerRef.current = setTimeout(() => {
         setOpen(false)
       }, closeDelay)
     }
 
+    React.useEffect(() => {
+      return () => {
+        if (timerRef.current) clearTimeout(timerRef.current)
+      }
+    }, [])
+
     return (
       <Comp
         ref={setMergedRef as any}
-        onMouseEnter={(e: any) => {
+        aria-describedby={open ? contentId : undefined}
+        data-state={open ? "open" : "closed"}
+        onMouseEnter={(e: React.MouseEvent<HTMLElement>) => {
           onMouseEnter?.(e)
           handleEnter()
         }}
-        onMouseLeave={(e: any) => {
+        onMouseLeave={(e: React.MouseEvent<HTMLElement>) => {
           onMouseLeave?.(e)
           handleLeave()
+        }}
+        onFocus={(e: React.FocusEvent<HTMLElement>) => {
+          onFocus?.(e)
+          handleEnter()
+        }}
+        onBlur={(e: React.FocusEvent<HTMLElement>) => {
+          onBlur?.(e)
+          handleLeave()
+        }}
+        onKeyDown={(e: React.KeyboardEvent<HTMLElement>) => {
+          onKeyDown?.(e)
+          if (e.key === "Escape" && open) {
+            e.stopPropagation()
+            setOpen(false)
+          }
         }}
         {...props}
       >
@@ -161,14 +219,50 @@ export const HoverCardContent = React.forwardRef<HTMLDivElement, HoverCardConten
     },
     ref
   ) => {
-    const { open, setOpen, triggerRect, closeDelay } = useHoverCardContext()
-    const timerRef = React.useRef<any>(null)
+    const { open, setOpen, triggerRect, closeDelay, contentId } = useHoverCardContext()
+    const timerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+    const contentRef = React.useRef<HTMLDivElement | null>(null)
+
+    const setMergedRef = React.useCallback(
+      (node: HTMLDivElement | null) => {
+        contentRef.current = node
+        if (typeof ref === "function") {
+          ref(node)
+        } else if (ref) {
+          ;(ref as React.MutableRefObject<HTMLDivElement | null>).current = node
+        }
+      },
+      [ref]
+    )
+
+    React.useEffect(() => {
+      return () => {
+        if (timerRef.current) clearTimeout(timerRef.current)
+      }
+    }, [])
 
     if (!open) return null
 
+    // Boundary flip viewport collision detection
+    let resolvedSide = side
+    const windowHeight = typeof window !== "undefined" ? window.innerHeight : 800
+
+    if (triggerRect) {
+      const estimatedHeight = 160
+      if (side === "bottom" && triggerRect.bottom + sideOffset + estimatedHeight > windowHeight) {
+        if (triggerRect.top - sideOffset - estimatedHeight > 0) {
+          resolvedSide = "top"
+        }
+      } else if (side === "top" && triggerRect.top - sideOffset - estimatedHeight < 0) {
+        if (triggerRect.bottom + sideOffset + estimatedHeight < windowHeight) {
+          resolvedSide = "bottom"
+        }
+      }
+    }
+
     let positioningStyle: React.CSSProperties = {}
     if (triggerRect) {
-      if (side === "bottom") {
+      if (resolvedSide === "bottom") {
         positioningStyle = {
           position: "fixed",
           top: `${triggerRect.bottom + sideOffset}px`,
@@ -183,7 +277,7 @@ export const HoverCardContent = React.forwardRef<HTMLDivElement, HoverCardConten
       } else {
         positioningStyle = {
           position: "fixed",
-          bottom: `${window.innerHeight - triggerRect.top + sideOffset}px`,
+          bottom: `${windowHeight - triggerRect.top + sideOffset}px`,
           left:
             align === "start"
               ? `${triggerRect.left}px`
@@ -198,14 +292,21 @@ export const HoverCardContent = React.forwardRef<HTMLDivElement, HoverCardConten
     return (
       <Portal>
         <div
-          ref={ref}
+          ref={setMergedRef}
+          id={contentId}
+          role="dialog"
+          aria-modal={false}
+          aria-label={
+            props["aria-label"] || (props["aria-labelledby"] ? undefined : "Hover card details")
+          }
           style={{ ...positioningStyle, ...style }}
           onMouseEnter={(e) => {
             onMouseEnter?.(e)
-            clearTimeout(timerRef.current)
+            if (timerRef.current) clearTimeout(timerRef.current)
           }}
           onMouseLeave={(e) => {
             onMouseLeave?.(e)
+            if (timerRef.current) clearTimeout(timerRef.current)
             timerRef.current = setTimeout(() => {
               setOpen(false)
             }, closeDelay)
