@@ -352,14 +352,38 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
       registeredCountRef.current = Math.max(0, registeredCountRef.current - 1)
     }, [])
 
-    // Autoplay timer
+    const [isPaused, setIsPaused] = React.useState(false)
+
+    // Autoplay timer with pause on hover and focus per WCAG 2.2.2
     React.useEffect(() => {
-      if (!autoPlay || count <= 1) return
+      if (!autoPlay || isPaused || count <= 1) return
       const timer = setInterval(() => {
         scrollNext()
       }, interval)
       return () => clearInterval(timer)
-    }, [autoPlay, interval, count, scrollNext])
+    }, [autoPlay, isPaused, interval, count, scrollNext])
+
+    const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+      setIsPaused(true)
+      props.onMouseEnter?.(e)
+    }
+
+    const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+      setIsPaused(false)
+      props.onMouseLeave?.(e)
+    }
+
+    const handleFocus = (e: React.FocusEvent<HTMLDivElement>) => {
+      setIsPaused(true)
+      props.onFocus?.(e)
+    }
+
+    const handleBlur = (e: React.FocusEvent<HTMLDivElement>) => {
+      if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+        setIsPaused(false)
+      }
+      props.onBlur?.(e)
+    }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
       onKeyDown?.(e)
@@ -406,6 +430,10 @@ export const Carousel = React.forwardRef<HTMLDivElement, CarouselProps>(
           aria-roledescription="carousel"
           tabIndex={0}
           onKeyDown={handleKeyDown}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           className={cn(
             "relative w-full focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring rounded-lg",
             className

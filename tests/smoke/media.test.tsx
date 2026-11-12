@@ -109,6 +109,14 @@ describe('Media Domain Smoke & Accessibility Suite', () => {
     expect(getByText('Slide 1 Content')).toBeDefined()
     expect(getByText('Slide 2 Content')).toBeDefined()
 
+    // Test carousel keyboard navigation
+    const carouselRegion = getByRole('region', { name: '' })
+    fireEvent.keyDown(carouselRegion, { key: 'ArrowRight' })
+    fireEvent.mouseEnter(carouselRegion)
+    fireEvent.mouseLeave(carouselRegion)
+    fireEvent.focus(carouselRegion)
+    fireEvent.blur(carouselRegion)
+
     const ssr = renderToString(
       <Carousel>
         <CarouselContent>

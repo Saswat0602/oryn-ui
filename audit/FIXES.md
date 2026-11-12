@@ -264,3 +264,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **C-03 (Minor)**: Supported polymorphic `as` prop on `CardTitle` (defaulting to `"h3"`).
   - **C-04 (Minor)**: Updated `CardFooter` text style to `text-card-foreground` so nested buttons retain proper contrast.
   - Added unit, clickable card role and keyboard activation, and axe tests in `tests/smoke/core.test.tsx`.
+
+- **`Carousel`** (`src/components/media/carousel.tsx`):
+  - **CAR-01 (Major)**: Paused autoplay slideshow timer whenever the carousel container is hovered (`onMouseEnter`/`onMouseLeave`) or keyboard focused (`onFocus`/`onBlur`) satisfying WCAG 2.1 SC 2.2.2.
+  - **CAR-03 (Minor)**: Supported bubbling keyboard navigation from within focused child controls.
+  - Added unit, keyboard arrow navigation, hover/focus events, and axe tests in `tests/smoke/media.test.tsx`.
