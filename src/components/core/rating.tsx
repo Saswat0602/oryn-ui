@@ -20,6 +20,7 @@ export interface RatingProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   precision?: 0.5 | 1
   icon?: React.ReactNode
   emptyIcon?: React.ReactNode
+  activeColor?: string
 }
 
 export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
@@ -40,6 +41,7 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
       precision = 1,
       icon,
       emptyIcon,
+      activeColor,
       ...props
     },
     ref
@@ -114,38 +116,43 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
 
     const activeDisplayValue = hoverValue !== null ? hoverValue : value
 
+    const activeStarClass = activeColor || "text-amber-500 fill-amber-500 dark:text-amber-400 dark:fill-amber-400"
+
     const renderStar = (index: number) => {
       const isFull = activeDisplayValue >= index
       const isHalf = !isFull && activeDisplayValue >= index - 0.5
+      const isCurrentSelection = Math.round(value) === index
 
       return (
         <button
           key={index}
           type="button"
+          role="radio"
+          aria-checked={isCurrentSelection}
           tabIndex={-1}
           disabled={!isInteractive}
           onClick={(e) => handleStarClick(e, index)}
           onMouseMove={(e) => handleStarMouseMove(e, index)}
           className={cn(
             "relative p-0.5 transition-transform duration-100 focus:outline-none select-none",
-            isInteractive && "cursor-pointer hover:scale-110 active:scale-95",
+            isInteractive && "cursor-pointer motion-safe:hover:scale-110 motion-safe:active:scale-95",
             !isInteractive && "cursor-default"
           )}
-          aria-label={`Rate ${index} of ${max}`}
+          aria-label={label ? `${label}, ${index} of ${max}` : `Rate ${index} of ${max}`}
         >
           {/* Base / Empty star */}
-          <span className="text-muted-foreground/30 fill-muted/30">
-            {emptyIcon || <Star className={cn(sizeClasses[size], "fill-muted/30 text-muted-foreground/30")} />}
+          <span className="text-muted-foreground/30 fill-muted-foreground/20">
+            {emptyIcon || <Star className={cn(sizeClasses[size], "fill-muted-foreground/20 text-muted-foreground/30")} />}
           </span>
 
           {/* Full or Half Star Overlay */}
           {isFull ? (
-            <span className="absolute inset-0.5 text-amber-400 fill-amber-400">
-              {icon || <Star className={cn(sizeClasses[size], "fill-amber-400 text-amber-400")} />}
+            <span className={cn("absolute inset-0.5", activeStarClass)}>
+              {icon || <Star className={cn(sizeClasses[size], "fill-current text-current")} />}
             </span>
           ) : isHalf ? (
-            <span className="absolute inset-0.5 overflow-hidden w-1/2 text-amber-400 fill-amber-400">
-              {icon || <Star className={cn(sizeClasses[size], "fill-amber-400 text-amber-400")} />}
+            <span className={cn("absolute inset-0.5 overflow-hidden w-1/2", activeStarClass)}>
+              {icon || <Star className={cn(sizeClasses[size], "fill-current text-current")} />}
             </span>
           ) : null}
         </button>
@@ -168,8 +175,10 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
         <div
           ref={ref}
           role="radiogroup"
-          aria-label={label || "Rating"}
-          tabIndex={isInteractive ? 0 : undefined}
+          aria-label={label || props["aria-label"] || "Rating"}
+          aria-readonly={readOnly || undefined}
+          aria-disabled={disabled || undefined}
+          tabIndex={disabled ? undefined : 0}
           onKeyDown={handleKeyDown}
           onMouseLeave={() => setHoverValue(null)}
           className={cn(
@@ -188,3 +197,5 @@ export const Rating = React.forwardRef<HTMLDivElement, RatingProps>(
 )
 
 Rating.displayName = "Rating"
+
+export default Rating

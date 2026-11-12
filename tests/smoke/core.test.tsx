@@ -151,6 +151,12 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
     fireEvent.keyDown(minThumb, { key: 'Home' })
     expect(handleSliderChange).toHaveBeenCalledWith([0, 80])
 
+    const ratingGroup = getByRole('radiogroup', { name: 'Customer rating' })
+    expect(ratingGroup).toBeDefined()
+    const radios = ratingGroup.querySelectorAll('[role="radio"]')
+    expect(radios.length).toBe(5)
+    expect(radios[3].getAttribute('aria-checked')).toBe('true')
+
     const results = await axe(container)
     expect(results.violations).toEqual([])
   })

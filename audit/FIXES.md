@@ -182,3 +182,11 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **PG-04 (Minor)**: Enforced accessible minimum touch targets across pagination items.
   - **PG-05 (Nit)**: Implemented strict `PaginationComponent` compound typing, eliminating monkey-patching.
   - Added unit, automated mode, compound mode, and axe tests in `tests/smoke/navigation.test.tsx`.
+
+- **`Rating`** (`src/components/core/rating.tsx`):
+  - **RA-01 (Critical)**: Fixed keyboard accessibility by ensuring the container maintains `tabIndex={0}` in both interactive and `readOnly` modes so screen readers and keyboard users can discover ratings.
+  - **RA-04 (Major)**: Added explicit `role="radio"` and `aria-checked` to each individual star button within `role="radiogroup"`, satisfying WAI-ARIA parent-child role specifications.
+  - **RA-02 & RA-03 (Major)**: Migrated hardcoded colors to theme-compatible tokens with dark mode support (`text-amber-500 fill-amber-500 dark:text-amber-400 dark:fill-amber-400`) and customizable `activeColor` prop.
+  - **RA-05 (Minor)**: Added contextual `aria-label` per star button.
+  - **RA-06 (Minor)**: Added `motion-safe:` prefixes on hover and active scale animations.
+  - Added unit, role=radio validation, and axe tests in `tests/smoke/core.test.tsx`.
