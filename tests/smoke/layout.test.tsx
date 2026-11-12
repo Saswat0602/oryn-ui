@@ -143,7 +143,7 @@ describe('Layout Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders Popover floating element', async () => {
-    const { container, getByText } = render(
+    const { container, getByText, queryByText } = render(
       <StrictMode>
         <Popover
           trigger={<Button variant="outline">Open Popover</Button>}
@@ -151,7 +151,20 @@ describe('Layout Domain Smoke & Accessibility Suite', () => {
         />
       </StrictMode>
     )
-    expect(getByText('Open Popover')).toBeDefined()
+    const triggerBtn = getByText('Open Popover')
+    expect(triggerBtn).toBeDefined()
+    expect(triggerBtn.getAttribute('aria-expanded')).toBe('false')
+
+    fireEvent.click(triggerBtn)
+    expect(triggerBtn.getAttribute('aria-expanded')).toBe('true')
+    const popoverContent = getByText('Floating popover card')
+    expect(popoverContent).toBeDefined()
+    const contentPanel = document.querySelector('[role="dialog"]')!
+    expect(contentPanel).toBeDefined()
+    expect(triggerBtn.getAttribute('aria-controls')).toBe(contentPanel.getAttribute('id'))
+
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(triggerBtn.getAttribute('aria-expanded')).toBe('false')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

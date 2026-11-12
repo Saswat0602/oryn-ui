@@ -13,11 +13,12 @@ interface PopoverContextValue {
   triggerRef: React.MutableRefObject<HTMLElement | null>
   triggerRect: DOMRect | null
   updateTriggerRect: () => void
+  contentId: string
 }
 
 const PopoverContext = React.createContext<PopoverContextValue | null>(null)
 
-function usePopoverContext() {
+export function usePopoverContext() {
   const context = React.useContext(PopoverContext)
   if (!context) {
     throw new Error("Popover compound components must be used within a Popover")
@@ -32,27 +33,27 @@ export interface PopoverProps {
   isOpen?: boolean
   onClose?: () => void
   trigger?: React.ReactNode
+  content?: React.ReactNode
   placement?: "top" | "bottom" | "left" | "right"
   children?: React.ReactNode
-  [key: string]: any
 }
 
 export interface PopoverTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   asChild?: boolean
 }
 
-export const PopoverTrigger = React.forwardRef<HTMLButtonElement, PopoverTriggerProps>(
+export const PopoverTrigger = React.forwardRef<HTMLElement, PopoverTriggerProps>(
   ({ asChild = false, onClick, children, "aria-haspopup": ariaHasPopup = "dialog", ...props }, forwardedRef) => {
-    const { open, setOpen, triggerRef, updateTriggerRect } = usePopoverContext()
+    const { open, setOpen, triggerRef, updateTriggerRect, contentId } = usePopoverContext()
     const Comp = asChild ? Slot : "button"
 
     const setMergedRef = React.useCallback(
       (node: HTMLElement | null) => {
         triggerRef.current = node
         if (typeof forwardedRef === "function") {
-          forwardedRef(node as any)
+          forwardedRef(node)
         } else if (forwardedRef) {
-          (forwardedRef as React.MutableRefObject<any>).current = node
+          (forwardedRef as React.MutableRefObject<HTMLElement | null>).current = node
         }
       },
       [forwardedRef, triggerRef]
@@ -68,10 +69,11 @@ export const PopoverTrigger = React.forwardRef<HTMLButtonElement, PopoverTrigger
 
     return (
       <Comp
-        ref={setMergedRef as any}
+        ref={setMergedRef}
         type={asChild ? undefined : "button"}
         aria-expanded={open}
         aria-haspopup={ariaHasPopup}
+        aria-controls={open ? contentId : undefined}
         onClick={handleClick}
         {...props}
       >
@@ -90,7 +92,7 @@ export const PopoverAnchor = React.forwardRef<HTMLDivElement, PopoverAnchorProps
   ({ asChild = false, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "div"
     return (
-      <Comp ref={ref as any} {...props}>
+      <Comp ref={ref} {...props}>
         {children}
       </Comp>
     )
@@ -102,21 +104,25 @@ export interface PopoverCloseProps extends React.ButtonHTMLAttributes<HTMLButton
   asChild?: boolean
 }
 
-export const PopoverClose = React.forwardRef<HTMLButtonElement, PopoverCloseProps>(
+export const PopoverClose = React.forwardRef<HTMLElement, PopoverCloseProps>(
   ({ asChild = false, onClick, children, ...props }, ref) => {
-    const { setOpen } = usePopoverContext()
+    const { setOpen, triggerRef } = usePopoverContext()
     const Comp = asChild ? Slot : "button"
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       onClick?.(e)
       if (!e.defaultPrevented) {
         setOpen(false)
+        triggerRef.current?.focus()
       }
     }
 
     return (
       <Comp
-        ref={ref as any}
+        ref={(node: HTMLElement | null) => {
+          if (typeof ref === "function") ref(node)
+          else if (ref) (ref as React.MutableRefObject<HTMLElement | null>).current = node
+        }}
         type={asChild ? undefined : "button"}
         onClick={handleClick}
         {...props}
@@ -140,7 +146,7 @@ export const PopoverContent = React.forwardRef<HTMLDivElement, PopoverContentPro
     {
       className,
       align = "center",
-      side = "bottom",
+      side: requestedSide = "bottom",
       sideOffset = 4,
       showArrow = false,
       children,
@@ -149,7 +155,7 @@ export const PopoverContent = React.forwardRef<HTMLDivElement, PopoverContentPro
     },
     ref
   ) => {
-    const { open, setOpen, triggerRef, triggerRect } = usePopoverContext()
+    const { open, setOpen, triggerRef, triggerRect, contentId } = usePopoverContext()
     const contentRef = React.useRef<HTMLDivElement | null>(null)
 
     useClickOutside(contentRef, (e) => {
@@ -159,22 +165,57 @@ export const PopoverContent = React.forwardRef<HTMLDivElement, PopoverContentPro
       setOpen(false)
     }, open)
 
+    // Focus restoration on close
+    const prevOpenRef = React.useRef(open)
+    React.useEffect(() => {
+      if (prevOpenRef.current && !open) {
+        triggerRef.current?.focus()
+      }
+      prevOpenRef.current = open
+    }, [open, triggerRef])
+
+    // Initial focus on open
+    React.useEffect(() => {
+      if (open && contentRef.current) {
+        const focusable = contentRef.current.querySelector<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        )
+        if (focusable) {
+          focusable.focus()
+        } else {
+          contentRef.current.focus()
+        }
+      }
+    }, [open])
+
+    // Escape key
     React.useEffect(() => {
       if (!open) return
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === "Escape") {
           e.preventDefault()
           setOpen(false)
+          triggerRef.current?.focus()
         }
       }
       window.addEventListener("keydown", handleKeyDown)
       return () => window.removeEventListener("keydown", handleKeyDown)
-    }, [open, setOpen])
+    }, [open, setOpen, triggerRef])
 
     if (!open) return null
 
+    // Viewport collision flipping
+    let side = requestedSide
+    if (typeof window !== "undefined" && triggerRect) {
+      if (requestedSide === "bottom" && triggerRect.bottom + 200 > window.innerHeight && triggerRect.top > 200) {
+        side = "top"
+      } else if (requestedSide === "top" && triggerRect.top - 200 < 0 && window.innerHeight - triggerRect.bottom > 200) {
+        side = "bottom"
+      }
+    }
+
     let positioningStyle: React.CSSProperties = {}
-    if (triggerRect) {
+    if (triggerRect && typeof window !== "undefined") {
       if (side === "bottom") {
         positioningStyle = {
           position: "fixed",
@@ -224,10 +265,12 @@ export const PopoverContent = React.forwardRef<HTMLDivElement, PopoverContentPro
             if (typeof ref === "function") ref(node)
             else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node
           }}
+          id={contentId}
           role="dialog"
+          tabIndex={-1}
           style={{ ...positioningStyle, ...style }}
           className={cn(
-            "fixed z-[70] w-72 rounded-xl border border-border bg-popover p-4 text-popover-foreground shadow-2xl outline-none duration-150 animate-in fade-in-0 zoom-in-95",
+            "fixed z-[70] w-72 rounded-xl border border-border bg-popover p-4 text-popover-foreground shadow-2xl outline-none duration-150 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95",
             className
           )}
           {...props}
@@ -247,9 +290,9 @@ export const Popover: React.FC<PopoverProps> = ({
   isOpen,
   onClose,
   trigger,
+  content,
   placement = "bottom",
   children,
-  ...props
 }) => {
   const isControlled = controlledOpen !== undefined || isOpen !== undefined
   const resolvedProp = controlledOpen !== undefined ? controlledOpen : isOpen
@@ -263,6 +306,9 @@ export const Popover: React.FC<PopoverProps> = ({
     },
   })
 
+  const rawId = React.useId()
+  const contentId = `popover-content-${rawId}`
+
   const triggerRef = React.useRef<HTMLElement | null>(null)
   const [triggerRect, setTriggerRect] = React.useState<DOMRect | null>(null)
 
@@ -272,12 +318,25 @@ export const Popover: React.FC<PopoverProps> = ({
     }
   }, [])
 
-  const contextValue = {
+  React.useEffect(() => {
+    if (!open) return
+    updateTriggerRect()
+    const handleScrollOrResize = () => updateTriggerRect()
+    window.addEventListener("scroll", handleScrollOrResize, true)
+    window.addEventListener("resize", handleScrollOrResize)
+    return () => {
+      window.removeEventListener("scroll", handleScrollOrResize, true)
+      window.removeEventListener("resize", handleScrollOrResize)
+    }
+  }, [open, updateTriggerRect])
+
+  const contextValue: PopoverContextValue = {
     open,
     setOpen,
     triggerRef,
     triggerRect,
     updateTriggerRect,
+    contentId,
   }
 
   if (trigger) {
@@ -286,7 +345,7 @@ export const Popover: React.FC<PopoverProps> = ({
         <PopoverTrigger asChild>
           {React.isValidElement(trigger) ? trigger : <span>{trigger}</span>}
         </PopoverTrigger>
-        <PopoverContent side={placement}>{children}</PopoverContent>
+        <PopoverContent side={placement}>{content || children}</PopoverContent>
       </PopoverContext.Provider>
     )
   }
@@ -298,10 +357,19 @@ export const Popover: React.FC<PopoverProps> = ({
   )
 }
 
-export const usePopover = () => ({
-  open: false,
-  setOpen: () => {},
-})
+export const usePopover = () => {
+  const context = React.useContext(PopoverContext)
+  if (context) {
+    return {
+      open: context.open,
+      setOpen: context.setOpen,
+    }
+  }
+  return {
+    open: false,
+    setOpen: () => {},
+  }
+}
 
 // Compound component pattern attachment
 export type PopoverComponent = typeof Popover & {
@@ -310,8 +378,10 @@ export type PopoverComponent = typeof Popover & {
   Anchor: typeof PopoverAnchor
 }
 
-;(Popover as any).Trigger = PopoverTrigger
-;(Popover as any).Content = PopoverContent
-;(Popover as any).Anchor = PopoverAnchor
+export const PopoverNamespace = Object.assign(Popover, {
+  Trigger: PopoverTrigger,
+  Content: PopoverContent,
+  Anchor: PopoverAnchor,
+})
 
 export default Popover

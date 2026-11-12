@@ -220,3 +220,11 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **FM-05 (Minor)**: Added `required` prop on `FormLabel` with accessible visual asterisk indicator.
   - **FM-06 (Minor)**: Cleaned typed ref forwarding and eliminated redundant `aria-invalid` on fallback div wrappers.
   - Added unit, required indicator, aria-invalid, and axe tests in `tests/smoke/forms.test.tsx`.
+
+- **`Popover`** (`src/components/layout/popover.tsx`):
+  - **POP-01 (Major)**: Implemented automatic initial focus on open and focus restoration to `triggerRef` on dismiss.
+  - **POP-02 (Major)**: Added deterministic `contentId` and linked `aria-controls={open ? contentId : undefined}` on `PopoverTrigger`.
+  - **POP-03 (Major)**: Connected `usePopover()` directly to `PopoverContext` to read active state.
+  - **POP-04 (Minor)**: Added viewport boundary collision detection with vertical auto-flipping.
+  - **POP-05 (Nit)**: Removed `[key: string]: any` from `PopoverProps` and typed refs strictly without `any` casts.
+  - Added unit, aria-controls linkage, Escape dismissal, and axe tests in `tests/smoke/layout.test.tsx`.
