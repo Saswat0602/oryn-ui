@@ -84,7 +84,7 @@ describe('Data Display Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders DataTable with sorting and search data', async () => {
-    const { container, getByText } = render(
+    const { container, getByText, getAllByRole, getByLabelText } = render(
       <StrictMode>
         <DataTable
           data={[
@@ -100,6 +100,17 @@ describe('Data Display Domain Smoke & Accessibility Suite', () => {
     )
     expect(getByText('Auth Pod')).toBeDefined()
     expect(getByText('12ms')).toBeDefined()
+
+    const headers = getAllByRole('columnheader')
+    expect(headers[0].getAttribute('scope')).toBe('col')
+    expect(headers[0].getAttribute('aria-sort')).toBe('none')
+
+    // Find sort button by aria-label
+    const sortBtn = getByLabelText('Sort by Service in ascending order')
+    expect(sortBtn).toBeDefined()
+    fireEvent.click(sortBtn)
+
+    expect(headers[0].getAttribute('aria-sort')).toBe('ascending')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

@@ -421,7 +421,7 @@ export const DataTableHeader = <T extends Record<string, any>>({
     <TableHeader>
       <TableRow className="hover:bg-transparent">
         {selectable && (
-          <TableHead className="w-10 px-4">
+          <TableHead scope="col" className="w-10 px-4">
             <Checkbox
               checked={isAllSelected}
               aria-label="Select all rows"
@@ -433,10 +433,19 @@ export const DataTableHeader = <T extends Record<string, any>>({
         {columns.map((column) => {
           const isSorted = sortColumn === column.key
           const canSort = sortable && column.sortable !== false
+          const sortAria = canSort
+            ? isSorted
+              ? sortDirection === "asc"
+                ? "ascending"
+                : "descending"
+              : "none"
+            : undefined
 
           return (
             <TableHead
               key={String(column.key)}
+              scope="col"
+              aria-sort={sortAria}
               style={column.width ? { width: column.width } : undefined}
               className={cn("text-xs font-semibold select-none", column.className)}
             >
@@ -444,6 +453,7 @@ export const DataTableHeader = <T extends Record<string, any>>({
                 <button
                   type="button"
                   onClick={() => onSort?.(column.key)}
+                  aria-label={`Sort by ${column.header} in ${isSorted && sortDirection === "asc" ? "descending" : "ascending"} order`}
                   className="group inline-flex items-center gap-1.5 hover:text-foreground transition-colors cursor-pointer"
                 >
                   <span>{column.header}</span>

@@ -343,3 +343,9 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **TAB-03 (Minor)**: Added accessible `aria-label` attributes (`"Select all rows"` and `"Select row X"`) to row selection checkboxes.
   - **TAB-05 (Nit)**: Typed `value: unknown` on `onEditCell` callback for strict typing.
   - Added unit tests in `tests/smoke/data.test.tsx` asserting `scope="col"`, `aria-sort` toggling, and accessible selection checkboxes.
+
+- **`DataTable`** (`src/components/data/data-table.tsx`):
+  - **DTT-01 (Major)**: Added `aria-sort` (`"ascending"`, `"descending"`, or `"none"`) to sortable `TableHead` elements.
+  - **DTT-02 (Major)**: Added accessible descriptive `aria-label` to column header sort buttons (`Sort by X in ascending/descending order`).
+  - **DTT-03 (Minor)**: Explicitly passed `scope="col"` on header cells.
+  - Added unit test in `tests/smoke/data.test.tsx` asserting `scope="col"`, sort button `aria-label`, and `aria-sort` toggling.
