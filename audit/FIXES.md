@@ -190,3 +190,12 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **RA-05 (Minor)**: Added contextual `aria-label` per star button.
   - **RA-06 (Minor)**: Added `motion-safe:` prefixes on hover and active scale animations.
   - Added unit, role=radio validation, and axe tests in `tests/smoke/core.test.tsx`.
+
+- **`Select`** (`src/components/core/select.tsx`):
+  - **SE-01 & SE-02 (Critical)**: Implemented full keyboard roving listbox navigation (`ArrowDown`/`ArrowUp`/`Home`/`End`/`Enter`/`Space`), `focusedValue` state, option auto-scrolling, `tabIndex={-1}`, and `aria-activedescendant` on both trigger and listbox.
+  - **SE-03 (Major)**: Added `Tab` and `Escape` focus restoration to `triggerRef.current?.focus()`, closing listbox and retaining proper focus flow.
+  - **SE-04 (Major)**: Replaced raw `focus:ring-1` with accessible `focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1`.
+  - **SE-05 (Major)**: Implemented label registry map ref (`registerOptionLabel`) and direct `options` fallback, eliminating stale label resets during programmatic value changes.
+  - **SE-06 (Minor)**: Added `SelectGroupContext` with deterministic `labelId` auto-wiring `aria-labelledby` on `SelectGroup`.
+  - **SE-07 (Minor)**: Added `motion-safe:` prefixes on enter/exit animations.
+  - Added unit, dropdown selection, keyboard navigation, and axe tests in `tests/smoke/core.test.tsx`.

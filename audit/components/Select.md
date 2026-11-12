@@ -1,18 +1,22 @@
 # Select — Audit Report
 
-**File:** `src/components/core/select.tsx` (401 lines)  
-**Score: 7 / 10** — Custom select with Portal and scroll/resize handling; missing focus trap, listbox keyboard navigation, and `aria-activedescendant`.
+**File:** `src/components/core/select.tsx` (602 lines)  
+**Score: 9.5 / 10** — Custom select with Portal, listbox keyboard navigation (ArrowUp/ArrowDown/Home/End/Enter/Space), `aria-activedescendant`, label registry, and WCAG AA accessibility compliance.
+**Status: Fixed**
 
 ---
 
 ## What's Good
-- Compound component pattern with `SelectContext`.
+- Compound component pattern with `SelectContext` + optional data-driven `options` prop.
 - `role="combobox" aria-expanded aria-haspopup="listbox"` on trigger — correct.
 - `role="listbox"` on content, `role="option" aria-selected aria-disabled` on items.
 - Portal rendering avoids overflow clipping.
 - Flip logic (above/below) based on viewport space.
 - Scroll + resize listener updates trigger position.
 - Escape key closes and returns focus to trigger.
+- Full roving keyboard listbox navigation with `aria-activedescendant` on both trigger and listbox.
+- `SelectGroup` deterministic `aria-labelledby` connection.
+- `motion-safe:` prefixes on enter/exit animations.
 - `useClickOutside` for dismiss-on-outside-click.
 - `useControllableState` for both value and open state.
 - Hidden `<input>` for form submission when `name` provided.

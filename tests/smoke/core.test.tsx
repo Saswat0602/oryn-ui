@@ -162,20 +162,31 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders Select dropdown and Label', async () => {
-    const { container, getByText } = render(
+    const handleSelectChange = vi.fn()
+    const { container, getByText, getByRole } = render(
       <StrictMode>
         <Label htmlFor="framework-select">Preferred Framework</Label>
         <Select 
           id="framework-select"
           options={[
             { label: 'Next.js App Router', value: 'nextjs' },
-            { label: 'Vite React', value: 'vite' }
+            { label: 'Vite React', value: 'vite' },
+            { label: 'Remix', value: 'remix' }
           ]}
           defaultValue="nextjs"
+          onValueChange={handleSelectChange}
         />
       </StrictMode>
     )
     expect(getByText('Preferred Framework')).toBeDefined()
+    const trigger = getByRole('combobox')
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+    fireEvent.click(trigger)
+    expect(trigger.getAttribute('aria-expanded')).toBe('true')
+    const viteOption = getByText('Vite React')
+    fireEvent.click(viteOption)
+    expect(handleSelectChange).toHaveBeenCalledWith('vite')
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
