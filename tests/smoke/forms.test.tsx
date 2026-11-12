@@ -350,12 +350,21 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
         <TimePicker
           value="10:45 AM"
           format="12h"
+          error
+          aria-describedby="time-error-msg"
           onChange={() => {}}
         />
       </StrictMode>
     )
     const hoursInput = getByLabelText('Hours') as HTMLInputElement
     expect(hoursInput.value).toBe('10')
+    expect(hoursInput.getAttribute('aria-invalid')).toBe('true')
+    expect(hoursInput.getAttribute('aria-describedby')).toBe('time-error-msg')
+
+    const minutesInput = getByLabelText('Minutes') as HTMLInputElement
+    expect(minutesInput.value).toBe('45')
+    expect(minutesInput.getAttribute('aria-invalid')).toBe('true')
+    expect(minutesInput.getAttribute('aria-describedby')).toBe('time-error-msg')
 
     const trigger = getByRole('button', { name: /date range picker/i })
     expect(trigger.getAttribute('aria-haspopup')).toBe('dialog')

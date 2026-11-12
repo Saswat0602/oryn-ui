@@ -155,7 +155,7 @@ export const TimePicker = React.forwardRef<HTMLDivElement, TimePickerProps>(
         {...props}
       >
         {name && <input type="hidden" name={name} value={time ?? ""} />}
-        <Clock className="h-4 w-4 text-muted-foreground shrink-0 mr-1" />
+        <Clock className="h-4 w-4 text-muted-foreground shrink-0 mr-1" aria-hidden="true" />
 
         <input
           type="text"
@@ -165,14 +165,16 @@ export const TimePicker = React.forwardRef<HTMLDivElement, TimePickerProps>(
           aria-valuenow={parsed.h}
           aria-valuemin={format === "12h" ? 1 : 0}
           aria-valuemax={format === "12h" ? 12 : 23}
+          aria-invalid={error || props["aria-invalid"] ? "true" : undefined}
+          aria-describedby={props["aria-describedby"]}
           value={pad(parsed.h)}
           disabled={disabled}
           onChange={handleHourChange}
           onKeyDown={handleKeyDownHour}
-          className="w-7 bg-transparent text-center outline-none focus:bg-accent focus:text-accent-foreground rounded font-semibold text-foreground"
+          className="w-7 bg-transparent text-center outline-none focus-visible:bg-accent focus-visible:text-accent-foreground rounded font-semibold text-foreground"
         />
 
-        <span className="text-muted-foreground font-semibold">:</span>
+        <span className="text-muted-foreground font-semibold" aria-hidden="true">:</span>
 
         <input
           type="text"
@@ -182,11 +184,13 @@ export const TimePicker = React.forwardRef<HTMLDivElement, TimePickerProps>(
           aria-valuenow={parsed.m}
           aria-valuemin={0}
           aria-valuemax={59}
+          aria-invalid={error || props["aria-invalid"] ? "true" : undefined}
+          aria-describedby={props["aria-describedby"]}
           value={pad(parsed.m)}
           disabled={disabled}
           onChange={handleMinuteChange}
           onKeyDown={handleKeyDownMinute}
-          className="w-7 bg-transparent text-center outline-none focus:bg-accent focus:text-accent-foreground rounded font-semibold text-foreground"
+          className="w-7 bg-transparent text-center outline-none focus-visible:bg-accent focus-visible:text-accent-foreground rounded font-semibold text-foreground"
         />
 
         {format === "12h" && (
@@ -194,8 +198,8 @@ export const TimePicker = React.forwardRef<HTMLDivElement, TimePickerProps>(
             type="button"
             disabled={disabled}
             onClick={togglePeriod}
-            aria-label="Toggle AM/PM"
-            className="ml-1 rounded px-1.5 py-0.5 text-xs font-semibold uppercase text-muted-foreground hover:bg-accent hover:text-accent-foreground cursor-pointer"
+            aria-label={`Toggle AM/PM, currently ${parsed.period}`}
+            className="ml-1 rounded px-1.5 py-0.5 text-xs font-semibold uppercase text-muted-foreground hover:bg-accent hover:text-accent-foreground cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
           >
             {parsed.period}
           </button>

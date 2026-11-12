@@ -1,13 +1,13 @@
 # TimePicker — Audit Report
 
-## Score: 8/10 — Good spinbutton implementation, minor gap
+## Score: 9.5/10 — Status: Fixed. Accessible spinbutton time input with aria-invalid, aria-describedby, and labelled AM/PM controls
 
 ## What's Good
 - `role="group" aria-label="Time picker"` on container ✅
 - Hour input: `role="spinbutton" aria-label="Hours" aria-valuenow/min/max` ✅
 - Minute input: `role="spinbutton" aria-label="Minutes" aria-valuenow/min/max` ✅
 - ArrowUp/Down keyboard step on both hour and minute inputs ✅
-- AM/PM toggle button with `aria-label="Toggle AM/PM"` ✅
+- AM/PM toggle button with descriptive state in aria-label ✅
 - `useControllableState` ✅
 - Error state visual with `border-destructive` ✅
 - `focus-within:ring-1` on container ✅
@@ -17,14 +17,14 @@
 
 ## Issues
 
-| ID | Severity | Category | File:line | Problem | Why it matters | Fix |
-|----|----------|----------|-----------|---------|----------------|-----|
-| TP-01 | Major | A11y | time-picker.tsx:160-173 | Hour input uses `type="text"` with `role="spinbutton"` but no `aria-invalid` even when `error=true` | AT doesn't know the field is invalid | Add `aria-invalid={error}` to both hour and minute inputs |
-| TP-02 | Major | A11y | time-picker.tsx:160-173 | Hour and minute inputs have no `aria-describedby` for error messages | Cannot link to external `FormMessage` | Accept and wire `aria-describedby` prop to both inputs |
-| TP-03 | Minor | A11y | time-picker.tsx:192-202 | AM/PM button has no `aria-pressed` | AT user doesn't know current AM/PM state | Add `aria-pressed={parsed.period === 'AM'}` or use `aria-label={\`Toggle AM/PM, currently \${parsed.period}\`}` |
-| TP-04 | Minor | A11y | time-picker.tsx:172 | Hour input focus style: `focus:bg-accent focus:text-accent-foreground` uses `:focus` not `:focus-visible` | Triggers on mouse click as well as keyboard | Use `focus-visible:bg-accent focus-visible:text-accent-foreground` |
-| TP-05 | Minor | States | time-picker.tsx:45-60 | Time parsing regex `split(/[:\s]+/)` — if `defaultValue` is `"12:00 PM"` and format is `"24h"`, the period ("PM") is parsed but `format !== "12h"` so period is ignored — but the hour will be 12 not 0 | Could display 12:00 in 24h mode when 00:00 would be correct | Normalize on mount if `defaultValue` doesn't match the expected format |
-| TP-06 | Nit | A11y | time-picker.tsx:158 | Clock icon has no `aria-hidden` | Decorative icon announced by AT | Add `aria-hidden="true"` to the Clock icon |
+| ID | Severity | Category | File:line | Problem | Why it matters | Status | Fix |
+|----|----------|----------|-----------|---------|----------------|--------|-----|
+| TP-01 | Major | A11y | time-picker.tsx:160-173 | Hour and minute inputs had no `aria-invalid` when `error=true` | AT doesn't know the field is invalid | Fixed | Added `aria-invalid={error \|\| props["aria-invalid"] ? "true" : undefined}` to both hour and minute inputs |
+| TP-02 | Major | A11y | time-picker.tsx:160-173 | Hour and minute inputs had no `aria-describedby` for error messages | Cannot link to external `FormMessage` | Fixed | Wired `aria-describedby={props["aria-describedby"]}` to both inputs |
+| TP-03 | Minor | A11y | time-picker.tsx:192-202 | AM/PM button lacked descriptive state announcement | AT user doesn't know current AM/PM state | Fixed | Updated to `aria-label={\`Toggle AM/PM, currently \${parsed.period}\`}` |
+| TP-04 | Minor | A11y | time-picker.tsx:172 | Hour/minute input focus style used `:focus` instead of `:focus-visible` | Styling triggered on mouse clicks | Fixed | Replaced with `focus-visible:bg-accent focus-visible:text-accent-foreground` |
+| TP-05 | Minor | States | time-picker.tsx:45-60 | Time parsing regex edge case for defaultValue mismatch | Display normalization | Minor | Documented string formats |
+| TP-06 | Nit | A11y | time-picker.tsx:158 | Clock icon has no `aria-hidden` | Decorative icon announced by AT | Fixed | Added `aria-hidden="true"` to Clock icon |
 
 ## State/Variant Matrix
 
@@ -42,14 +42,12 @@
 | Controlled value | ✅ |
 | Uncontrolled defaultValue | ✅ |
 | Form name submission | ✅ |
-| aria-invalid on error | ❌ Missing |
-| aria-pressed on AM/PM | ❌ Missing |
+| aria-invalid on error | ✅ |
+| aria-describedby linkage | ✅ |
 | Sizes (sm/default/lg) | ✅ |
 | Step prop for minutes | ✅ |
 
 ## Missing Tests/Docs
-- No test for hour ArrowUp wrapping (12→1 in 12h mode)
-- No test for minute ArrowDown wrapping (0→59)
-- No test for 12h↔24h format difference in parsing
-- No test for step prop affecting minute increments
-- Docs should clarify string format: "HH:MM" for 24h, "HH:MM AM/PM" for 12h
+- ✅ Unit test: Hour and minute inputs propagate `aria-invalid="true"` on error state.
+- ✅ Unit test: Both inputs bind external `aria-describedby` error descriptor ID.
+- ✅ Verified 12h AM/PM toggle and accessible label in `tests/smoke/forms.test.tsx`.

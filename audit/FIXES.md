@@ -359,3 +359,10 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
 - **`Textarea`** (`src/components/core/textarea.tsx`):
   - **TA-02 (Major)**: Automatically propagate `aria-invalid={isError ? "true" : undefined}` when `error` prop is set so assistive technologies announce invalid input states.
   - Added unit test in `tests/smoke/core.test.tsx` asserting `aria-invalid="true"` on error state.
+
+- **`TimePicker`** (`src/components/forms/time-picker.tsx`):
+  - **TP-01 (Major)**: Added `aria-invalid={error || props["aria-invalid"] ? "true" : undefined}` to both hour and minute spinbutton inputs.
+  - **TP-02 (Major)**: Wired `aria-describedby` to both spinbutton inputs for form validation error linkage.
+  - **TP-03 (Minor)**: Updated AM/PM button `aria-label` to dynamically announce current period (`Toggle AM/PM, currently X`).
+  - **TP-04 & TP-06 (Minor/Nit)**: Replaced `:focus` with `:focus-visible` styling on numeric inputs and added `aria-hidden="true"` to decorative clock icon.
+  - Added unit test in `tests/smoke/forms.test.tsx` asserting `aria-invalid="true"` and `aria-describedby` linkage on hour and minute inputs.
