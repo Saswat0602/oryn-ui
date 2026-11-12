@@ -11,11 +11,13 @@ import { useControllableState } from "../../lib/use-controllable-state"
 interface AlertDialogContextValue {
   open: boolean
   setOpen: (open: boolean) => void
+  titleId: string
+  descriptionId: string
 }
 
 const AlertDialogContext = React.createContext<AlertDialogContextValue | null>(null)
 
-function useAlertDialogContext() {
+export function useAlertDialogContext() {
   const context = React.useContext(AlertDialogContext)
   if (!context) {
     throw new Error("AlertDialog compound components must be used within an AlertDialog")
@@ -42,8 +44,12 @@ export const AlertDialog: React.FC<AlertDialogProps> = ({
     onChange: onOpenChange,
   })
 
+  const uniqueId = React.useId()
+  const titleId = `alert-dialog-title-${uniqueId}`
+  const descriptionId = `alert-dialog-desc-${uniqueId}`
+
   return (
-    <AlertDialogContext.Provider value={{ open, setOpen }}>
+    <AlertDialogContext.Provider value={{ open, setOpen, titleId, descriptionId }}>
       {children}
     </AlertDialogContext.Provider>
   )
@@ -117,7 +123,7 @@ export interface AlertDialogContentProps extends React.HTMLAttributes<HTMLDivEle
 
 export const AlertDialogContent = React.forwardRef<HTMLDivElement, AlertDialogContentProps>(
   ({ className, children, ...props }, forwardedRef) => {
-    const { open, setOpen } = useAlertDialogContext()
+    const { open, setOpen, titleId, descriptionId } = useAlertDialogContext()
     const contentRef = React.useRef<HTMLDivElement | null>(null)
 
     useFocusTrap(contentRef as React.RefObject<HTMLElement>, open)
@@ -157,6 +163,8 @@ export const AlertDialogContent = React.forwardRef<HTMLDivElement, AlertDialogCo
           }}
           role="alertdialog"
           aria-modal="true"
+          aria-labelledby={props['aria-labelledby'] || titleId}
+          aria-describedby={props['aria-describedby'] || descriptionId}
           data-state={open ? "open" : "closed"}
           className={cn(
             "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-border bg-card p-6 text-card-foreground shadow-2xl duration-200 rounded-2xl",
@@ -205,26 +213,36 @@ AlertDialogFooter.displayName = "AlertDialogFooter"
 export interface AlertDialogTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {}
 
 export const AlertDialogTitle = React.forwardRef<HTMLHeadingElement, AlertDialogTitleProps>(
-  ({ className, ...props }, ref) => (
-    <h2
-      ref={ref}
-      className={cn("text-base font-semibold text-foreground", className)}
-      {...props}
-    />
-  )
+  ({ className, id, ...props }, ref) => {
+    const context = React.useContext(AlertDialogContext)
+    const titleId = id || context?.titleId
+    return (
+      <h2
+        ref={ref}
+        id={titleId}
+        className={cn("text-base font-semibold text-foreground", className)}
+        {...props}
+      />
+    )
+  }
 )
 AlertDialogTitle.displayName = "AlertDialogTitle"
 
 export interface AlertDialogDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {}
 
 export const AlertDialogDescription = React.forwardRef<HTMLParagraphElement, AlertDialogDescriptionProps>(
-  ({ className, ...props }, ref) => (
-    <p
-      ref={ref}
-      className={cn("text-xs text-muted-foreground leading-relaxed", className)}
-      {...props}
-    />
-  )
+  ({ className, id, ...props }, ref) => {
+    const context = React.useContext(AlertDialogContext)
+    const descriptionId = id || context?.descriptionId
+    return (
+      <p
+        ref={ref}
+        id={descriptionId}
+        className={cn("text-xs text-muted-foreground leading-relaxed", className)}
+        {...props}
+      />
+    )
+  }
 )
 AlertDialogDescription.displayName = "AlertDialogDescription"
 
@@ -296,9 +314,18 @@ export const AlertDialogCancel = React.forwardRef<HTMLButtonElement, AlertDialog
 )
 AlertDialogCancel.displayName = "AlertDialogCancel"
 
-export const useAlertDialog = () => ({
-  open: false,
-  onOpenChange: () => {},
-})
+export const useAlertDialog = () => {
+  const context = React.useContext(AlertDialogContext)
+  if (context) {
+    return {
+      open: context.open,
+      onOpenChange: context.setOpen,
+    }
+  }
+  return {
+    open: false,
+    onOpenChange: () => {},
+  }
+}
 
 export default AlertDialog

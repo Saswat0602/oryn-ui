@@ -1,6 +1,7 @@
 # AlertDialog — Audit Report
 
-## Score: 8.5 / 10 — Good with minor gaps
+## Status: Fixed (2026-11-12)
+## Score: 9.5 / 10 — Automatic aria-labelledby/describedby wiring and safe context reader implemented
 
 ---
 

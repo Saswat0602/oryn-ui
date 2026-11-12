@@ -55,6 +55,10 @@ describe('Overlay Domain Smoke & Accessibility Suite', () => {
       </StrictMode>
     )
     expect(getByText('Are you absolutely sure?')).toBeDefined()
+    const dialog = document.querySelector('[role="alertdialog"]')!
+    expect(dialog).toBeDefined()
+    const title = getByText('Are you absolutely sure?')
+    expect(dialog.getAttribute('aria-labelledby')).toBe(title.getAttribute('id'))
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
