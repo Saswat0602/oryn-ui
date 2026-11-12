@@ -290,3 +290,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **SON-01 (Major)**: Added accessible `<span className="sr-only">Loading</span>` to `Loader2` spinner container and `motion-safe:animate-spin` on loading toast items.
   - **SON-02 (Minor)**: Added `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1` on action and dismiss buttons.
   - Added unit tests for loading state toast with accessible sr-only text in `tests/smoke/feedback.test.tsx`.
+
+- **`Timeline`** (`src/components/data/timeline.tsx`):
+  - **TIM-01 (Major)**: Replaced hardcoded `bg-rose-600 text-white border-rose-600 ring-4 ring-rose-50 dark:ring-rose-950/40` with semantic design tokens `bg-destructive text-destructive-foreground border-destructive ring-4 ring-destructive/20`.
+  - **TIM-02 (Minor)**: Added `motion-safe:animate-pulse` to the current status node to respect reduced motion settings.
+  - Added unit, error status, and axe tests in `tests/smoke/data.test.tsx`.

@@ -96,8 +96,8 @@ describe('Data Display Domain Smoke & Accessibility Suite', () => {
     expect(results.violations).toEqual([])
   })
 
-  it('renders Timeline with chronological steps', async () => {
-    const { container, getByText } = render(
+  it('renders Timeline with chronological steps and passes a11y', async () => {
+    const { container, getByText, getByRole, getAllByRole } = render(
       <StrictMode>
         <Timeline
           items={[
@@ -105,15 +105,22 @@ describe('Data Display Domain Smoke & Accessibility Suite', () => {
               id: '1',
               title: 'Pull Request Merged',
               description: 'feat(core): add button group',
-              timestamp: '10:30 AM',
+              time: '10:30 AM',
               status: 'completed'
             },
             {
               id: '2',
               title: 'Automated CI Verification',
               description: 'Running unit & a11y tests',
-              timestamp: '10:32 AM',
+              time: '10:32 AM',
               status: 'current'
+            },
+            {
+              id: '3',
+              title: 'Deployment Failed',
+              description: 'Container health check failed',
+              time: '10:35 AM',
+              status: 'error'
             }
           ]}
         />
@@ -121,6 +128,15 @@ describe('Data Display Domain Smoke & Accessibility Suite', () => {
     )
     expect(getByText('Pull Request Merged')).toBeDefined()
     expect(getByText('Automated CI Verification')).toBeDefined()
+    expect(getByText('Deployment Failed')).toBeDefined()
+    expect(getByRole('list')).toBeDefined()
+    expect(getAllByRole('listitem').length).toBe(3)
+
+    const ssr = renderToString(
+      <Timeline items={[{ title: 'SSR Step', status: 'error' }]} />
+    )
+    expect(ssr).toContain('SSR Step')
+    expect(ssr).toContain('bg-destructive')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

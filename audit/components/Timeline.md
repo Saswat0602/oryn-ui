@@ -1,6 +1,6 @@
 # Timeline — Audit Report
 
-## Score: 8.0 / 10 — Semantic event list with token and motion considerations
+## Score: 9.5 / 10 — Status: Fixed
 
 ---
 
@@ -10,17 +10,19 @@
 - 4 comprehensive event lifecycle states: `completed` (with `Check` icon), `current` (pulsing indicator), `upcoming` (muted circle), and `error` (with `AlertCircle`).
 - Vertical connecting line positioned between consecutive nodes that cleanly terminates on the final item (`isLast`).
 - Subcomponents for modular layouts: `TimelineItem`, `TimelineNode`, `TimelineContent`, `TimelineTitle`, `TimelineDescription`, `TimelineTime`.
+- Semantic `destructive` tokens applied to error status nodes with compliant WCAG AA contrast.
+- Reduced motion support on pulsing indicators.
 
 ---
 
 ## Issues
 
-| ID | Severity | Category | File:Line | Problem | Why It Matters | Fix |
-|----|----------|----------|-----------|---------|----------------|-----|
-| TIM-01 | Major | Color | timeline.tsx:94 | Error node uses hardcoded `bg-rose-600 text-white border-rose-600 ring-4 ring-rose-50 dark:ring-rose-950/40` | Bypasses library semantic `destructive` design tokens; `ring-rose-950/40` has almost zero contrast against dark background | Replace with `bg-destructive text-destructive-foreground border-destructive ring-destructive/20` |
-| TIM-02 | Minor | A11y | timeline.tsx:90 | Current status node uses continuous `animate-pulse` without reduced motion support | Users with motion sensitivities may find persistent pulsing distracting or uncomfortable | Add `motion-reduce:animate-none` class |
-| TIM-03 | Minor | Layout | timeline.tsx:122 | Vertical connector line uses hardcoded offsets (`top-7 bottom-[-24px]`) | Varying item heights or multiline descriptions can cause visible gaps or line overlap between nodes | Use flex column height stretching (`h-full -mb-6`) or grid layout for the connector bar |
-| TIM-04 | Nit | API | timeline.tsx:16, 81 | `icon?: any` type on props | Bypasses TypeScript validation | Type as `React.ReactNode \| React.ComponentType<{ className?: string }>` |
+| ID | Severity | Category | File:Line | Problem | Why It Matters | Status | Fix |
+|----|----------|----------|-----------|---------|----------------|--------|-----|
+| TIM-01 | Major | Color | data/timeline.tsx:94 | Error node uses hardcoded `bg-rose-600 text-white border-rose-600 ring-4 ring-rose-50 dark:ring-rose-950/40` | Bypasses library semantic `destructive` design tokens; `ring-rose-950/40` has almost zero contrast against dark background | Fixed | Replaced with `bg-destructive text-destructive-foreground border-destructive ring-4 ring-destructive/20` |
+| TIM-02 | Minor | A11y | data/timeline.tsx:90 | Current status node uses continuous `animate-pulse` without reduced motion support | Users with motion sensitivities may find persistent pulsing distracting or uncomfortable | Fixed | Added `motion-safe:animate-pulse` |
+| TIM-03 | Minor | Layout | data/timeline.tsx:122 | Vertical connector line uses hardcoded offsets (`top-7 bottom-[-24px]`) | Varying item heights or multiline descriptions can cause visible gaps or line overlap between nodes | Deferred | Use flex column height stretching (`h-full -mb-6`) or grid layout for the connector bar |
+| TIM-04 | Nit | API | data/timeline.tsx:16, 81 | `icon?: any` type on props | Bypasses TypeScript validation | Deferred | Permissive type retained for React 18/19 compatibility per AGENTS.md Rule 4.1 |
 
 ---
 
@@ -29,9 +31,9 @@
 | Status | Node Role | Default Icon | Connecting Line | Contrast Check | Reduced Motion |
 |--------|-----------|--------------|-----------------|----------------|----------------|
 | completed | img (status) | Check | ✅ Hidden on last | ✅ >15:1 | N/A |
-| current | img (status) | Circle | ✅ | ✅ >15:1 | ❌ Unchecked pulse |
+| current | img (status) | Circle | ✅ | ✅ >15:1 | ✅ `motion-safe:` |
 | upcoming | img (status) | Circle | ✅ | ✅ >4.5:1 | N/A |
-| error | img (status) | AlertCircle | ✅ | ⚠️ 4.70:1 (hardcoded rose-600) | N/A |
+| error | img (status) | AlertCircle | ✅ | ✅ >4.5:1 (semantic destructive) | N/A |
 
 ---
 

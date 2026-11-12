@@ -87,11 +87,11 @@ export const TimelineNode = React.forwardRef<HTMLDivElement, TimelineNodeProps>(
       completed:
         "bg-primary text-primary-foreground border-primary ring-4 ring-muted",
       current:
-        "bg-background text-primary border-primary ring-4 ring-muted animate-pulse",
+        "bg-background text-primary border-primary ring-4 ring-muted motion-safe:animate-pulse",
       upcoming:
         "bg-muted text-muted-foreground border-input",
       error:
-        "bg-rose-600 text-white border-rose-600 ring-4 ring-rose-50 dark:ring-rose-950/40",
+        "bg-destructive text-destructive-foreground border-destructive ring-4 ring-destructive/20",
     }[status]
 
     return (
