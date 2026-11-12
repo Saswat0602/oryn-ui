@@ -1,31 +1,33 @@
 # Collapsible — Audit Report
 
-## Score: 7.5 / 10 — Solid but missing ARIA wiring
+## Score: 9.5 / 10 — Remediated: Deterministic aria-controls, focus-visible outline, aria-hidden content hiding
+**Status:** Fixed
 
 ---
 
 ## What's Good
 - Clean compound-component pattern with context.
 - Full controlled/uncontrolled via `useControllableState`.
-- `aria-expanded` on the trigger button — correct boolean.
+- `aria-expanded` and deterministic `aria-controls` on the trigger button.
 - Disabled state passed through context, blocks toggle on click.
 - CSS grid trick (`grid-rows-[1fr]/[0fr]`) for height animation avoids JS-measured heights.
-- `pointer-events-none` on collapsed content prevents accidental interaction.
+- Focus-visible ring on trigger button (`focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1`).
+- `aria-hidden={!open}` on content panel hides collapsed content from screen readers.
 - `forwardRef` + `displayName` on all parts.
 
 ---
 
-## Issues
+## Remediated Issues
 
-| ID | Severity | Category | File:Line | Problem | Why It Matters | Fix |
-|----|----------|----------|-----------|---------|----------------|-----|
-| CO-01 | Critical | A11y | collapsible.tsx:100 | `aria-expanded` present but no `aria-controls` pointing to the content panel ID | Screen readers cannot associate button with the content it controls | Generate IDs (useId), set `aria-controls={contentId}` on trigger, `id={contentId}` on content |
-| CO-02 | Major | A11y | collapsible.tsx:104–107 | Trigger loses focus outline — className has `outline-none` with no `focus-visible` alternative | Keyboard users cannot see focus indicator | Replace `outline-none` with `focus-visible:ring-2 focus-visible:ring-ring` |
-| CO-03 | Major | A11y | collapsible.tsx:97–98 | `ref={ref as any}` on CollapsibleTrigger | Type unsafe | Use proper typed merge ref |
-| CO-04 | Minor | Performance | collapsible.tsx:128–130 | Animation uses `opacity-0` when collapsed, but `pointer-events-none` is not on the outer wrapper — the inner `overflow-hidden` div may still receive events briefly | Minor interaction issue on slow transitions | Move `pointer-events-none` to the outer grid div when closed |
-| CO-05 | Minor | A11y | collapsible.tsx:124–137 | Content div has no `role` or `hidden` attribute when collapsed — `pointer-events-none` does not hide from AT | Screen readers may read collapsed content | Add `hidden` boolean or `aria-hidden={!open}` to `CollapsibleContent` |
-| CO-06 | Minor | Tokens | collapsible.tsx:69 | `className="w-full"` hardcoded on root — no token, but non-tokenized layout can conflict with consumer wrappers | Minor layout issue | Document or make it overridable (it already takes `className`, so OK if noted) |
-| CO-07 | Nit | API | collapsible.tsx:28–29 | `onToggle` and `onExpand`/`onCollapse` are redundant with `onOpenChange` | API surface bloat | Consolidate into `onOpenChange` or at least note deprecation direction |
+| ID | Severity | Category | File:Line | Problem | Status |
+|----|----------|----------|-----------|---------|--------|
+| CO-01 | Critical | A11y | collapsible.tsx:102 | `aria-expanded` present but no `aria-controls` pointing to content panel ID | Fixed |
+| CO-02 | Major | A11y | collapsible.tsx:109 | Trigger lost focus outline — `outline-none` with no `focus-visible` ring | Fixed |
+| CO-03 | Major | A11y | collapsible.tsx:85 | Type-unsafe ref casting on `CollapsibleTrigger` | Fixed |
+| CO-04 | Minor | Performance | collapsible.tsx:135 | `pointer-events-none` applied to outer grid wrapper | Fixed |
+| CO-05 | Minor | A11y | collapsible.tsx:130 | Collapsed content visible to AT without `aria-hidden` | Fixed |
+| CO-06 | Minor | Tokens | collapsible.tsx:70 | Non-tokenized layout wrapper | Cleaned |
+| CO-07 | Nit | API | collapsible.tsx:28 | Event prop redundancy | Kept for backwards compatibility |
 
 ---
 

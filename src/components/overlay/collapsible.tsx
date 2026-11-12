@@ -1,14 +1,15 @@
 "use client"
 
-import React, { createContext, useContext, forwardRef } from 'react'
+import React, { createContext, useContext, forwardRef, useId } from 'react'
 import { cn } from '../../lib/utils'
 import { Slot } from '../../lib/slot'
-import { useControllableState } from '../../lib/use-controllable-state'
+import { useControllableState } from '../../hooks/use-controllable-state'
 
 interface CollapsibleContextValue {
   open: boolean
   setOpen: (open: boolean) => void
   disabled?: boolean
+  contentId: string
 }
 
 const CollapsibleContext = createContext<CollapsibleContextValue | null>(null)
@@ -47,7 +48,7 @@ export const Collapsible = forwardRef<HTMLDivElement, CollapsibleProps>(
     },
     ref
   ) => {
-    const [open, setOpen] = useControllableState<boolean>({
+    const [open = false, setOpen] = useControllableState<boolean>({
       prop: controlledOpen,
       defaultProp: defaultOpen,
       onChange: (nextOpen) => {
@@ -61,8 +62,11 @@ export const Collapsible = forwardRef<HTMLDivElement, CollapsibleProps>(
       },
     })
 
+    const generatedId = useId()
+    const contentId = `collapsible-content-${generatedId}`
+
     return (
-      <CollapsibleContext.Provider value={{ open, setOpen, disabled }}>
+      <CollapsibleContext.Provider value={{ open, setOpen, disabled, contentId }}>
         <div
           ref={ref}
           data-state={open ? 'open' : 'closed'}
@@ -83,7 +87,7 @@ export interface CollapsibleTriggerProps extends React.ButtonHTMLAttributes<HTML
 
 export const CollapsibleTrigger = forwardRef<HTMLButtonElement, CollapsibleTriggerProps>(
   ({ asChild = false, onClick, children, className, ...props }, ref) => {
-    const { open, setOpen, disabled } = useCollapsibleContext()
+    const { open, setOpen, disabled, contentId } = useCollapsibleContext()
     const Comp = asChild ? Slot : 'button'
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -95,14 +99,15 @@ export const CollapsibleTrigger = forwardRef<HTMLButtonElement, CollapsibleTrigg
 
     return (
       <Comp
-        ref={ref as any}
+        ref={ref}
         type={asChild ? undefined : 'button'}
         aria-expanded={open}
+        aria-controls={props['aria-controls'] || contentId}
         disabled={disabled}
         data-state={open ? 'open' : 'closed'}
         onClick={handleClick}
         className={cn(
-          'flex items-center justify-between font-medium transition-all outline-none cursor-pointer',
+          'flex items-center justify-between font-medium transition-all select-none cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 rounded-md disabled:pointer-events-none disabled:opacity-50',
           className
         )}
         {...props}
@@ -117,20 +122,23 @@ CollapsibleTrigger.displayName = 'CollapsibleTrigger'
 export interface CollapsibleContentProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const CollapsibleContent = forwardRef<HTMLDivElement, CollapsibleContentProps>(
-  ({ className, children, ...props }, ref) => {
-    const { open } = useCollapsibleContext()
+  ({ className, children, id, ...props }, ref) => {
+    const { open, contentId } = useCollapsibleContext()
 
     return (
       <div
         ref={ref}
+        id={id || contentId}
+        aria-hidden={!open}
         data-state={open ? 'open' : 'closed'}
         className={cn(
           'grid transition-all duration-200 ease-in-out',
           open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 pointer-events-none'
         )}
+        {...props}
       >
         <div className="overflow-hidden">
-          <div className={cn('overflow-hidden', className)} {...props}>
+          <div className={cn('overflow-hidden', className)}>
             {children}
           </div>
         </div>

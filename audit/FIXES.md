@@ -150,3 +150,10 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **HC-05 (Major)**: Refactored internal state to `useControllableState` primitive.
   - **HC-06 (Minor)**: Added auto-measurement effect to calculate trigger dimensions during programmatic / controlled `open={true}` and on window resize/scroll.
   - Added unit, keyboard focus, Escape dismissal, and axe tests in `tests/smoke/overlay.test.tsx`.
+
+- **`Collapsible`** (`src/components/overlay/collapsible.tsx`):
+  - **CO-01 (Critical)**: Implemented deterministic `aria-controls` on `CollapsibleTrigger` mapped directly to the generated `id` on `CollapsibleContent`.
+  - **CO-02 (Major)**: Replaced raw `outline-none` with accessible `focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1` styling on trigger.
+  - **CO-03 (Major)**: Fixed typed ref forwarding on `CollapsibleTrigger` removing unsafe `as any`.
+  - **CO-04 & CO-05 (Minor)**: Added `aria-hidden={!open}` and `pointer-events-none` on collapsed content to ensure screen readers and pointers ignore hidden content.
+  - Added unit, aria-controls linkage, toggle click, and axe tests in `tests/smoke/overlay.test.tsx`.

@@ -169,7 +169,7 @@ describe('Overlay Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders HoverCard, Collapsible, and Separator', async () => {
-    const { container, getByText } = render(
+    const { container, getByText, getByRole } = render(
       <StrictMode>
         <HoverCard open={true}>
           <HoverCardTrigger asChild>
@@ -194,6 +194,18 @@ describe('Overlay Domain Smoke & Accessibility Suite', () => {
     )
     expect(getByText('Advanced Agentic AI Assistant')).toBeDefined()
     expect(getByText('Expanded collapsible body')).toBeDefined()
+
+    const collapsibleTrigger = getByRole('button', { name: 'Toggle Section' })
+    const collapsibleBody = getByText('Expanded collapsible body').parentElement?.parentElement?.parentElement
+    expect(collapsibleTrigger.getAttribute('aria-expanded')).toBe('true')
+    const controlledId = collapsibleTrigger.getAttribute('aria-controls')
+    expect(controlledId).toBeTruthy()
+    expect(collapsibleBody?.getAttribute('id')).toBe(controlledId)
+
+    // Toggle collapse
+    fireEvent.click(collapsibleTrigger)
+    expect(collapsibleTrigger.getAttribute('aria-expanded')).toBe('false')
+    expect(collapsibleBody?.getAttribute('aria-hidden')).toBe('true')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
