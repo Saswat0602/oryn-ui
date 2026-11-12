@@ -10,6 +10,8 @@ interface RadioGroupContextValue {
   setValue: (value: string) => void
   name?: string
   disabled?: boolean
+  firstValue?: string
+  registerValue: (val: string) => void
 }
 
 const RadioGroupContext = createContext<RadioGroupContextValue | null>(null)
@@ -28,6 +30,8 @@ export interface RadioGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   onValueChange?: (value: string) => void
   disabled?: boolean
   name?: string
+  "aria-label"?: string
+  "aria-labelledby"?: string
 }
 
 export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
@@ -39,6 +43,8 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
       onValueChange,
       disabled = false,
       name,
+      "aria-label": ariaLabel,
+      "aria-labelledby": ariaLabelledBy,
       children,
       ...props
     },
@@ -50,16 +56,33 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
       onChange: (val) => val !== undefined && onValueChange?.(val),
     })
 
+    const [firstValue, setFirstValue] = React.useState<string | undefined>(undefined)
+
+    const registerValue = React.useCallback((val: string) => {
+      setFirstValue((prev) => prev ?? val)
+    }, [])
+
     return (
-      <RadioGroupContext.Provider value={{ value, setValue, name, disabled }}>
+      <RadioGroupContext.Provider
+        value={{
+          value,
+          setValue,
+          name,
+          disabled,
+          firstValue,
+          registerValue,
+        }}
+      >
         <div
           ref={ref}
           role="radiogroup"
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
           aria-disabled={disabled}
           className={cn('grid gap-2.5', className)}
           {...props}
         >
-          {name && <input type="hidden" name={name} value={value ?? ""} />}
+          {name && <input type="hidden" name={name} value={value ?? ""} aria-hidden="true" />}
           {children}
         </div>
       </RadioGroupContext.Provider>
@@ -78,10 +101,15 @@ export const RadioGroupItem = forwardRef<HTMLButtonElement, RadioGroupItemProps>
   ({ className, children, id, value: itemValue, disabled: itemDisabled, onClick, onKeyDown, ...props }, ref) => {
     const generatedId = React.useId()
     const itemId = id || generatedId
-    const { value, setValue, disabled: groupDisabled } = useRadioGroupContext()
+    const { value, setValue, disabled: groupDisabled, firstValue, registerValue } = useRadioGroupContext()
+
+    React.useEffect(() => {
+      registerValue(itemValue)
+    }, [registerValue, itemValue])
 
     const disabled = itemDisabled || groupDisabled
     const isChecked = value === itemValue
+    const isFocusable = isChecked || (!value && firstValue === itemValue)
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       onClick?.(e)
@@ -97,6 +125,30 @@ export const RadioGroupItem = forwardRef<HTMLButtonElement, RadioGroupItemProps>
         if (!disabled) {
           setValue(itemValue)
         }
+      } else if (
+        e.key === 'ArrowDown' ||
+        e.key === 'ArrowRight' ||
+        e.key === 'ArrowUp' ||
+        e.key === 'ArrowLeft'
+      ) {
+        e.preventDefault()
+        const root = (e.currentTarget.closest('[role="radiogroup"]') || document) as HTMLElement
+        const radios = Array.from(
+          root.querySelectorAll<HTMLButtonElement>('[role="radio"]:not([disabled]):not([aria-disabled="true"])')
+        )
+        if (!radios.length) return
+        const currentIndex = radios.indexOf(e.currentTarget)
+        let nextIndex = 0
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+          nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % radios.length
+        } else {
+          nextIndex = currentIndex === -1 ? radios.length - 1 : (currentIndex - 1 + radios.length) % radios.length
+        }
+        const nextRadio = radios[nextIndex]
+        if (nextRadio) {
+          nextRadio.focus()
+          nextRadio.click()
+        }
       }
     }
 
@@ -110,7 +162,7 @@ export const RadioGroupItem = forwardRef<HTMLButtonElement, RadioGroupItemProps>
         aria-checked={isChecked}
         aria-disabled={disabled}
         data-state={isChecked ? 'checked' : 'unchecked'}
-        tabIndex={isChecked ? 0 : -1}
+        tabIndex={isFocusable ? 0 : -1}
         onClick={handleClick}
         onKeyDown={handleKeyDown}
         className={cn(
@@ -121,7 +173,7 @@ export const RadioGroupItem = forwardRef<HTMLButtonElement, RadioGroupItemProps>
         {...props}
       >
         {isChecked && (
-          <Circle className="h-2 w-2 fill-primary text-primary" />
+          <Circle className="h-2 w-2 fill-primary text-primary" aria-hidden="true" />
         )}
       </button>
     )
@@ -135,11 +187,6 @@ export const RadioGroupItem = forwardRef<HTMLButtonElement, RadioGroupItemProps>
         {itemNode}
         <label
           htmlFor={itemId}
-          onClick={() => {
-            if (!disabled) {
-              setValue(itemValue)
-            }
-          }}
           className={cn(
             'text-sm font-medium leading-none text-foreground cursor-pointer select-none',
             disabled && 'cursor-not-allowed opacity-70'

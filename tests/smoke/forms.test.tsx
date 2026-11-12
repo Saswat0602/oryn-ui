@@ -176,18 +176,28 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
     expect(results.violations).toEqual([])
   })
 
-  it('renders InputOTP and RadioGroup', async () => {
+  it('renders InputOTP and RadioGroup with arrow navigation', async () => {
+    const handleValueChange = vi.fn()
     const { container, getByLabelText } = render(
       <StrictMode>
         <InputOTP length={6} value="123456" onChange={() => {}} aria-label="Verification OTP" />
 
-        <RadioGroup defaultValue="team" aria-label="Account tier">
+        <RadioGroup defaultValue="team" aria-label="Account tier" onValueChange={handleValueChange}>
           <RadioGroupItem value="personal" id="radio-personal" aria-label="Personal" />
           <RadioGroupItem value="team" id="radio-team" aria-label="Team" />
+          <RadioGroupItem value="enterprise" id="radio-enterprise" aria-label="Enterprise" />
         </RadioGroup>
       </StrictMode>
     )
-    expect(getByLabelText('Team')).toBeDefined()
+    const teamRadio = getByLabelText('Team')
+    const enterpriseRadio = getByLabelText('Enterprise')
+    expect(teamRadio).toBeDefined()
+    expect(teamRadio.getAttribute('aria-checked')).toBe('true')
+
+    // Arrow down moves to next
+    fireEvent.keyDown(teamRadio, { key: 'ArrowDown' })
+    expect(handleValueChange).toHaveBeenCalledWith('enterprise')
+    expect(enterpriseRadio.getAttribute('aria-checked')).toBe('true')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

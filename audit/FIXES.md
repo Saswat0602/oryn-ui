@@ -123,3 +123,12 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **R-03 (Major)**: Added `pt-0.5` to label/description column for vertical baseline alignment with multi-line text.
   - **R-04 (Minor)**: Added `peer` class to native `<input>` element, activating `peer-disabled:` styling on labels.
   - Added unit, click toggle, and axe tests in `tests/smoke/core.test.tsx`.
+
+- **`RadioGroup`** (`src/components/forms/radio-group.tsx`):
+  - **RG-01 (Critical)**: Implemented full 2D Arrow key navigation (`ArrowDown`/`ArrowRight`/`ArrowUp`/`ArrowLeft`) across radio items, shifting focus and updating selection automatically.
+  - **RG-02 (Major)**: Bound `aria-label` and `aria-labelledby` directly to the `role="radiogroup"` element.
+  - **RG-03 (Major)**: Added `aria-hidden="true"` to form submission hidden input.
+  - **RG-04 (Minor)**: Resolved roving tabindex initial state by assigning `tabIndex={0}` to the first radio item when no option is selected.
+  - **RG-05 (Minor)**: Removed redundant label `onClick` handler, allowing native `htmlFor` activation to function without duplicate state calls.
+  - **RG-06 (Nit)**: Added `aria-hidden="true"` to decorative `Circle` radio indicator.
+  - Added unit, arrow key navigation, and axe tests in `tests/smoke/forms.test.tsx`.

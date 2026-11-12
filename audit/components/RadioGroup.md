@@ -1,29 +1,29 @@
 # RadioGroup — Audit Report
 
-## Score: 7/10 — Good pattern, roving tabindex needs fix
+## Score: 9.5 / 10 — Status: Fixed (Full 2D Arrow Key Traversal, Accessible Naming & Roving Tabindex)
 
 ## What's Good
-- `role="radiogroup"` on group container ✅
-- `role="radio" aria-checked` on each button ✅
-- Roving tabindex: focused item gets `tabIndex=0`, others get `tabIndex=-1` ✅
-- `useControllableState` for controlled/uncontrolled ✅
-- Space/Enter key activates the radio ✅
-- `aria-disabled` on both group and item ✅
-- `htmlFor` tied to generated `id` for label association ✅
-- `disabled` properly propagated from group context ✅
-- forwardRef, displayName ✅
-- Label click sets value ✅
+- `role="radiogroup"` on group container with explicit `aria-label` / `aria-labelledby` support ✅
+- `role="radio"` with `aria-checked` on each radio button ✅
+- Full 2D Arrow key navigation (`ArrowDown`/`ArrowRight`/`ArrowUp`/`ArrowLeft`) moving focus and selection ✅
+- Perfect roving tabindex: focused/selected item gets `tabIndex=0`, and when nothing is selected, the first item gets `tabIndex=0` ✅
+- `useControllableState` supporting both controlled and uncontrolled usage ✅
+- Space and Enter keys activate the radio ✅
+- `aria-disabled` and native disabled state properly propagated from group context ✅
+- `htmlFor` tied to generated `id` for label association without duplicate handler calls ✅
+- Hidden input for form submission has `aria-hidden="true"` ✅
+- Decorative `Circle` icon has `aria-hidden="true"` ✅
 
-## Issues
+## Remediated Issues
 
-| ID | Severity | Category | File:line | Problem | Why it matters | Fix |
-|----|----------|----------|-----------|---------|----------------|-----|
-| RG-01 | Critical | A11y | radio-group.tsx:93-101 | No Arrow key navigation between radio items | WCAG authoring practices require ArrowUp/ArrowDown/ArrowLeft/ArrowRight to move between radio items in a group | Implement `onKeyDown` on the group `div` or on each item that finds sibling radios and moves focus+selection |
-| RG-02 | Major | A11y | radio-group.tsx:55-67 | `role="radiogroup"` on `div` has no `aria-label` or `aria-labelledby` | ARIA requires a radiogroup to have an accessible name | Accept an `aria-label` or `aria-labelledby` prop and wire it to the group div |
-| RG-03 | Major | A11y | radio-group.tsx:62 | Hidden `<input type="hidden">` for form submission is exposed to AT | Hidden input could interfere with AT traversal | Add `aria-hidden="true"` to the hidden input |
-| RG-04 | Minor | A11y | radio-group.tsx:113-125 | `tabIndex={isChecked ? 0 : -1}` — when nothing is checked, all items have `tabIndex=-1` | Keyboard user cannot Tab into the group at all if nothing is selected | When no item is checked, give the first non-disabled item `tabIndex=0` |
-| RG-05 | Minor | A11y | radio-group.tsx:133-150 | `label onClick` calls `setValue` directly — duplicates the button's click handler | Could cause double setValue on some interactions | Remove label onClick; `htmlFor` natively activates the button on label click |
-| RG-06 | Nit | A11y | radio-group.tsx:124 | `Circle` icon for the filled indicator is `h-2 w-2` with no `aria-hidden` | Decorative icon should be hidden from AT | Add `aria-hidden="true"` to the Circle icon |
+| ID | Severity | Category | File:line | Problem | Status |
+|----|----------|----------|-----------|---------|--------|
+| RG-01 | Critical | A11y | radio-group.tsx:93-101 | No Arrow key navigation between radio items | Fixed |
+| RG-02 | Major | A11y | radio-group.tsx:55-67 | role="radiogroup" div had no aria-label or aria-labelledby wiring | Fixed |
+| RG-03 | Major | A11y | radio-group.tsx:62 | Hidden input exposed to assistive technologies | Fixed |
+| RG-04 | Minor | A11y | radio-group.tsx:113-125 | When nothing checked, all items had tabIndex=-1 | Fixed |
+| RG-05 | Minor | A11y | radio-group.tsx:133-150 | label onClick duplicated native button click | Fixed |
+| RG-06 | Nit | A11y | radio-group.tsx:124 | Circle icon lacked aria-hidden="true" | Fixed |
 
 ## State/Variant Matrix
 
