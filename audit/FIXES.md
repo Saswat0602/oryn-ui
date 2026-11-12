@@ -174,3 +174,11 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **MS-06 & MS-07 (Minor)**: Added `focus-visible:ring-2` to combobox trigger and bound `aria-controls` unconditionally to the listbox ID.
   - **MS-08 (Nit)**: Replaced `icon?: any` with `React.ReactNode`.
   - Added unit, arrow key listbox navigation, backspace removal, and axe tests in `tests/smoke/forms.test.tsx`.
+
+- **`Pagination`** (`src/components/navigation/pagination.tsx`):
+  - **PG-01 (Critical)**: Bound `aria-current="page"` to the active page button in both automated and declarative modes.
+  - **PG-02 (Major)**: Fixed HTML list semantics (WCAG 1.3.1) by ensuring `PaginationContent` (`<ul>`) renders `PaginationItem` (`<li>`) wrappers for all buttons and ellipses.
+  - **PG-03 (Minor)**: Added descriptive screen reader labels (`aria-label="Current page, page X"` and `"Go to page X"`).
+  - **PG-04 (Minor)**: Enforced accessible minimum touch targets across pagination items.
+  - **PG-05 (Nit)**: Implemented strict `PaginationComponent` compound typing, eliminating monkey-patching.
+  - Added unit, automated mode, compound mode, and axe tests in `tests/smoke/navigation.test.tsx`.

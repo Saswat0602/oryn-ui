@@ -30,7 +30,14 @@ import {
   NavigationMenuTrigger, 
   NavigationMenuContent 
 } from '../../src/components/navigation/navigation-menu'
-import { Pagination } from '../../src/components/navigation/pagination'
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationPrevious, 
+  PaginationNext 
+} from '../../src/components/navigation/pagination'
 import { Stepper } from '../../src/components/navigation/stepper'
 
 describe('Navigation Domain Smoke & Accessibility Suite', () => {
@@ -218,16 +225,39 @@ describe('Navigation Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders Pagination controls', async () => {
-    const { container } = render(
+    const handlePageChange = vi.fn()
+    const { container, getByRole, getByLabelText, getAllByLabelText } = render(
       <StrictMode>
         <Pagination
           currentPage={2}
           totalPages={10}
-          onPageChange={() => {}}
+          onPageChange={handlePageChange}
         />
+        <Pagination aria-label="custom pagination">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious />
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink isActive>1</PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationLink>2</PaginationLink>
+            </PaginationItem>
+            <PaginationItem>
+              <PaginationNext />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </StrictMode>
     )
-    expect(container.firstChild).toBeDefined()
+
+    const activePageButton = getByLabelText('Current page, page 2')
+    expect(activePageButton.getAttribute('aria-current')).toBe('page')
+
+    const nextButton = getAllByLabelText(/next page/i)[0]
+    fireEvent.click(nextButton)
+    expect(handlePageChange).toHaveBeenCalledWith(3)
 
     const ssr = renderToString(
       <Pagination currentPage={1} totalPages={5} onPageChange={() => {}} />

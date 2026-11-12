@@ -11,13 +11,139 @@ export interface PaginationProps extends React.ComponentProps<'nav'> {
   showPrevNext?: boolean
 }
 
-export interface PaginationItemProps {
-  children: React.ReactNode
-  className?: string
-  onClick?: () => void
-  disabled?: boolean
+export interface PaginationItemProps extends React.ComponentProps<'li'> {
   active?: boolean
+  disabled?: boolean
 }
+
+export const PaginationContent = React.forwardRef<
+  HTMLUListElement,
+  React.ComponentProps<'ul'>
+>(({ className, ...props }, ref) => (
+  <ul
+    ref={ref}
+    className={cn('flex flex-row items-center gap-1 list-none p-0 m-0', className)}
+    {...props}
+  />
+))
+PaginationContent.displayName = 'PaginationContent'
+
+export interface PaginationLinkProps extends React.ComponentProps<'button'> {
+  isActive?: boolean
+  size?: 'default' | 'sm' | 'lg' | 'icon'
+}
+
+export const PaginationLink = React.forwardRef<HTMLButtonElement, PaginationLinkProps>(
+  ({ className, isActive, size = 'icon', children, disabled, ...props }, ref) => (
+    <button
+      ref={ref}
+      type="button"
+      disabled={disabled}
+      aria-current={isActive ? 'page' : undefined}
+      className={cn(
+        'inline-flex items-center justify-center rounded-lg text-xs font-medium transition-colors cursor-pointer select-none',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+        'disabled:pointer-events-none disabled:opacity-40',
+        size === 'icon' && 'h-9 min-w-9 px-2',
+        size === 'default' && 'h-9 min-w-9 px-3',
+        size === 'sm' && 'h-8 min-w-8 px-2.5 text-xs',
+        size === 'lg' && 'h-10 min-w-10 px-4 text-sm',
+        isActive
+          ? 'bg-primary text-primary-foreground font-semibold shadow-xs'
+          : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground border border-border/60',
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  )
+)
+PaginationLink.displayName = 'PaginationLink'
+
+export const PaginationItem = React.forwardRef<HTMLLIElement, PaginationItemProps>(
+  ({ className, active, disabled, onClick, children, ...props }, ref) => {
+    if (typeof children === 'string' || typeof children === 'number') {
+      return (
+        <li ref={ref} className="list-none">
+          <PaginationLink
+            isActive={active}
+            disabled={disabled}
+            onClick={onClick as any}
+            className={className}
+            {...(props as any)}
+          >
+            {children}
+          </PaginationLink>
+        </li>
+      )
+    }
+
+    return (
+      <li ref={ref} className={cn('list-none', className)} onClick={onClick} {...props}>
+        {children}
+      </li>
+    )
+  }
+)
+PaginationItem.displayName = 'PaginationItem'
+
+export const PaginationPrevious = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentProps<'button'>
+>(({ className, children, disabled, ...props }, ref) => (
+  <button
+    ref={ref}
+    type="button"
+    disabled={disabled}
+    aria-label="Go to previous page"
+    className={cn(
+      'inline-flex h-9 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer border border-border/60 select-none disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+      className
+    )}
+    {...props}
+  >
+    <ChevronLeft className="h-4 w-4" />
+    <span>{children ?? 'Previous'}</span>
+  </button>
+))
+PaginationPrevious.displayName = 'PaginationPrevious'
+
+export const PaginationNext = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentProps<'button'>
+>(({ className, children, disabled, ...props }, ref) => (
+  <button
+    ref={ref}
+    type="button"
+    disabled={disabled}
+    aria-label="Go to next page"
+    className={cn(
+      'inline-flex h-9 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer border border-border/60 select-none disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+      className
+    )}
+    {...props}
+  >
+    <span>{children ?? 'Next'}</span>
+    <ChevronRight className="h-4 w-4" />
+  </button>
+))
+PaginationNext.displayName = 'PaginationNext'
+
+export const PaginationEllipsis = ({
+  className,
+  ...props
+}: React.ComponentProps<'span'>) => (
+  <span
+    aria-hidden="true"
+    className={cn('flex h-9 w-9 items-center justify-center text-muted-foreground', className)}
+    {...props}
+  >
+    <MoreHorizontal className="h-4 w-4" />
+    <span className="sr-only">More pages</span>
+  </span>
+)
+PaginationEllipsis.displayName = 'PaginationEllipsis'
 
 export const Pagination: React.FC<PaginationProps> = ({
   currentPage = 1,
@@ -30,7 +156,6 @@ export const Pagination: React.FC<PaginationProps> = ({
   children,
   ...props
 }) => {
-  // If children are passed, render standard declarative nav wrapper
   if (children) {
     return (
       <nav
@@ -83,199 +208,91 @@ export const Pagination: React.FC<PaginationProps> = ({
       className={cn('flex items-center space-x-1', className)}
       {...props}
     >
-      {showFirstLast && (
-        <PaginationItem
-          onClick={() => handlePageChange(1)}
-          disabled={currentPage === 1}
-          aria-label="First page"
-        >
-          <ChevronsLeft className="h-4 w-4" />
-        </PaginationItem>
-      )}
-
-      {showPrevNext && (
-        <PaginationItem
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          aria-label="Previous page"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </PaginationItem>
-      )}
-
-      {showPageNumbers && getVisiblePages().map((page, index) => (
-        <React.Fragment key={index}>
-          {page === '...' ? (
-            <span className="flex h-9 w-9 items-center justify-center text-muted-foreground">
-              <MoreHorizontal className="h-4 w-4" />
-            </span>
-          ) : (
-            <PaginationItem
-              onClick={() => handlePageChange(page as number)}
-              active={page === currentPage}
+      <PaginationContent>
+        {showFirstLast && (
+          <PaginationItem>
+            <PaginationLink
+              size="icon"
+              onClick={() => handlePageChange(1)}
+              disabled={currentPage === 1}
+              aria-label="First page"
             >
-              {page}
+              <ChevronsLeft className="h-4 w-4" />
+            </PaginationLink>
+          </PaginationItem>
+        )}
+
+        {showPrevNext && (
+          <PaginationItem>
+            <PaginationPrevious
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            />
+          </PaginationItem>
+        )}
+
+        {showPageNumbers &&
+          getVisiblePages().map((page, index) => (
+            <PaginationItem key={index}>
+              {page === '...' ? (
+                <PaginationEllipsis />
+              ) : (
+                <PaginationLink
+                  isActive={page === currentPage}
+                  onClick={() => handlePageChange(page as number)}
+                  aria-label={
+                    page === currentPage
+                      ? `Current page, page ${page}`
+                      : `Go to page ${page}`
+                  }
+                >
+                  {page}
+                </PaginationLink>
+              )}
             </PaginationItem>
-          )}
-        </React.Fragment>
-      ))}
+          ))}
 
-      {showPrevNext && (
-        <PaginationItem
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          aria-label="Next page"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </PaginationItem>
-      )}
+        {showPrevNext && (
+          <PaginationItem>
+            <PaginationNext
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            />
+          </PaginationItem>
+        )}
 
-      {showFirstLast && (
-        <PaginationItem
-          onClick={() => handlePageChange(totalPages)}
-          disabled={currentPage === totalPages}
-          aria-label="Last page"
-        >
-          <ChevronsRight className="h-4 w-4" />
-        </PaginationItem>
-      )}
+        {showFirstLast && (
+          <PaginationItem>
+            <PaginationLink
+              size="icon"
+              onClick={() => handlePageChange(totalPages)}
+              disabled={currentPage === totalPages}
+              aria-label="Last page"
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </PaginationLink>
+          </PaginationItem>
+        )}
+      </PaginationContent>
     </nav>
   )
 }
 
-export const PaginationItem: React.FC<PaginationItemProps & React.ComponentProps<'button'>> = ({
-  children,
-  className,
-  onClick,
-  disabled = false,
-  active = false,
-  ...props
-}) => {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      className={cn(
-        'inline-flex h-9 min-w-9 items-center justify-center rounded-lg text-xs font-medium transition-colors cursor-pointer select-none',
-        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
-        'disabled:pointer-events-none disabled:opacity-40',
-        active
-          ? 'bg-primary text-primary-foreground font-semibold shadow-xs'
-          : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground border border-border/60',
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </button>
-  )
+export type PaginationComponent = React.FC<PaginationProps> & {
+  Content: typeof PaginationContent
+  Item: typeof PaginationItem
+  Link: typeof PaginationLink
+  Previous: typeof PaginationPrevious
+  Next: typeof PaginationNext
+  Ellipsis: typeof PaginationEllipsis
 }
 
-export const PaginationContent = React.forwardRef<
-  HTMLUListElement,
-  React.ComponentProps<'ul'>
->(({ className, ...props }, ref) => (
-  <ul
-    ref={ref}
-    className={cn('flex flex-row items-center gap-1 list-none p-0 m-0', className)}
-    {...props}
-  />
-))
-PaginationContent.displayName = 'PaginationContent'
+const CompoundPagination = Pagination as PaginationComponent
+CompoundPagination.Content = PaginationContent
+CompoundPagination.Item = PaginationItem
+CompoundPagination.Link = PaginationLink
+CompoundPagination.Previous = PaginationPrevious
+CompoundPagination.Next = PaginationNext
+CompoundPagination.Ellipsis = PaginationEllipsis
 
-export interface PaginationLinkProps extends React.ComponentProps<'button'> {
-  isActive?: boolean
-  size?: 'default' | 'sm' | 'lg' | 'icon'
-}
-
-export const PaginationLink = React.forwardRef<HTMLButtonElement, PaginationLinkProps>(
-  ({ className, isActive, size = 'icon', children, ...props }, ref) => (
-    <button
-      ref={ref}
-      type="button"
-      aria-current={isActive ? 'page' : undefined}
-      className={cn(
-        'inline-flex items-center justify-center rounded-lg text-xs font-medium transition-colors cursor-pointer select-none',
-        'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring',
-        size === 'icon' && 'h-9 w-9',
-        size === 'default' && 'h-9 px-3',
-        size === 'sm' && 'h-8 px-2.5 text-xs',
-        size === 'lg' && 'h-10 px-4 text-sm',
-        isActive
-          ? 'bg-primary text-primary-foreground font-semibold shadow-xs'
-          : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground border border-border/60',
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </button>
-  )
-)
-PaginationLink.displayName = 'PaginationLink'
-
-export const PaginationPrevious = React.forwardRef<
-  HTMLButtonElement,
-  React.ComponentProps<'button'>
->(({ className, children, ...props }, ref) => (
-  <button
-    ref={ref}
-    type="button"
-    aria-label="Go to previous page"
-    className={cn(
-      'inline-flex h-9 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer border border-border/60 select-none',
-      className
-    )}
-    {...props}
-  >
-    <ChevronLeft className="h-4 w-4" />
-    <span>{children ?? 'Previous'}</span>
-  </button>
-))
-PaginationPrevious.displayName = 'PaginationPrevious'
-
-export const PaginationNext = React.forwardRef<
-  HTMLButtonElement,
-  React.ComponentProps<'button'>
->(({ className, children, ...props }, ref) => (
-  <button
-    ref={ref}
-    type="button"
-    aria-label="Go to next page"
-    className={cn(
-      'inline-flex h-9 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer border border-border/60 select-none',
-      className
-    )}
-    {...props}
-  >
-    <span>{children ?? 'Next'}</span>
-    <ChevronRight className="h-4 w-4" />
-  </button>
-))
-PaginationNext.displayName = 'PaginationNext'
-
-export const PaginationEllipsis = ({
-  className,
-  ...props
-}: React.ComponentProps<'span'>) => (
-  <span
-    aria-hidden
-    className={cn('flex h-9 w-9 items-center justify-center text-muted-foreground', className)}
-    {...props}
-  >
-    <MoreHorizontal className="h-4 w-4" />
-    <span className="sr-only">More pages</span>
-  </span>
-)
-PaginationEllipsis.displayName = 'PaginationEllipsis'
-
-// Attach compound subcomponents to Pagination
-;(Pagination as any).Content = PaginationContent
-;(Pagination as any).Item = PaginationItem
-;(Pagination as any).Link = PaginationLink
-;(Pagination as any).Previous = PaginationPrevious
-;(Pagination as any).Next = PaginationNext
-;(Pagination as any).Ellipsis = PaginationEllipsis
-
-export default Pagination
+export default CompoundPagination
