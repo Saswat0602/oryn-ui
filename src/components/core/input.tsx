@@ -25,14 +25,15 @@ const inputVariants = createVariants({
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, error, success, leftIcon, rightIcon, fullWidth = true, ...props }, ref) => {
-    const isError = error || props["aria-invalid"] === true || props["aria-invalid"] === "true"
+    const isError = Boolean(error || props["aria-invalid"] === true || props["aria-invalid"] === "true")
     const state = isError ? "error" : success ? "success" : "default"
+    const ariaInvalid = props["aria-invalid"] !== undefined ? props["aria-invalid"] : (isError ? "true" : undefined)
 
     if (leftIcon || rightIcon) {
       return (
-        <div className={cn("relative", fullWidth && "w-full")}>
+        <div className={cn("relative min-w-0", fullWidth && "w-full")}>
           {leftIcon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" aria-hidden="true">
               {leftIcon}
             </div>
           )}
@@ -47,9 +48,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             )}
             ref={ref}
             {...props}
+            aria-invalid={ariaInvalid}
           />
           {rightIcon && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" aria-hidden="true">
               {rightIcon}
             </div>
           )}
@@ -67,6 +69,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         ref={ref}
         {...props}
+        aria-invalid={ariaInvalid}
       />
     )
   }

@@ -383,3 +383,9 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **B-03 (Minor)**: Added `@deprecated Use loading instead` JSDoc annotation to legacy `isLoading` prop.
   - **B-04 (Minor)**: Added `motion-safe:animate-spin` on loading spinner SVG to respect user reduced-motion preferences.
   - Added unit tests in `tests/smoke/core.test.tsx` asserting `loading` disabled behavior, `aria-busy`, and icon button `aria-label`.
+
+- **`Input`** (`src/components/core/input.tsx`):
+  - **I-02 (Major)**: Automatically set `aria-invalid={ariaInvalid}` on the rendered `<input>` element whenever `error` or `props["aria-invalid"]` is active.
+  - **I-03 (Minor)**: Added `aria-hidden="true"` and `pointer-events-none` to `leftIcon` and `rightIcon` wrapper containers so decorative icons don't pollute screen reader output.
+  - **I-04 (Minor)**: Added `min-w-0` to the icon wrapper container `<div>` to eliminate overflow when placed in flexbox layouts.
+  - Added unit test in `tests/smoke/core.test.tsx` asserting `aria-invalid="true"` propagation on error state.

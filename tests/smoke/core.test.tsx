@@ -66,6 +66,12 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
           placeholder="Enter username" 
           onChange={(e) => { text = e.target.value }} 
         />
+        <Input
+          placeholder="Error email"
+          aria-label="Email error"
+          error
+          leftIcon={<span data-testid="left-icon">@</span>}
+        />
         <Textarea 
           placeholder="Enter biography" 
           aria-label="Biography"
@@ -77,6 +83,9 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
     expect(input).toBeDefined()
     fireEvent.change(input, { target: { value: 'alice' } })
     expect(text).toBe('alice')
+
+    const errorInput = getByPlaceholderText('Error email')
+    expect(errorInput.getAttribute('aria-invalid')).toBe('true')
 
     const textarea = getByPlaceholderText('Enter biography')
     expect(textarea.getAttribute('aria-invalid')).toBe('true')
