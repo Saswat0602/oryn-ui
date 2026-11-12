@@ -60,8 +60,6 @@ export const BreadcrumbPage = React.forwardRef<HTMLSpanElement, React.ComponentP
   ({ className, ...props }, ref) => (
     <span
       ref={ref}
-      role="link"
-      aria-disabled="true"
       aria-current="page"
       className={cn("font-semibold text-foreground tracking-tight", className)}
       {...props}
@@ -253,7 +251,7 @@ export const Breadcrumbs = React.forwardRef<HTMLElement, BreadcrumbsProps>(
                       type="button"
                       onClick={item.onClick}
                       disabled={item.disabled}
-                      className="transition-colors hover:text-foreground font-medium text-muted-foreground cursor-pointer disabled:opacity-50"
+                      className="transition-colors hover:text-foreground font-medium text-muted-foreground cursor-pointer disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-xs"
                     >
                       {item.icon && <span className="mr-1.5 inline-flex">{item.icon}</span>}
                       {item.label}

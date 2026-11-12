@@ -77,7 +77,10 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
         />
       </StrictMode>
     )
-    expect(getByText('Security')).toBeDefined()
+    const securityPage = getByText('Security')
+    expect(securityPage).toBeDefined()
+    expect(securityPage.getAttribute('aria-current')).toBe('page')
+    expect(securityPage.getAttribute('role')).toBeNull()
     expect(getByText('Overview Content')).toBeDefined()
 
     const results = await axe(container)

@@ -269,3 +269,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **CAR-01 (Major)**: Paused autoplay slideshow timer whenever the carousel container is hovered (`onMouseEnter`/`onMouseLeave`) or keyboard focused (`onFocus`/`onBlur`) satisfying WCAG 2.1 SC 2.2.2.
   - **CAR-03 (Minor)**: Supported bubbling keyboard navigation from within focused child controls.
   - Added unit, keyboard arrow navigation, hover/focus events, and axe tests in `tests/smoke/media.test.tsx`.
+
+- **`Breadcrumbs`** (`src/components/forms/breadcrumbs.tsx`):
+  - **B-01 (Major)**: Removed misleading `role="link"` and `aria-disabled="true"` on non-navigable `BreadcrumbPage`, adhering to WAI-ARIA breadcrumb guidelines with `aria-current="page"`.
+  - **B-02 (Minor)**: Added `focus-visible:ring-2 focus-visible:ring-ring` and `disabled:pointer-events-none` to action button breadcrumb items.
+  - Added unit, aria-current="page" validation, role=link exclusion, and axe tests in `tests/smoke/forms.test.tsx`.
