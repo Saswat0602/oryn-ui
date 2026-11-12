@@ -14,7 +14,8 @@ import {
   Zap,
   Flame,
   Wrench,
-  BookOpen
+  BookOpen,
+  Palette
 } from "lucide-react"
 import { CodeBlock } from "@/components/CodeBlock"
 import * as snippets from "@/data/installation-snippets"
@@ -129,6 +130,7 @@ export default function InstallationPage() {
   const [activePkgManager, setActivePkgManager] = useState<PkgManager>("npm")
   const [activeFramework, setActiveFramework] = useState<FrameworkKey>("nextjs")
   const [nextjsMethod, setNextjsMethod] = useState<"css" | "tailwind-v4" | "tailwind-v3">("css")
+  const [selectedStyle, setSelectedStyle] = useState<snippets.ThemeStyle>("monochrome")
 
   return (
     <div className="space-y-12 w-full max-w-5xl mx-auto pb-16">
@@ -223,28 +225,94 @@ export default function InstallationPage() {
         </div>
       </section>
 
-      {/* Global Package Manager Selector */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-border/60 bg-muted/20">
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Terminal className="w-4 h-4 text-primary" />
-          <span>Active Package Manager (updates all commands below):</span>
+      {/* Configuration Controls: Package Manager & Base Color Palette */}
+      <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          {/* Global Package Manager Selector */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-border/60 bg-muted/20">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Terminal className="w-4 h-4 text-primary" />
+              <span>Package Manager:</span>
+            </div>
+            <div className="inline-flex items-center p-0.5 rounded-lg bg-muted/80 border border-border/60 text-xs font-mono self-start sm:self-auto">
+              {(["npm", "pnpm", "yarn", "bun"] as const).map((pm) => (
+                <button
+                  key={pm}
+                  type="button"
+                  onClick={() => setActivePkgManager(pm)}
+                  className={cn(
+                    "px-3 py-1 rounded-md transition-all cursor-pointer",
+                    activePkgManager === pm
+                      ? "bg-background text-foreground shadow-xs font-semibold"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                  )}
+                >
+                  {pm}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Base Color Palette Selector */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-border/60 bg-muted/20">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Palette className="w-4 h-4 text-primary" />
+              <span>Base Color Palette:</span>
+            </div>
+            <div className="inline-flex items-center p-0.5 rounded-lg bg-muted/80 border border-border/60 text-xs font-medium self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={() => setSelectedStyle("monochrome")}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1 rounded-md transition-all cursor-pointer",
+                  selectedStyle === "monochrome"
+                    ? "bg-background text-foreground shadow-xs font-semibold"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                )}
+              >
+                <span className="w-2.5 h-2.5 rounded-full bg-zinc-900 dark:bg-zinc-100 border border-zinc-500/40" />
+                <span>B&amp;W (Zinc)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedStyle("normal")}
+                className={cn(
+                  "flex items-center gap-1.5 px-3 py-1 rounded-md transition-all cursor-pointer",
+                  selectedStyle === "normal"
+                    ? "bg-background text-foreground shadow-xs font-semibold"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                )}
+              >
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-600 border border-blue-400" />
+                <span>Normal (Blue)</span>
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="inline-flex items-center p-0.5 rounded-lg bg-muted/80 border border-border/60 text-xs font-mono self-start sm:self-auto">
-          {(["npm", "pnpm", "yarn", "bun"] as const).map((pm) => (
-            <button
-              key={pm}
-              type="button"
-              onClick={() => setActivePkgManager(pm)}
-              className={cn(
-                "px-3 py-1 rounded-md transition-all cursor-pointer",
-                activePkgManager === pm
-                  ? "bg-background text-foreground shadow-xs font-semibold"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
-              )}
-            >
-              {pm}
-            </button>
-          ))}
+
+        {/* Base Color Palette Indicator / Auto-Setup Info Banner */}
+        <div className="p-3.5 rounded-xl border border-border/60 bg-card/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5">
+            <div className={cn(
+              "w-3 h-3 rounded-full shrink-0 border",
+              selectedStyle === "monochrome"
+                ? "bg-zinc-950 dark:bg-zinc-100 border-zinc-500"
+                : "bg-blue-600 border-blue-400"
+            )} />
+            <div>
+              <span className="font-semibold text-foreground">
+                {selectedStyle === "monochrome" ? "B&W / Monochrome Aesthetic Selected" : "Normal / Vibrant Blue Aesthetic Selected"}
+              </span>
+              <span className="text-muted-foreground ml-1.5">
+                {selectedStyle === "monochrome"
+                  ? "— Clean, modern black & white palette (Shadcn Zinc default). All buttons and primary accents render in monochrome."
+                  : "— Classic SaaS vibrant blue palette. All buttons, active indicators, and focus rings render with royal blue accents."}
+              </span>
+            </div>
+          </div>
+          <div className="font-mono text-[11px] text-muted-foreground shrink-0 bg-muted/60 px-2 py-1 rounded-md border border-border/40">
+            CLI: <span className="text-foreground font-semibold">--style {selectedStyle}</span>
+          </div>
         </div>
       </div>
 
@@ -360,7 +428,7 @@ export default function InstallationPage() {
                   <CodeBlock 
                     filename="app/layout.tsx" 
                     language="tsx" 
-                    code={snippets.nextjs.methodCss} 
+                    code={snippets.getNextLayoutSnippet(selectedStyle)} 
                     showLineNumbers 
                   />
                 </div>
@@ -411,7 +479,7 @@ export default function InstallationPage() {
               <CodeBlock 
                 filename="components/theme-provider.tsx" 
                 language="tsx" 
-                code={snippets.nextjs.themeProvider} 
+                code={snippets.getNextThemeProviderSnippet(selectedStyle)} 
                 showLineNumbers 
               />
             </div>
@@ -641,7 +709,7 @@ export default function InstallationPage() {
               <CodeBlock 
                 filename="src/layouts/Layout.astro" 
                 language="astro" 
-                code={snippets.astro.layoutAstro} 
+                code={snippets.getAstroLayoutSnippet(selectedStyle)} 
                 showLineNumbers 
               />
             </div>
@@ -815,7 +883,10 @@ export default function InstallationPage() {
         <div className="space-y-4">
           <CodeBlock 
             language="bash" 
-            code={`# Add individual components (primitives and hooks bundled automatically)
+            code={`# 1. Initialize project and auto-configure components.json & theme tokens for ${selectedStyle === "monochrome" ? "B&W (Zinc)" : "Normal (Blue)"}
+${snippets.getInitCommand(activePkgManager, selectedStyle)}
+
+# 2. Add individual components (primitives and hooks bundled automatically)
 ${siteConfig.cli.command} add button
 ${siteConfig.cli.command} add dialog
 ${siteConfig.cli.command} add data-table
@@ -832,16 +903,22 @@ ${siteConfig.cli.command} list`}
       {/* Theme Customization with HSL Channel Tokens */}
       <section className="space-y-4 pt-4 border-t border-border/40">
         <div>
-          <h2 className="text-xl font-bold tracking-tight text-foreground">Theme Variables (HSL Channel Tokens)</h2>
+          <div className="flex items-center gap-2 mb-1 text-xs font-semibold uppercase tracking-wider text-primary">
+            <Palette className="w-3.5 h-3.5" />
+            <span>Theme Tokens</span>
+          </div>
+          <h2 className="text-xl font-bold tracking-tight text-foreground">
+            Theme Variables ({selectedStyle === "monochrome" ? "B&W / Monochrome Zinc" : "Normal / Vibrant Blue"})
+          </h2>
           <p className="text-xs text-muted-foreground mt-1">
-            ORYN UI uses HSL channel tokens (<code className="font-mono text-foreground">--primary: 221.2 83.2% 53.3%</code>) without hardcoded color functions. This ensures Tailwind opacity modifiers like <code className="font-mono text-foreground">bg-primary/80</code> and <code className="font-mono text-foreground">ring-primary/20</code> work without color clipping.
+            ORYN UI uses HSL channel tokens (<code className="font-mono text-foreground">{selectedStyle === "monochrome" ? "--primary: 240 5.9% 10%" : "--primary: 221.2 83.2% 53.3%"}</code>) without hardcoded color functions. This ensures Tailwind opacity modifiers like <code className="font-mono text-foreground">bg-primary/80</code> and <code className="font-mono text-foreground">ring-primary/20</code> work without color clipping.
           </p>
         </div>
 
         <CodeBlock 
           filename="app/globals.css"
           language="css"
-          code={snippets.themeVariables}
+          code={snippets.getThemeVariables(selectedStyle)}
           showLineNumbers
         />
       </section>

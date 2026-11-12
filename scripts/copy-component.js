@@ -159,7 +159,9 @@ function parseArgs() {
     targetDir: path.join(process.cwd(), 'components', 'ui', 'oryn'),
     all: false,
     dryRun: false,
-    overwrite: false
+    overwrite: false,
+    style: 'monochrome',
+    styleSpecified: false
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -184,6 +186,21 @@ function parseArgs() {
     } else if (arg === '--copy') {
       // Explicit copy flag
       options.copy = true;
+    } else if (arg === '--style' || arg.startsWith('--style=')) {
+      let styleVal = '';
+      if (arg.startsWith('--style=')) {
+        styleVal = arg.slice(8);
+      } else if (args[i + 1] && !args[i + 1].startsWith('-')) {
+        styleVal = args[++i];
+      }
+      const s = styleVal.toLowerCase().trim();
+      if (s === 'normal' || s === 'blue' || s === 'vibrant') {
+        options.style = 'normal';
+        options.styleSpecified = true;
+      } else if (s === 'monochrome' || s === 'bw' || s === 'zinc' || s === 'black-and-white' || s === 'b&w') {
+        options.style = 'monochrome';
+        options.styleSpecified = true;
+      }
     } else if (arg === '--path' || arg === '-p') {
       if (args[i + 1]) {
         options.targetDir = path.resolve(process.cwd(), args[++i]);
@@ -202,12 +219,13 @@ function printHelp() {
 ORYN Component CLI (oryn-ui)
 
 Commands:
-  npx oryn-ui init                   Initialize project with styles and utils
-  npx oryn-ui list                   List all 75 components by category
-  npx oryn-ui add <component>       Copy component and its dependencies
-  npx oryn-ui add --all             Copy all 75 components
+  npx oryn-ui init [--style <monochrome|normal>]   Initialize project with styles, components.json, and utils
+  npx oryn-ui list                                 List all 75 components by category
+  npx oryn-ui add <component>                     Copy component and its dependencies
+  npx oryn-ui add --all                           Copy all 75 components
 
 Options:
+  --style <name>      Base color palette: monochrome (B&W Zinc) or normal (Vibrant Blue)
   --copy              Explicitly copy source code into project (default behavior)
   --path, -p <dir>    Custom destination directory (default: components/ui/oryn)
   --overwrite         Overwrite files if they already exist
@@ -323,11 +341,84 @@ function copyFileSafe(src, dest, overwrite, dryRun, transform = null) {
   return { status: 'copied' };
 }
 
-function initProject(options, rootDir) {
+async function askUserStyle() {
+  return new Promise((resolve) => {
+    if (!process.stdin.isTTY) {
+      return resolve('monochrome');
+    }
+    const readline = require('readline');
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout
+    });
+    console.log('\n🎨 Choose base color palette for your project:');
+    console.log('   1) \x1b[1mB&W / Monochrome\x1b[0m (Zinc — Sleek black & white aesthetic) [Default]');
+    console.log('   2) \x1b[1mNormal / Vibrant\x1b[0m (Classic blue SaaS accent)');
+    rl.question('\nSelect [1-2] (default: 1): ', (answer) => {
+      rl.close();
+      const trimmed = answer.trim().toLowerCase();
+      if (trimmed === '2' || trimmed === 'normal' || trimmed === 'blue') {
+        resolve('normal');
+      } else {
+        resolve('monochrome');
+      }
+    });
+  });
+}
+
+function getStyleTokens(style) {
+  if (style === 'normal') {
+    return `/* ORYN UI Theme: Normal (Vibrant Blue) */
+:root, [data-style="normal"] {
+  --primary: 221.2 83.2% 53.3%;
+  --primary-foreground: 210 40% 98%;
+  --ring: 221.2 83.2% 53.3%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+}
+
+.dark, .dark[data-style="normal"], [data-style="normal"].dark {
+  --primary: 217.2 91.2% 59.8%;
+  --primary-foreground: 0 0% 100%;
+  --ring: 217.2 91.2% 59.8%;
+  --accent: 217.2 32.6% 17.5%;
+  --accent-foreground: 210 40% 98%;
+}
+`;
+  }
+  return `/* ORYN UI Theme: B&W / Monochrome (Shadcn Zinc) */
+:root, [data-style="monochrome"] {
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+  --ring: 240 5.9% 10%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+}
+
+.dark, .dark[data-style="monochrome"], [data-style="monochrome"].dark {
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+  --ring: 240 4.9% 83.9%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+}
+`;
+}
+
+async function initProject(options, rootDir) {
   console.log('\n🚀 Initializing ORYN UI in your project...\n');
   const cwd = process.cwd();
 
-  // 1. Ensure lib/utils.ts exists
+  // 1. Determine style
+  let selectedStyle = options.style || 'monochrome';
+  if (!options.styleSpecified && process.stdin.isTTY) {
+    selectedStyle = await askUserStyle();
+  }
+
+  const baseColor = selectedStyle === 'monochrome' ? 'zinc' : 'blue';
+  console.log(`\n🎨 Configuring base palette: \x1b[1m${selectedStyle === 'monochrome' ? 'B&W (Monochrome Zinc)' : 'Normal (Vibrant Blue)'}\x1b[0m`);
+
+  // 2. Ensure lib/utils.ts exists
   const utilsDir = path.join(cwd, 'lib');
   const utilsPath = path.join(utilsDir, 'utils.ts');
   if (!fs.existsSync(utilsPath)) {
@@ -339,24 +430,75 @@ function initProject(options, rootDir) {
     console.log('  - lib/utils.ts already exists');
   }
 
-  // 2. Ensure components/ui directory exists
+  // 3. Ensure components/ui directory exists
   const componentsUiDir = path.join(cwd, 'components', 'ui');
   if (!fs.existsSync(componentsUiDir)) {
     fs.mkdirSync(componentsUiDir, { recursive: true });
     console.log('  ✓ Created components/ui directory');
   }
 
-  console.log('\n🎉 ORYN initialized successfully!');
-  console.log('\nNext steps:');
-  console.log('  1. Add theme styles to your globals.css:');
-  console.log('     @import "oryn-ui/theme.css";');
+  // 4. Detect CSS file
+  const possibleCssFiles = [
+    'app/globals.css',
+    'src/app/globals.css',
+    'src/index.css',
+    'src/styles.css',
+    'styles/globals.css'
+  ];
+
+  let detectedCss = null;
+  for (const f of possibleCssFiles) {
+    const full = path.join(cwd, f);
+    if (fs.existsSync(full)) {
+      detectedCss = f;
+      break;
+    }
+  }
+
+  // 5. Create or update components.json
+  const configPath = path.join(cwd, 'components.json');
+  const configContent = {
+    "$schema": "https://oryn-ui.com/schema.json",
+    "style": selectedStyle,
+    "tailwind": {
+      "config": "tailwind.config.js",
+      "css": detectedCss || "app/globals.css",
+      "baseColor": baseColor
+    },
+    "aliases": {
+      "components": "@/components",
+      "utils": "@/lib/utils",
+      "ui": "@/components/ui"
+    }
+  };
+  fs.writeFileSync(configPath, JSON.stringify(configContent, null, 2) + '\n', 'utf8');
+  console.log(`  ✓ Generated components.json (style: "${selectedStyle}", baseColor: "${baseColor}")`);
+
+  // 6. Inject theme tokens into detected CSS if needed
+  if (detectedCss) {
+    const fullCss = path.join(cwd, detectedCss);
+    let cssContent = fs.readFileSync(fullCss, 'utf8');
+    if (!cssContent.includes('--primary') && !cssContent.includes('oryn-ui/styles.css')) {
+      cssContent += '\n' + getStyleTokens(selectedStyle);
+      fs.writeFileSync(fullCss, cssContent, 'utf8');
+      console.log(`  ✓ Injected ${selectedStyle} theme tokens into ${detectedCss}`);
+    } else {
+      console.log(`  - Detected existing theme tokens in ${detectedCss}`);
+    }
+  }
+
+  console.log(`\n🎉 ORYN UI initialized successfully with \x1b[1m${selectedStyle === 'monochrome' ? 'B&W (Monochrome Zinc)' : 'Normal (Vibrant Blue)'}\x1b[0m!`);
+  console.log('\nUsage:');
+  console.log(`  1. Set your root HTML element: <html lang="en" data-style="${selectedStyle}">`);
+  console.log(`     Or wrap with ThemeProvider: <ThemeProvider defaultStyle="${selectedStyle}">`);
   console.log('  2. For Tailwind v4, add to your CSS:');
   console.log('     @source "../node_modules/oryn-ui/dist";');
-  console.log('  3. Add components to your project:');
-  console.log('     npx oryn-ui add button\n');
+  console.log('  3. Add components to your project anytime:');
+  console.log('     npx oryn-ui add button');
+  console.log('     npx oryn-ui add dialog\n');
 }
 
-function main() {
+async function main() {
   const options = parseArgs();
   const rootDir = path.resolve(__dirname, '..');
 
@@ -366,7 +508,7 @@ function main() {
   }
 
   if (options.command === 'init') {
-    initProject(options, rootDir);
+    await initProject(options, rootDir);
     process.exit(0);
   }
 

@@ -5,8 +5,23 @@ import { siteConfig } from '@/lib/site-config'
 
 export type PkgManager = 'npm' | 'pnpm' | 'yarn' | 'bun'
 export type FrameworkKey = 'nextjs' | 'vite' | 'astro' | 'manual'
+export type ThemeStyle = 'monochrome' | 'normal'
 
 export const pkgCommands = siteConfig.installCommands
+
+export const getInitCommand = (pm: PkgManager, style: ThemeStyle = 'monochrome') => {
+  const flag = style === 'normal' ? ' --style normal' : ' --style monochrome'
+  switch (pm) {
+    case 'pnpm':
+      return `pnpm dlx ${siteConfig.cli.command} init${flag}`
+    case 'yarn':
+      return `yarn dlx ${siteConfig.cli.command} init${flag}`
+    case 'bun':
+      return `bunx ${siteConfig.cli.command} init${flag}`
+    default:
+      return `npx ${siteConfig.cli.command} init${flag}`
+  }
+}
 
 export const getInstallCommand = (pm: PkgManager, pkg = siteConfig.packageName) => {
   switch (pm) {
@@ -346,7 +361,69 @@ export function App() {
 }`
 }
 
-export const themeVariables = `/* HSL Channel Tokens (enables Tailwind opacity modifiers like bg-primary/80) */
+export const getNextLayoutSnippet = (style: ThemeStyle = 'monochrome') => `// app/layout.tsx (Method 1: Zero-config precompiled CSS)
+import "${siteConfig.packageName}/styles.css"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "My ORYN UI App",
+  description: "Built with Next.js and ORYN UI",
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en" className="dark" data-style="${style}">
+      <body className="min-h-screen bg-background text-foreground antialiased">
+        {children}
+      </body>
+    </html>
+  )
+}`
+
+export const getNextThemeProviderSnippet = (style: ThemeStyle = 'monochrome') => `// components/theme-provider.tsx (Optional Dark/Light Theme Switching)
+'use client'
+
+import * as React from 'react'
+import { ThemeProvider as OrynThemeProvider } from '${siteConfig.packageName}'
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <OrynThemeProvider defaultTheme="dark" defaultStyle="${style}" storageKey="app-theme">
+      {children}
+    </OrynThemeProvider>
+  )
+}`
+
+export const getAstroLayoutSnippet = (style: ThemeStyle = 'monochrome') => `---
+// src/layouts/Layout.astro
+import '${siteConfig.packageName}/styles.css'
+
+interface Props {
+  title?: string
+}
+
+const { title = "${siteConfig.fullName} + Astro" } = Astro.props
+---
+
+<!doctype html>
+<html lang="en" class="dark" data-style="${style}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
+    <slot />
+  </body>
+</html>`
+
+export const getThemeVariables = (style: ThemeStyle = 'monochrome') => {
+  if (style === 'normal') {
+    return `/* ORYN UI Theme: Normal (Vibrant Blue) */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -355,14 +432,14 @@ export const themeVariables = `/* HSL Channel Tokens (enables Tailwind opacity m
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 221.2 83.2% 53.3%;
+    --primary: 221.2 83.2% 53.3%;          /* Vibrant Royal Blue */
     --primary-foreground: 210 40% 98%;
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
+    --accent: 210 40% 96.1%;             /* Soft Ice Blue Accent */
+    --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 240 5.9% 90%;
@@ -377,8 +454,56 @@ export const themeVariables = `/* HSL Channel Tokens (enables Tailwind opacity m
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 217.2 91.2% 59.8%;          /* Electric Blue in Dark */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 217.2 91.2% 59.8%;
+  }
+}`
+  }
+
+  return `/* ORYN UI Theme: B&W / Monochrome (Shadcn Zinc Default) */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;              /* Deep Black/Zinc in Light */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;             /* Subtle Zinc Accent */
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;                  /* Crisp White in Dark */
+    --primary-foreground: 240 5.9% 10%;
     --secondary: 240 3.7% 15.9%;
     --secondary-foreground: 0 0% 98%;
     --muted: 240 3.7% 15.9%;
@@ -389,9 +514,12 @@ export const themeVariables = `/* HSL Channel Tokens (enables Tailwind opacity m
     --destructive-foreground: 0 0% 98%;
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 217.2 91.2% 59.8%;
+    --ring: 240 4.9% 83.9%;
   }
 }`
+}
+
+export const themeVariables = getThemeVariables('monochrome')
 
 export const cli = {
   copyCommand: `${siteConfig.cli.command} add button card input`
