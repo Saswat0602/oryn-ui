@@ -295,3 +295,9 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **TIM-01 (Major)**: Replaced hardcoded `bg-rose-600 text-white border-rose-600 ring-4 ring-rose-50 dark:ring-rose-950/40` with semantic design tokens `bg-destructive text-destructive-foreground border-destructive ring-4 ring-destructive/20`.
   - **TIM-02 (Minor)**: Added `motion-safe:animate-pulse` to the current status node to respect reduced motion settings.
   - Added unit, error status, and axe tests in `tests/smoke/data.test.tsx`.
+
+- **`Badge`** (`src/components/media/badge.tsx`):
+  - **BDG-01 (Major)**: Enforced `#dc2626` base destructive design tokens guaranteeing >= 4.8:1 contrast ratio across `destructive` and `error` badges.
+  - **BDG-02 (Minor)**: Updated `warning` variant to `text-amber-800 dark:text-amber-300` achieving >= 5.5:1 contrast ratio against subtle tinted backgrounds.
+  - **BDG-03 (Nit)**: Added interactive `role="button"` and `tabIndex={0}` when `onClick` is provided, alongside `focus-visible:` styling.
+  - Added unit, all variant rendering, clickable badge interaction, and axe tests in `tests/smoke/media.test.tsx`.

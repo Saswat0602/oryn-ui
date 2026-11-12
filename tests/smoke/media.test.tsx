@@ -67,13 +67,18 @@ describe('Media Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders Badge with variants and passes a11y', async () => {
-    const { container, getByText } = render(
+    let clicked = false
+    const { container, getByText, getByRole } = render(
       <StrictMode>
         <div aria-label="Status badges">
           <Badge variant="default">Default</Badge>
           <Badge variant="secondary">Secondary</Badge>
           <Badge variant="outline">Outline</Badge>
           <Badge variant="destructive">Destructive</Badge>
+          <Badge variant="success">Success</Badge>
+          <Badge variant="warning">Warning</Badge>
+          <Badge variant="error">Error</Badge>
+          <Badge variant="default" onClick={() => { clicked = true }}>Clickable Badge</Badge>
         </div>
       </StrictMode>
     )
@@ -82,6 +87,13 @@ describe('Media Domain Smoke & Accessibility Suite', () => {
     expect(getByText('Secondary')).toBeDefined()
     expect(getByText('Outline')).toBeDefined()
     expect(getByText('Destructive')).toBeDefined()
+    expect(getByText('Success')).toBeDefined()
+    expect(getByText('Warning')).toBeDefined()
+    expect(getByText('Error')).toBeDefined()
+
+    const clickBtn = getByRole('button', { name: 'Clickable Badge' })
+    fireEvent.click(clickBtn)
+    expect(clicked).toBe(true)
 
     const ssr = renderToString(<Badge variant="secondary">SSR Badge</Badge>)
     expect(ssr).toContain('SSR Badge')

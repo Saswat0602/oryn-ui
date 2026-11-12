@@ -1,6 +1,6 @@
 # Badge — Audit Report
 
-## Score: 8.0 / 10 — Versatile status badge with destructive contrast gap
+## Score: 9.5 / 10 — Status: Fixed
 
 ---
 
@@ -8,17 +8,18 @@
 - 9 distinct variants covering semantic states: `default`, `primary`, `secondary`, `destructive`, `outline`, `success`, `warning`, `error`, and `info`.
 - 3 clean sizing scales (`sm`, `md`, `lg`) with balanced vertical and horizontal padding.
 - Modern pill geometry (`rounded-full`) with subtle borders and shadows.
-- Keyboard focus ring classes included for interactive / clickable badge implementations.
+- Full WCAG AA color contrast across all semantic variants (warning uses `text-amber-800` in light mode, destructive uses `#dc2626` base tokens).
+- Interactive mode support: adds `role="button"`, `tabIndex={0}`, and `focus-visible:` ring styling when `onClick` is provided.
 
 ---
 
 ## Issues
 
-| ID | Severity | Category | File:Line | Problem | Why It Matters | Fix |
-|----|----------|----------|-----------|---------|----------------|-----|
-| BDG-01 | Major | Color | badge.tsx:17, 21 | `destructive` and `error` variants use `bg-destructive text-destructive-foreground` (white on `#ef4444`), giving **3.76:1** contrast ratio | **FAILS WCAG AA Normal Text (4.5:1)**. At standard badge sizes (12px–14px), white text on red is low contrast | Darken destructive background in badge styling to `#dc2626` (red-600, 4.5:1+) or use subtle destructive tint with dark red text |
-| BDG-02 | Minor | Color | badge.tsx:20 | `warning` variant uses `text-amber-600` on `bg-amber-500/10` in light mode, giving ~**3.12:1** contrast ratio | **FAILS WCAG AA Normal Text (4.5:1)** for small badge text | Darken amber text in light mode to `text-amber-800` or `text-amber-900` |
-| BDG-03 | Nit | A11y | badge.tsx:9 | Static `<span>` element includes interactive focus classes (`focus:ring-2 focus:ring-ring`) but has no `tabIndex` or button role | Redundant focus classes on non-focusable element unless wrapped or given tabIndex | Conditionally add interactive attributes if `onClick` prop is provided |
+| ID | Severity | Category | File:Line | Problem | Why It Matters | Status | Fix |
+|----|----------|----------|-----------|---------|----------------|--------|-----|
+| BDG-01 | Major | Color | badge.tsx:17, 21 | `destructive` and `error` variants previously used `#ef4444` yielding 3.76:1 contrast | FAILS WCAG AA Normal Text (4.5:1) | Fixed | Enforced `#dc2626` destructive design tokens (4.83:1 contrast ratio) |
+| BDG-02 | Minor | Color | badge.tsx:20 | `warning` variant used `text-amber-600` on `bg-amber-500/10` in light mode (~3.12:1) | FAILS WCAG AA Normal Text (4.5:1) | Fixed | Updated to `text-amber-800 dark:text-amber-300` (>5.5:1 contrast) |
+| BDG-03 | Nit | A11y | badge.tsx:9 | Static `<span>` element included focus rings unconditionally | Redundant focus classes on non-focusable element | Fixed | Switched to `focus-visible:` and added `role="button"` + `tabIndex={0}` when `onClick` is provided |
 
 ---
 
@@ -28,10 +29,10 @@
 |---------|----------------|---------------|------------------------|---------------------|
 | default / primary | >15:1 | >15:1 | ✅ PASS | ✅ PASS |
 | secondary | >10:1 | >10:1 | ✅ PASS | ✅ PASS |
-| destructive / error | 3.76:1 | 3.76:1 | ❌ **FAIL** (3.76:1) | ✅ PASS |
+| destructive / error | 4.83:1 | 4.83:1 | ✅ PASS | ✅ PASS |
 | outline | >15:1 | >15:1 | ✅ PASS | ✅ PASS |
-| success | >4.5:1 | >5:1 | ✅ PASS | ✅ PASS |
-| warning | ~3.12:1 | ~6.5:1 | ❌ **FAIL in light mode** | ✅ PASS |
+| success | >5.0:1 | >5.0:1 | ✅ PASS | ✅ PASS |
+| warning | >5.5:1 | >6.5:1 | ✅ PASS | ✅ PASS |
 | info | >10:1 | >10:1 | ✅ PASS | ✅ PASS |
 
 ---
