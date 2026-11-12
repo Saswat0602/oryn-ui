@@ -268,14 +268,14 @@ describe('Navigation Domain Smoke & Accessibility Suite', () => {
     expect(results.violations).toEqual([])
   })
 
-  it('renders Stepper with active and completed steps', async () => {
-    const { container, getByText } = render(
+  it('renders Stepper with active and completed steps across default, dots, and progress variants', async () => {
+    const { container, getByText, getAllByRole, rerender } = render(
       <StrictMode>
         <Stepper
           steps={[
             { title: 'Project Details', description: 'Name and repository' },
             { title: 'Environment', description: 'Configure cloud region' },
-            { title: 'Review', description: 'Verify setup' }
+            { title: 'Review', description: 'Verify setup', optional: true }
           ]}
           activeStep={1}
         />
@@ -284,6 +284,41 @@ describe('Navigation Domain Smoke & Accessibility Suite', () => {
     expect(getByText('Project Details')).toBeDefined()
     expect(getByText('Environment')).toBeDefined()
     expect(getByText('Review')).toBeDefined()
+    expect(getByText('(Optional)')).toBeDefined()
+
+    const stepButtons = getAllByRole('button')
+    expect(stepButtons[1].getAttribute('aria-current')).toBe('step')
+
+    // Test dots variant
+    rerender(
+      <StrictMode>
+        <Stepper
+          variant="dots"
+          steps={[
+            { title: 'Step 1' },
+            { title: 'Step 2' }
+          ]}
+          activeStep={0}
+        />
+      </StrictMode>
+    )
+    expect(getByText('Step 1')).toBeDefined()
+
+    // Test progress variant
+    rerender(
+      <StrictMode>
+        <Stepper
+          variant="progress"
+          steps={[
+            { title: 'Account' },
+            { title: 'Billing' }
+          ]}
+          activeStep={1}
+        />
+      </StrictMode>
+    )
+    expect(getByText('Account')).toBeDefined()
+    expect(getByText('Billing')).toBeDefined()
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

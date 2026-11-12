@@ -54,6 +54,7 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
       onStepClick,
       orientation = "horizontal",
       clickable = true,
+      variant = "default",
       children,
       ...props
     },
@@ -69,6 +70,8 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
     })
 
     const isVertical = orientation === "vertical"
+    const isDots = variant === "dots"
+    const isProgressBar = variant === "progress"
 
     const goToStep = (step: number) => {
       if (clickable) {
@@ -106,6 +109,45 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
                 idx < current ? "completed" : idx === current ? "current" : "upcoming"
               const isLast = idx === steps.length - 1
 
+              if (isProgressBar && !isVertical) {
+                return (
+                  <div key={idx} className={cn("flex-1 flex flex-col gap-1.5", idx > 0 && "ml-2.5")}>
+                    <button
+                      type="button"
+                      onClick={() => goToStep(idx)}
+                      disabled={!clickable}
+                      aria-current={status === "current" ? "step" : undefined}
+                      aria-label={s.title ? `${s.title}${s.optional ? " (optional)" : ""} (${status})` : `Step ${idx + 1} (${status})`}
+                      className={cn(
+                        "h-2 w-full rounded-full transition-all duration-300 outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                        clickable && "cursor-pointer hover:opacity-90",
+                        status === "completed" || status === "current" ? "bg-primary" : "bg-muted"
+                      )}
+                    />
+                    <div className="flex flex-col">
+                      <span
+                        className={cn(
+                          "text-xs font-semibold tracking-tight truncate",
+                          status === "current"
+                            ? "text-primary"
+                            : status === "completed"
+                            ? "text-foreground"
+                            : "text-muted-foreground"
+                        )}
+                      >
+                        {s.title}
+                        {s.optional && <span className="ml-1 text-[10px] text-muted-foreground font-normal">(Optional)</span>}
+                      </span>
+                      {s.description && (
+                        <span className="text-[10px] text-muted-foreground truncate leading-tight hidden sm:inline">
+                          {s.description}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )
+              }
+
               if (isVertical) {
                 return (
                   <div key={idx} className="flex gap-4 group">
@@ -120,22 +162,28 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
                         }}
                         disabled={!clickable}
                         aria-current={status === "current" ? "step" : undefined}
-                        aria-label={s.title ? `${s.title} (${status})` : `Step ${idx + 1} (${status})`}
+                        aria-label={s.title ? `${s.title}${s.optional ? " (optional)" : ""} (${status})` : `Step ${idx + 1} (${status})`}
                         className={cn(
-                          "relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all duration-200 outline-none",
+                          isDots
+                            ? "relative z-10 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            : "relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring",
                           clickable && "cursor-pointer hover:scale-105",
                           status === "completed" && "bg-primary text-primary-foreground shadow-xs",
                           status === "current" &&
-                            "border-2 border-primary bg-background text-primary ring-4 ring-primary/15 font-bold shadow-xs",
-                          status === "upcoming" && "border border-input bg-muted/40 text-muted-foreground"
+                            (isDots
+                              ? "bg-primary ring-4 ring-primary/20 scale-125 shadow-xs"
+                              : "border-2 border-primary bg-background text-primary ring-4 ring-primary/15 font-bold shadow-xs"),
+                          status === "upcoming" && (isDots ? "bg-muted-foreground/30" : "border border-input bg-muted/40 text-muted-foreground")
                         )}
                       >
                         {status === "completed" ? (
-                          <>
-                            <Check className="h-4 w-4 stroke-[2.5]" aria-hidden="true" />
-                            <span className="sr-only">{s.title || `Step ${idx + 1}`} (Completed)</span>
-                          </>
-                        ) : s.icon ? (
+                          isDots ? null : (
+                            <>
+                              <Check className="h-4 w-4 stroke-[2.5]" aria-hidden="true" />
+                              <span className="sr-only">{s.title || `Step ${idx + 1}`} (Completed)</span>
+                            </>
+                          )
+                        ) : isDots ? null : s.icon ? (
                           s.icon
                         ) : (
                           <span>{idx + 1}</span>
@@ -176,6 +224,7 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
                         )}
                       >
                         {s.title}
+                        {s.optional && <span className="ml-1 text-[10px] text-muted-foreground font-normal">(Optional)</span>}
                       </span>
                       {s.description && (
                         <span className="text-[11px] text-muted-foreground mt-0.5 leading-snug">
@@ -210,22 +259,28 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
                       }}
                       disabled={!clickable}
                       aria-current={status === "current" ? "step" : undefined}
-                      aria-label={s.title ? `${s.title} (${status})` : `Step ${idx + 1} (${status})`}
+                      aria-label={s.title ? `${s.title}${s.optional ? " (optional)" : ""} (${status})` : `Step ${idx + 1} (${status})`}
                       className={cn(
-                        "relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all duration-200 outline-none",
+                        isDots
+                          ? "relative z-10 flex h-3.5 w-3.5 shrink-0 items-center justify-center rounded-full transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          : "relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring",
                         clickable && "cursor-pointer hover:scale-105",
                         status === "completed" && "bg-primary text-primary-foreground shadow-xs",
                         status === "current" &&
-                          "border-2 border-primary bg-background text-primary ring-4 ring-primary/15 font-bold shadow-xs",
-                        status === "upcoming" && "border border-input bg-muted/40 text-muted-foreground"
+                          (isDots
+                            ? "bg-primary ring-4 ring-primary/20 scale-125 shadow-xs"
+                            : "border-2 border-primary bg-background text-primary ring-4 ring-primary/15 font-bold shadow-xs"),
+                        status === "upcoming" && (isDots ? "bg-muted-foreground/30" : "border border-input bg-muted/40 text-muted-foreground")
                       )}
                     >
                       {status === "completed" ? (
-                        <>
-                          <Check className="h-4 w-4 stroke-[2.5]" aria-hidden="true" />
-                          <span className="sr-only">{s.title || `Step ${idx + 1}`} (Completed)</span>
-                        </>
-                      ) : s.icon ? (
+                        isDots ? null : (
+                          <>
+                            <Check className="h-4 w-4 stroke-[2.5]" aria-hidden="true" />
+                            <span className="sr-only">{s.title || `Step ${idx + 1}`} (Completed)</span>
+                          </>
+                        )
+                      ) : isDots ? null : s.icon ? (
                         s.icon
                       ) : (
                         <span>{idx + 1}</span>
@@ -244,6 +299,7 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
                         )}
                       >
                         {s.title}
+                        {s.optional && <span className="ml-1 text-[10px] text-muted-foreground font-normal">(Optional)</span>}
                       </span>
                       {s.description && (
                         <span className="text-[10px] text-muted-foreground truncate leading-tight hidden sm:inline">

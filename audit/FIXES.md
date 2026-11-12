@@ -324,3 +324,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **SK-02 (Major)**: Forwarded `ref` and native `{...props}` to the outer wrapper element on multi-line skeletons (`lines > 1`).
   - **SK-03 (Minor)**: Guarded animations with `motion-safe:animate-pulse` to respect user motion preferences.
   - Added unit, multi-line ref forwarding, role=status, and axe tests in `tests/smoke/core.test.tsx`.
+
+- **`Stepper`** (`src/components/navigation/stepper.tsx`):
+  - **ST-01 (Major)**: Implemented full visual rendering for `dots` (compact indicators with halo rings) and `progress` (segmented horizontal progress bars).
+  - **ST-04 (Nit)**: Added support for `optional?: boolean` on `StepItem` rendering `(Optional)` tags and appending to accessible `aria-label`.
+  - Added unit, dots/progress variants, optional step readout, and axe tests in `tests/smoke/navigation.test.tsx`.
