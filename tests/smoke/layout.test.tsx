@@ -11,7 +11,7 @@ import { Popover } from '../../src/components/layout/popover'
 import { Resizable, ResizablePanel, ResizableHandle } from '../../src/components/layout/resizable'
 import { ScrollArea } from '../../src/components/layout/scroll-area'
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '../../src/components/layout/sheet'
-import { Sidebar } from '../../src/components/layout/sidebar'
+import { Sidebar, SidebarProvider, SidebarTrigger } from '../../src/components/layout/sidebar'
 import { Tooltip, TooltipProvider } from '../../src/components/layout/tooltip'
 import { Button } from '../../src/components/core/button'
 
@@ -84,20 +84,32 @@ describe('Layout Domain Smoke & Accessibility Suite', () => {
     expect(results.violations).toEqual([])
   })
 
-  it('renders Sidebar with items', async () => {
-    const { container, getByText } = render(
+  it('renders Sidebar with items, toggle buttons, and aria-expanded attributes', async () => {
+    const { container, getByText, getByLabelText } = render(
       <StrictMode>
         <Sidebar
           title="Platform"
+          showToggleButton
           items={[
             { label: 'Overview' },
             { label: 'Deployments' }
           ]}
         />
+        <SidebarProvider defaultOpen={true}>
+          <SidebarTrigger />
+        </SidebarProvider>
       </StrictMode>
     )
     expect(getByText('Platform')).toBeDefined()
     expect(getByText('Overview')).toBeDefined()
+
+    const collapseBtn = getByLabelText('Collapse sidebar')
+    expect(collapseBtn.getAttribute('aria-expanded')).toBe('true')
+    expect(collapseBtn.getAttribute('aria-controls')).toBe('sidebar-navigation')
+
+    const triggerBtn = getByLabelText('Toggle Sidebar')
+    expect(triggerBtn.getAttribute('aria-expanded')).toBe('true')
+    expect(triggerBtn.getAttribute('aria-controls')).toBe('sidebar-navigation')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

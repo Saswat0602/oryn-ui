@@ -303,7 +303,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
               {isCollapsed && (
                 <div
                   className={cn(
-                    "absolute top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-border bg-popover text-popover-foreground text-xs shadow-lg z-50 whitespace-nowrap pointer-events-none duration-150 animate-in fade-in-0 zoom-in-95",
+                    "absolute top-1/2 -translate-y-1/2 hidden group-hover:flex group-focus-visible:flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-border bg-popover text-popover-foreground text-xs shadow-lg z-50 whitespace-nowrap pointer-events-none duration-150 animate-in fade-in-0 zoom-in-95",
                     position === "right" ? "right-full mr-2" : "left-full ml-2"
                   )}
                 >
@@ -324,6 +324,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
     return (
       <aside
         ref={ref}
+        id={props.id || "sidebar-navigation"}
         aria-label={props["aria-label"] || "Sidebar navigation"}
         className={cn(
           "flex flex-col h-full border-r border-border/80 bg-card text-card-foreground select-none transition-all duration-200",
@@ -355,8 +356,10 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             <button
               type="button"
               onClick={handleToggle}
-              className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
+              className="p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               aria-label="Collapse sidebar"
+              aria-expanded={!isCollapsed}
+              aria-controls="sidebar-navigation"
             >
               {position === "right" ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
             </button>
@@ -410,8 +413,10 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
             <button
               type="button"
               onClick={handleToggle}
-              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               aria-label="Expand sidebar"
+              aria-expanded={false}
+              aria-controls="sidebar-navigation"
             >
               {position === "right" ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
             </button>
@@ -531,7 +536,7 @@ export const SidebarTrigger = React.forwardRef<
   HTMLButtonElement,
   React.ButtonHTMLAttributes<HTMLButtonElement>
 >(({ className, onClick, children, ...props }, ref) => {
-  const { toggleSidebar } = useSidebar()
+  const { open, toggleSidebar } = useSidebar()
   return (
     <button
       ref={ref}
@@ -541,10 +546,12 @@ export const SidebarTrigger = React.forwardRef<
         toggleSidebar()
       }}
       className={cn(
-        "inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border/60 bg-background text-muted-foreground hover:bg-accent hover:text-foreground transition-colors cursor-pointer shadow-2xs",
+        "inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border/60 bg-background text-muted-foreground hover:bg-accent hover:text-foreground transition-colors cursor-pointer shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className
       )}
       aria-label="Toggle Sidebar"
+      aria-expanded={open}
+      aria-controls="sidebar-navigation"
       {...props}
     >
       {children || <PanelLeft className="h-4 w-4" />}

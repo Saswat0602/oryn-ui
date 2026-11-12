@@ -313,3 +313,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **SHT-02 (Major)**: Implemented focus restoration capturing `SheetTrigger` and restoring keyboard focus on sheet dismissal.
   - **SHT-03 (Major)**: Connected `useSheet()` directly to `SheetContext` to return live `open` state and `setOpen` callback.
   - Added unit, automatic aria-labelledby linkage, and axe tests in `tests/smoke/layout.test.tsx`.
+
+- **`Sidebar`** (`src/components/layout/sidebar.tsx`):
+  - **SIB-01 (Major)**: Added `aria-expanded` and `aria-controls="sidebar-navigation"` on `SidebarTrigger` and collapse/expand toggle buttons, with `id="sidebar-navigation"` on `<aside>`.
+  - **SIB-02 (Major)**: Added `group-focus-visible:flex` to collapsed-mode tooltip popovers ensuring keyboard users can inspect navigation item labels.
+  - Added unit, aria-expanded/controls validation, and axe tests in `tests/smoke/layout.test.tsx`.
