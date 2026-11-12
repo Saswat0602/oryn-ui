@@ -404,7 +404,9 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
         />
       </StrictMode>
     )
-    expect(getByPlaceholderText('Ask AI anything...')).toBeDefined()
+    const textarea = getByPlaceholderText('Ask AI anything...')
+    expect(textarea).toBeDefined()
+    expect(textarea.getAttribute('aria-label')).toBe('Ask AI anything...')
     const sendBtn = getByRole('button', { name: /send prompt/i })
     fireEvent.click(sendBtn)
     expect(promptSubmitted).toBe('Generate dashboard code')

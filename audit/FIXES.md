@@ -302,3 +302,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **BDG-02 (Minor)**: Updated `warning` variant to `text-amber-800 dark:text-amber-300` achieving >= 5.5:1 contrast ratio against subtle tinted backgrounds.
   - **BDG-03 (Nit)**: Added interactive `role="button"` and `tabIndex={0}` when `onClick` is provided, alongside `focus-visible:` styling.
   - Added unit, all variant rendering, clickable badge interaction, and axe tests in `tests/smoke/media.test.tsx`.
+
+- **`PromptInput`** (`src/components/forms/prompt-input.tsx`):
+  - **PRI-01 (Major)**: Added accessible `aria-label={props['aria-label'] || placeholder || 'Message prompt'}` to the internal `<textarea>`.
+  - **PRI-06 (Nit)**: Replaced low-contrast `text-muted-foreground/50` on disabled submit button with `text-muted-foreground opacity-60` and added `focus-visible:` focus rings.
+  - Added unit, textarea aria-label verification, and axe tests in `tests/smoke/forms.test.tsx`.

@@ -121,6 +121,7 @@ export const PromptInput = React.forwardRef<HTMLDivElement, PromptInputProps>(
           onChange={handleTextChange}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
+          aria-label={props["aria-label"] || placeholder || "Message prompt"}
           disabled={disabled}
           autoFocus={autoFocus}
           rows={minRows}
@@ -140,7 +141,7 @@ export const PromptInput = React.forwardRef<HTMLDivElement, PromptInputProps>(
                 type="button"
                 onClick={onStop}
                 aria-label="Stop generating"
-                className="flex h-8 w-8 items-center justify-center rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors cursor-pointer"
+                className="flex h-8 w-8 items-center justify-center rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <Square className="h-3.5 w-3.5 fill-current" />
               </button>
@@ -151,10 +152,10 @@ export const PromptInput = React.forwardRef<HTMLDivElement, PromptInputProps>(
                 disabled={!canSubmit}
                 aria-label="Send prompt"
                 className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-xl transition-all",
+                  "flex h-8 w-8 items-center justify-center rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   canSubmit
                     ? "bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer shadow-xs"
-                    : "bg-muted text-muted-foreground/50 cursor-not-allowed"
+                    : "bg-muted text-muted-foreground cursor-not-allowed opacity-60"
                 )}
               >
                 <ArrowUp className="h-4 w-4 stroke-[2.5]" />
