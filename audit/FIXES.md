@@ -212,3 +212,11 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **CB-02 (Major)**: Removed redundant `onClick` handler on `<label htmlFor={checkboxId}>`, eliminating double-toggle regressions on label clicks.
   - **CB-03 (Major)**: Added typed `CheckboxChangeEvent` interface for `onChange` callback.
   - Added unit, label single-toggle regression, and axe tests in `tests/smoke/core.test.tsx`.
+
+- **`Form`** (`src/components/forms/form.tsx`):
+  - **FM-01 (Major)**: Replaced hardcoded `text-red-500` error label styling with semantic token `text-destructive`.
+  - **FM-02 (Major)**: Mapped `FormMessage` error variant to `text-destructive`, success to `text-emerald-700 dark:text-emerald-400`, and warning to `text-amber-700 dark:text-amber-400`.
+  - **FM-03 & FM-07 (Major/Nit)**: Removed unsafe `[key: string]: any` catch-all index signatures from `FormContextValue` and `FormFieldError`.
+  - **FM-05 (Minor)**: Added `required` prop on `FormLabel` with accessible visual asterisk indicator.
+  - **FM-06 (Minor)**: Cleaned typed ref forwarding and eliminated redundant `aria-invalid` on fallback div wrappers.
+  - Added unit, required indicator, aria-invalid, and axe tests in `tests/smoke/forms.test.tsx`.

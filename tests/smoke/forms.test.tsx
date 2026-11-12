@@ -209,7 +209,7 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
         <Form>
           <FormField name="username" error="Handle is required">
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel required>Username</FormLabel>
               <FormControl>
                 <input placeholder="Enter username" />
               </FormControl>
@@ -220,7 +220,10 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
         </Form>
       </StrictMode>
     )
-    expect(getByLabelText('Username')).toBeDefined()
+    const input = getByLabelText(/Username/i)
+    expect(input).toBeDefined()
+    expect(input.getAttribute('aria-invalid')).toBe('true')
+    expect(getByText('*')).toBeDefined()
     expect(getByText('Choose a unique organization handle.')).toBeDefined()
     expect(getByText('Handle is required')).toBeDefined()
 

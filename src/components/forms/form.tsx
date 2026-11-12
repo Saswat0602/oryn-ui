@@ -9,7 +9,6 @@ import { useId } from "../../hooks/use-id"
 export interface FormFieldError {
   message?: string
   type?: string
-  [key: string]: any
 }
 
 export interface FormFieldContextValue {
@@ -33,9 +32,8 @@ export const FormItemContext = React.createContext<FormItemContextValue>({
 })
 
 export interface FormContextValue {
-  errors?: Record<string, any>
-  getFieldState?: (name: string) => { error?: any; isDirty?: boolean; isTouched?: boolean; invalid?: boolean }
-  [key: string]: any
+  errors?: Record<string, FormFieldError | string | undefined>
+  getFieldState?: (name: string) => { error?: FormFieldError | string; isDirty?: boolean; isTouched?: boolean; invalid?: boolean }
 }
 
 export const FormContext = React.createContext<FormContextValue | null>(null)
@@ -211,10 +209,12 @@ export const FormItem = React.forwardRef<HTMLDivElement, FormItemProps>(
 )
 FormItem.displayName = "FormItem"
 
-export interface FormLabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {}
+export interface FormLabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+  required?: boolean
+}
 
 export const FormLabel = React.forwardRef<HTMLLabelElement, FormLabelProps>(
-  ({ className, children, htmlFor, ...props }, ref) => {
+  ({ className, children, htmlFor, required, ...props }, ref) => {
     const { error, formItemId } = useFormField()
 
     return (
@@ -222,13 +222,18 @@ export const FormLabel = React.forwardRef<HTMLLabelElement, FormLabelProps>(
         ref={ref}
         htmlFor={htmlFor || formItemId}
         className={cn(
-          "text-xs font-semibold tracking-wide text-foreground select-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 transition-colors",
-          error && "text-red-500 dark:text-red-400",
+          "text-xs font-semibold tracking-wide text-foreground select-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 transition-colors inline-flex items-center",
+          error && "text-destructive",
           className
         )}
         {...props}
       >
         {children}
+        {required && (
+          <span aria-hidden="true" className="text-destructive ml-0.5 font-bold">
+            *
+          </span>
+        )}
       </label>
     )
   }
@@ -263,10 +268,12 @@ export const FormControl = React.forwardRef<HTMLElement, FormControlProps>(
 
     return (
       <div
-        ref={ref as any}
+        ref={(node) => {
+          if (typeof ref === "function") ref(node)
+          else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node
+        }}
         id={formItemId}
         aria-describedby={ariaDescribedBy}
-        aria-invalid={!!error}
         className="relative"
         {...props}
       >
@@ -310,9 +317,9 @@ export const FormMessage = React.forwardRef<HTMLParagraphElement, FormMessagePro
 
     const variantClasses = {
       default: "text-muted-foreground",
-      error: "text-red-500 dark:text-red-400",
-      success: "text-emerald-600 dark:text-emerald-400",
-      warning: "text-amber-600 dark:text-amber-400",
+      error: "text-destructive",
+      success: "text-emerald-700 dark:text-emerald-400",
+      warning: "text-amber-700 dark:text-amber-400",
     }
 
     return (
@@ -321,7 +328,7 @@ export const FormMessage = React.forwardRef<HTMLParagraphElement, FormMessagePro
         id={formMessageId}
         role="alert"
         className={cn(
-          "text-xs font-medium animate-in fade-in-0 duration-150 leading-none",
+          "text-xs font-medium motion-safe:animate-in motion-safe:fade-in-0 duration-150 leading-none",
           variantClasses[variant],
           className
         )}
