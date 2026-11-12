@@ -103,12 +103,12 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
       if (variant === "filled") {
         switch (resolvedVariant) {
           case "success":
-            return "bg-emerald-600 text-white border-transparent"
+            return "bg-emerald-700 text-white border-transparent dark:bg-emerald-800"
           case "destructive":
           case "error":
             return "bg-destructive text-destructive-foreground border-transparent"
           case "warning":
-            return "bg-amber-600 text-white border-transparent"
+            return "bg-amber-700 text-white border-transparent dark:bg-amber-800"
           case "info":
           case "primary":
             return "bg-primary text-primary-foreground border-transparent"
@@ -153,10 +153,12 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
 
     const effectiveIcon = icon !== undefined ? icon : getDefaultIcon()
 
+    const effectiveRole = role || (resolvedVariant === "destructive" || resolvedVariant === "error" ? "alert" : "status")
+
     return (
       <div
         ref={ref}
-        role={role}
+        role={effectiveRole}
         className={cn(
           "relative w-full rounded-xl border transition-all duration-200",
           sizeClasses[size],

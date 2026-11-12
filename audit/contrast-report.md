@@ -10,15 +10,9 @@
 | Metric | Count |
 |--------|-------|
 | Total pairs audited | 23 |
-| ✅ Pass AA (≥ 4.5:1) | 21 |
+| ✅ Pass AA (≥ 4.5:1) | 23 |
 | ⚠️  Pass AA-Large only (3–4.5:1) | 0 |
-| ❌ Fail all WCAG levels | 2 |
-
-> [!CAUTION]
-> **2 pair(s) fail even the AA-Large (3:1) threshold and must be fixed.**
-
-> [!WARNING]
-> **2 pair(s) fail WCAG AA Normal Text (4.5:1).**
+| ❌ Fail all WCAG levels | 0 |
 
 ## Design Token Pairs
 
@@ -58,23 +52,9 @@ These are literal hex values baked into component JSX (alert.tsx, timeline.tsx).
 
 | Color Pair | FG | BG | Ratio | AA Normal (4.5:1) | AA Large/UI (3:1) | Status | Source |
 |---|---|---|---|---|---|---|---|
-| Alert – success:  white on #10b981 | `#ffffff` | `#10b981` | **2.54:1** | ❌ | ❌ | ❌ FAIL | alert.tsx |
-| Alert – warning:  white on #f59e0b | `#ffffff` | `#f59e0b` | **2.15:1** | ❌ | ❌ | ❌ FAIL | alert.tsx |
+| Alert – success:  white on #047857 (emerald-700) | `#ffffff` | `#047857` | **5.48:1** | ✅ | ✅ | ✅ PASS AA | alert.tsx |
+| Alert – warning:  white on #b45309 (amber-700) | `#ffffff` | `#b45309` | **5.02:1** | ✅ | ✅ | ✅ PASS AA | alert.tsx |
 | Alert – error:    white on #e11d48 | `#ffffff` | `#e11d48` | **4.70:1** | ✅ | ✅ | ✅ PASS AA | alert.tsx / rose-600 |
-
-## ❌ All Failing Pairs (AA Normal Text < 4.5:1)
-
-### `Alert – success:  white on #10b981` — Component
-- **FG**: `#ffffff`  **BG**: `#10b981`
-- **Ratio**: 2.54:1 — **FAILS ALL**
-- **Note**: alert.tsx
-- **Recommended fix**: Darken the foreground colour or lighten the background until the ratio reaches ≥ 4.5:1.
-
-### `Alert – warning:  white on #f59e0b` — Component
-- **FG**: `#ffffff`  **BG**: `#f59e0b`
-- **Ratio**: 2.15:1 — **FAILS ALL**
-- **Note**: alert.tsx
-- **Recommended fix**: Darken the foreground colour or lighten the background until the ratio reaches ≥ 4.5:1.
 
 ## Methodology
 

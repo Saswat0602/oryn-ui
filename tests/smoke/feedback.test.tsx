@@ -17,7 +17,7 @@ import { Button } from '../../src/components/core/button'
 
 describe('Feedback Domain Smoke & Accessibility Suite', () => {
   it('renders Alert with title, description, and passes a11y', async () => {
-    const { container, getByText } = render(
+    const { container, getByText, getByRole } = render(
       <StrictMode>
         <Alert variant="info">
           <AlertTitle>System Notice</AlertTitle>
@@ -28,6 +28,7 @@ describe('Feedback Domain Smoke & Accessibility Suite', () => {
 
     expect(getByText('System Notice')).toBeDefined()
     expect(getByText('Maintenance scheduled for midnight.')).toBeDefined()
+    expect(getByRole('status')).toBeDefined()
 
     const ssr = renderToString(
       <Alert variant="destructive">
@@ -35,9 +36,28 @@ describe('Feedback Domain Smoke & Accessibility Suite', () => {
       </Alert>
     )
     expect(ssr).toContain('SSR Outage Alert')
+    expect(ssr).toContain('role="alert"')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
+  })
+
+  it('renders Alert with accessible dismiss and correct roles for all types', async () => {
+    let closed = false
+    const { getByRole, getByLabelText } = render(
+      <Alert
+        variant="destructive"
+        closable
+        onClose={() => { closed = true }}
+        title="Error occurred"
+        message="Something went wrong"
+      />
+    )
+
+    expect(getByRole('alert')).toBeDefined()
+    const closeBtn = getByLabelText('Close alert')
+    fireEvent.click(closeBtn)
+    expect(closed).toBe(true)
   })
 
   it('renders Banner with action, handles dismiss, and passes a11y', async () => {

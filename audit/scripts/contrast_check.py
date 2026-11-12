@@ -186,9 +186,9 @@ def _make_pairs() -> list[PairSpec]:
 
 # Hardcoded component colours
 HARDCODED_PAIRS = [
-    PairSpec("Alert – success:  white on #10b981",  "#ffffff", "#10b981", "Component", "alert.tsx"),
-    PairSpec("Alert – warning:  white on #f59e0b",  "#ffffff", "#f59e0b", "Component", "alert.tsx"),
-    PairSpec("Alert – error:    white on #e11d48",  "#ffffff", "#e11d48", "Component", "alert.tsx / rose-600"),
+    PairSpec("Alert – success:  white on #047857 (emerald-700)",  "#ffffff", "#047857", "Component", "alert.tsx"),
+    PairSpec("Alert – warning:  white on #b45309 (amber-700)",    "#ffffff", "#b45309", "Component", "alert.tsx"),
+    PairSpec("Alert – error:    white on #e11d48",                "#ffffff", "#e11d48", "Component", "alert.tsx / rose-600"),
 ]
 
 
