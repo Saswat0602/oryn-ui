@@ -48,7 +48,7 @@ export interface TableProps<T> extends React.HTMLAttributes<HTMLDivElement> {
   editable?: boolean
   onAddRow?: () => void
   onAddColumn?: () => void
-  onEditCell?: (row: T, column: keyof T, value: any) => void
+  onEditCell?: (row: T, column: keyof T, value: unknown) => void
   onDeleteRow?: (row: T, index: number) => void
   showAddRowButton?: boolean
   showAddColumnButton?: boolean
@@ -223,46 +223,60 @@ function Table<T extends Record<string, unknown>>({
           <thead>
             <tr className="border-b border-border bg-muted/50">
               {selectable && (
-                <th className={cn("w-12 text-left font-medium py-3 px-4", sizeClasses[size])}>
+                <th scope="col" className={cn("w-12 text-left font-medium py-3 px-4", sizeClasses[size])}>
                   <input
                     type="checkbox"
+                    aria-label="Select all rows"
                     checked={selectedRows.length === data.length && data.length > 0}
                     onChange={(e) => handleSelectAll(e.target.checked)}
                     className="h-4 w-4 rounded border-input text-primary focus:ring-primary/40 cursor-pointer"
                   />
                 </th>
               )}
-              {columns.map((column) => (
-                <th
-                  key={String(column.key)}
-                  className={cn(
-                    "text-left font-semibold text-xs text-muted-foreground uppercase tracking-wider py-3 px-4 select-none",
-                    sizeClasses[size],
-                    column.sortable && sortable && "cursor-pointer hover:text-foreground transition-colors",
-                    column.className
-                  )}
-                  style={{
-                    width: column.width,
-                    textAlign: column.align || "left"
-                  }}
-                  onClick={() => column.sortable && sortable && handleSort(column.key)}
-                >
-                  <div className="inline-flex items-center gap-1.5">
-                    <span>{column.header}</span>
-                    {column.sortable && sortable && (
-                      <span className="text-muted-foreground/70">
-                        {sortColumn === column.key ? (
-                          sortDirection === "asc" ? <ArrowUp className="h-3.5 w-3.5 text-primary" /> : <ArrowDown className="h-3.5 w-3.5 text-primary" />
-                        ) : (
-                          <ArrowUpDown className="h-3 w-3 opacity-40 hover:opacity-100" />
-                        )}
-                      </span>
+              {columns.map((column) => {
+                const isSorted = sortColumn === column.key
+                const ariaSort = column.sortable && sortable
+                  ? isSorted
+                    ? sortDirection === "asc"
+                      ? "ascending"
+                      : "descending"
+                    : "none"
+                  : undefined
+
+                return (
+                  <th
+                    key={String(column.key)}
+                    scope="col"
+                    aria-sort={ariaSort}
+                    className={cn(
+                      "text-left font-semibold text-xs text-muted-foreground uppercase tracking-wider py-3 px-4 select-none",
+                      sizeClasses[size],
+                      column.sortable && sortable && "cursor-pointer hover:text-foreground transition-colors",
+                      column.className
                     )}
-                  </div>
-                </th>
-              ))}
+                    style={{
+                      width: column.width,
+                      textAlign: column.align || "left"
+                    }}
+                    onClick={() => column.sortable && sortable && handleSort(column.key)}
+                  >
+                    <div className="inline-flex items-center gap-1.5">
+                      <span>{column.header}</span>
+                      {column.sortable && sortable && (
+                        <span className="text-muted-foreground/70">
+                          {sortColumn === column.key ? (
+                            sortDirection === "asc" ? <ArrowUp className="h-3.5 w-3.5 text-primary" /> : <ArrowDown className="h-3.5 w-3.5 text-primary" />
+                          ) : (
+                            <ArrowUpDown className="h-3 w-3 opacity-40 hover:opacity-100" />
+                          )}
+                        </span>
+                      )}
+                    </div>
+                  </th>
+                )
+              })}
               {showDeleteRowButton && (
-                <th className={cn("text-left font-medium py-3 px-4", sizeClasses[size])}>
+                <th scope="col" className={cn("text-left font-medium py-3 px-4", sizeClasses[size])}>
                   Actions
                 </th>
               )}
@@ -299,6 +313,7 @@ function Table<T extends Record<string, unknown>>({
                       <td className={cn("py-3 px-4", sizeClasses[size])} onClick={(e) => e.stopPropagation()}>
                         <input
                           type="checkbox"
+                          aria-label={`Select row ${index + 1}`}
                           checked={isSelected}
                           onChange={(e) => handleSelectRow(currentKey, e.target.checked)}
                           className="h-4 w-4 rounded border-input text-primary focus:ring-primary/40 cursor-pointer"
@@ -406,8 +421,8 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
 TableRow.displayName = "TableRow"
 
 const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<HTMLTableCellElement>>(
-  ({ className, ...props }, ref) => (
-    <th ref={ref} className={cn("h-10 px-4 text-left align-middle font-semibold text-xs text-muted-foreground uppercase tracking-wider [&:has([role=checkbox])]:pr-0", className)} {...props} />
+  ({ className, scope = "col", ...props }, ref) => (
+    <th ref={ref} scope={scope} className={cn("h-10 px-4 text-left align-middle font-semibold text-xs text-muted-foreground uppercase tracking-wider [&:has([role=checkbox])]:pr-0", className)} {...props} />
   )
 )
 TableHead.displayName = "TableHead"

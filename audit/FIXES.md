@@ -336,3 +336,10 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **SW-03 (Minor)**: Added `motion-safe:transition-transform` on thumb element to respect reduced-motion settings.
   - **SW-05 (Minor)**: Linked `aria-describedby` on the switch button to description paragraph element ID.
   - Added unit test in `tests/smoke/core.test.tsx` asserting label click toggles state cleanly without double-toggle and binds `aria-describedby`.
+
+- **`Table`** (`src/components/data/table.tsx`):
+  - **TAB-01 (Major)**: Added `scope="col"` by default to `TableHead` primitive and all column `<th>` elements in data-driven table mode.
+  - **TAB-02 (Major)**: Added `aria-sort` (`"ascending"`, `"descending"`, or `"none"`) to sortable column headers.
+  - **TAB-03 (Minor)**: Added accessible `aria-label` attributes (`"Select all rows"` and `"Select row X"`) to row selection checkboxes.
+  - **TAB-05 (Nit)**: Typed `value: unknown` on `onEditCell` callback for strict typing.
+  - Added unit tests in `tests/smoke/data.test.tsx` asserting `scope="col"`, `aria-sort` toggling, and accessible selection checkboxes.

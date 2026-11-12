@@ -4,7 +4,7 @@ import { renderToString } from 'react-dom/server'
 import { describe, it, expect } from 'vitest'
 import { axe } from 'vitest-axe'
 
-import { Table, TableHeader, TableBody, TableRow, TableCell } from '../../src/components/data/table'
+import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from '../../src/components/data/table'
 import { DataTable } from '../../src/components/data/data-table'
 import { Chart } from '../../src/components/data/chart'
 import { StatCard } from '../../src/components/data/stat-card'
@@ -12,14 +12,14 @@ import { Timeline } from '../../src/components/data/timeline'
 import { TreeView } from '../../src/components/data/tree-view'
 
 describe('Data Display Domain Smoke & Accessibility Suite', () => {
-  it('renders standard Table primitives', async () => {
-    const { container, getByText } = render(
+  it('renders standard Table primitives with accessible scope', async () => {
+    const { container, getByText, getAllByRole } = render(
       <StrictMode>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableCell>Service</TableCell>
-              <TableCell>Uptime</TableCell>
+              <TableHead>Service</TableHead>
+              <TableHead>Uptime</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -33,6 +33,51 @@ describe('Data Display Domain Smoke & Accessibility Suite', () => {
     )
     expect(getByText('API Gateway')).toBeDefined()
     expect(getByText('99.98%')).toBeDefined()
+
+    const colHeaders = getAllByRole('columnheader')
+    expect(colHeaders.length).toBe(2)
+    expect(colHeaders[0].getAttribute('scope')).toBe('col')
+    expect(colHeaders[1].getAttribute('scope')).toBe('col')
+
+    const results = await axe(container)
+    expect(results.violations).toEqual([])
+  })
+
+  it('renders high-level Table with sorting and row selection', async () => {
+    const testData = [
+      { id: '1', service: 'Redis Cache', latency: 2 },
+      { id: '2', service: 'Postgres DB', latency: 15 }
+    ]
+    const { container, getByText, getAllByRole, getByLabelText } = render(
+      <StrictMode>
+        <Table
+          data={testData}
+          columns={[
+            { key: 'service', header: 'Service Name', sortable: true },
+            { key: 'latency', header: 'Latency (ms)', sortable: true }
+          ]}
+          sortable
+          selectable
+        />
+      </StrictMode>
+    )
+    expect(getByText('Redis Cache')).toBeDefined()
+    expect(getByText('Postgres DB')).toBeDefined()
+
+    // Assert scope and aria-sort
+    const headers = getAllByRole('columnheader')
+    expect(headers[0].getAttribute('scope')).toBe('col') // Select all checkbox header
+    expect(headers[1].getAttribute('aria-sort')).toBe('none')
+
+    // Click to sort by service name
+    fireEvent.click(getByText('Service Name'))
+    expect(headers[1].getAttribute('aria-sort')).toBe('ascending')
+
+    // Verify row checkboxes have accessible labels
+    const selectAllCheckbox = getByLabelText('Select all rows')
+    expect(selectAllCheckbox).toBeDefined()
+    const row1Checkbox = getByLabelText('Select row 1')
+    expect(row1Checkbox).toBeDefined()
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
