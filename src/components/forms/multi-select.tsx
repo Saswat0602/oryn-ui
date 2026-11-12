@@ -4,14 +4,14 @@ import * as React from "react"
 import { Check, ChevronDown, X } from "../../icons"
 import { cn } from "../../lib/utils"
 import { Badge } from "../media/badge"
-import { useControllableState } from "../../lib/use-controllable-state"
+import { useControllableState } from "../../hooks/use-controllable-state"
 import { Portal } from "../../primitives/portal"
 
 export interface MultiSelectOption {
   label: string
   value: string
   disabled?: boolean
-  icon?: any
+  icon?: React.ReactNode
 }
 
 export interface MultiSelectProps
@@ -48,7 +48,7 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
     },
     ref
   ) => {
-    const [selected, setSelected] = useControllableState<string[]>({
+    const [selected = [], setSelected] = useControllableState<string[]>({
       prop: controlledValue,
       defaultProp: defaultValue,
       onChange,
@@ -56,11 +56,15 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
 
     const [open, setOpen] = React.useState(false)
     const [search, setSearch] = React.useState("")
+    const [focusedIndex, setFocusedIndex] = React.useState<number>(-1)
+    const [announcement, setAnnouncement] = React.useState<string>("")
     const [triggerRect, setTriggerRect] = React.useState<DOMRect | null>(null)
-    const listboxId = React.useId()
+    const rawId = React.useId()
+    const listboxId = `ms-listbox-${rawId}`
     const containerRef = React.useRef<HTMLDivElement>(null)
     const popupRef = React.useRef<HTMLDivElement>(null)
     const searchInputRef = React.useRef<HTMLInputElement>(null)
+    const optionsContainerRef = React.useRef<HTMLDivElement>(null)
 
     const updateTriggerRect = React.useCallback(() => {
       if (containerRef.current) {
@@ -103,41 +107,102 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
       return options.filter((opt) => opt.label.toLowerCase().includes(term))
     }, [options, search])
 
+    React.useEffect(() => {
+      setFocusedIndex(filteredOptions.length > 0 ? 0 : -1)
+    }, [filteredOptions, open])
+
     const isSelected = (val: string) => (selected ?? []).includes(val)
 
     const toggleOption = (val: string) => {
       if (disabled) return
+      const opt = options.find((o) => o.value === val)
+      const label = opt ? opt.label : val
       const current = selected ?? []
       if (current.includes(val)) {
-        setSelected(current.filter((v) => v !== val))
+        const next = current.filter((v) => v !== val)
+        setSelected(next)
+        setAnnouncement(`${label} removed, ${next.length} selected`)
       } else {
         if (maxSelected && current.length >= maxSelected) return
-        setSelected([...current, val])
+        const next = [...current, val]
+        setSelected(next)
+        setAnnouncement(`${label} added, ${next.length} selected`)
       }
     }
 
-    const removeOption = (e: React.MouseEvent, val: string) => {
+    const removeOption = (e: React.MouseEvent | React.KeyboardEvent, val: string) => {
       e.stopPropagation()
       if (disabled) return
-      setSelected((selected ?? []).filter((v) => v !== val))
+      const opt = options.find((o) => o.value === val)
+      const label = opt ? opt.label : val
+      const current = selected ?? []
+      const next = current.filter((v) => v !== val)
+      setSelected(next)
+      setAnnouncement(`${label} removed, ${next.length} selected`)
     }
 
     const clearAll = (e: React.MouseEvent) => {
       e.stopPropagation()
       if (disabled) return
       setSelected([])
+      setAnnouncement("All options cleared")
+    }
+
+    const scrollFocusedIntoView = (index: number) => {
+      if (!optionsContainerRef.current) return
+      const optionElements = optionsContainerRef.current.querySelectorAll<HTMLElement>('[role="option"]')
+      const target = optionElements[index]
+      if (target && typeof target.scrollIntoView === "function") {
+        target.scrollIntoView({ block: "nearest" })
+      }
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (disabled) return
+
       if (e.key === "Escape") {
-        setOpen(false)
+        if (open) {
+          e.preventDefault()
+          setOpen(false)
+        }
       } else if (e.key === "Backspace" && search === "" && (selected ?? []).length > 0) {
         const current = selected ?? []
-        setSelected(current.slice(0, -1))
-      } else if (e.key === "ArrowDown" && !open) {
+        const lastVal = current[current.length - 1]
+        const opt = options.find((o) => o.value === lastVal)
+        const label = opt ? opt.label : lastVal
+        const next = current.slice(0, -1)
+        setSelected(next)
+        setAnnouncement(`${label} removed, ${next.length} selected`)
+      } else if (e.key === "ArrowDown") {
         e.preventDefault()
-        setOpen(true)
+        if (!open) {
+          updateTriggerRect()
+          setOpen(true)
+          setFocusedIndex(0)
+        } else if (filteredOptions.length > 0) {
+          setFocusedIndex((prev) => {
+            const nextIdx = (prev + 1) % filteredOptions.length
+            scrollFocusedIntoView(nextIdx)
+            return nextIdx
+          })
+        }
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault()
+        if (open && filteredOptions.length > 0) {
+          setFocusedIndex((prev) => {
+            const prevIdx = prev <= 0 ? filteredOptions.length - 1 : prev - 1
+            scrollFocusedIntoView(prevIdx)
+            return prevIdx
+          })
+        }
+      } else if ((e.key === "Enter" || (e.key === " " && search === "")) && open) {
+        if (focusedIndex >= 0 && focusedIndex < filteredOptions.length) {
+          e.preventDefault()
+          const opt = filteredOptions[focusedIndex]
+          if (opt && !opt.disabled) {
+            toggleOption(opt.value)
+          }
+        }
       }
     }
 
@@ -162,6 +227,11 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
         }
       : {}
 
+    const activeDescendantId =
+      open && focusedIndex >= 0 && focusedIndex < filteredOptions.length
+        ? `${listboxId}-opt-${focusedIndex}`
+        : undefined
+
     return (
       <div
         ref={containerRef}
@@ -169,12 +239,18 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
         className={cn("relative w-full", className)}
         {...props}
       >
+        {/* Screen Reader Live Region */}
+        <div role="status" aria-live="polite" className="sr-only">
+          {announcement}
+        </div>
+
         <div
           ref={ref}
           role="combobox"
           aria-expanded={open}
           aria-haspopup="listbox"
-          aria-controls={open ? listboxId : undefined}
+          aria-controls={listboxId}
+          aria-activedescendant={activeDescendantId}
           aria-label={props["aria-label"] || placeholder || "Select options"}
           tabIndex={disabled ? -1 : 0}
           onClick={() => {
@@ -187,16 +263,16 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
             }
           }}
           className={cn(
-            "flex w-full flex-wrap items-center gap-1.5 rounded-lg border bg-background ring-offset-background transition-all shadow-2xs cursor-pointer select-none",
+            "flex w-full flex-wrap items-center gap-1.5 rounded-lg border bg-background ring-offset-background transition-all shadow-2xs cursor-pointer select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1",
             error
-              ? "border-destructive focus-visible:border-destructive focus-visible:ring-1 focus-visible:ring-destructive/30"
-              : "border-input focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring",
+              ? "border-destructive focus-visible:border-destructive focus-visible:ring-destructive/30"
+              : "border-input focus-visible:border-ring",
             disabled && "cursor-not-allowed opacity-50 bg-muted",
             sizeClasses
           )}
         >
           {(selected ?? []).length === 0 ? (
-            <span className="text-muted-foreground">{placeholder}</span>
+            <span aria-hidden="true" className="text-muted-foreground">{placeholder}</span>
           ) : (
             (selected ?? []).map((val) => {
               const opt = options.find((o) => o.value === val)
@@ -211,8 +287,13 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
                   <button
                     type="button"
                     onClick={(e) => removeOption(e, val)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        removeOption(e, val)
+                      }
+                    }}
                     aria-label={`Remove ${label}`}
-                    className="ml-0.5 rounded-full p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground"
+                    className="ml-0.5 rounded-full p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -227,7 +308,7 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
                 type="button"
                 onClick={clearAll}
                 aria-label="Clear all options"
-                className="p-1 rounded text-muted-foreground hover:text-foreground"
+                className="p-1 rounded text-muted-foreground hover:text-foreground cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -245,60 +326,68 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
               style={popupStyle}
               className="fixed z-[70] max-h-60 overflow-hidden flex flex-col rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-2xl animate-in fade-in-0 zoom-in-95"
             >
-            {searchable && (
-              <div className="p-1 border-b border-border mb-1">
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  aria-label="Search options"
-                  placeholder="Search options..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  onClick={(e) => e.stopPropagation()}
-                  className="w-full bg-transparent px-2 py-1 text-xs outline-none placeholder:text-muted-foreground"
-                />
-              </div>
-            )}
-
-            <div
-              id={listboxId}
-              role="listbox"
-              aria-label={props["aria-label"] || "Options"}
-              aria-multiselectable="true"
-              className="overflow-auto max-h-48"
-            >
-              {filteredOptions.length === 0 ? (
-                <div className="py-4 text-center text-xs text-muted-foreground">No options found.</div>
-              ) : (
-                filteredOptions.map((opt) => {
-                  const checked = isSelected(opt.value)
-                  return (
-                    <div
-                      key={opt.value}
-                      role="option"
-                      aria-selected={checked}
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        if (!opt.disabled) toggleOption(opt.value)
-                      }}
-                      className={cn(
-                        "flex items-center justify-between rounded-md px-2.5 py-1.5 text-xs transition-colors cursor-pointer select-none",
-                        checked
-                          ? "bg-accent text-accent-foreground font-medium"
-                          : "hover:bg-accent hover:text-accent-foreground text-foreground",
-                        opt.disabled && "cursor-not-allowed opacity-50"
-                      )}
-                    >
-                      <span className="flex items-center gap-2">
-                        {opt.icon && <span className="text-muted-foreground">{opt.icon}</span>}
-                        {opt.label}
-                      </span>
-                      {checked && <Check className="h-3.5 w-3.5 text-primary" />}
-                    </div>
-                  )
-                })
+              {searchable && (
+                <div className="p-1 border-b border-border mb-1">
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    aria-label="Search options"
+                    aria-controls={listboxId}
+                    aria-activedescendant={activeDescendantId}
+                    placeholder="Search options..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-full bg-transparent px-2 py-1 text-xs outline-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring rounded-sm"
+                  />
+                </div>
               )}
-            </div>
+
+              <div
+                ref={optionsContainerRef}
+                id={listboxId}
+                role="listbox"
+                aria-label={props["aria-label"] || "Options"}
+                aria-multiselectable="true"
+                className="overflow-auto max-h-48"
+              >
+                {filteredOptions.length === 0 ? (
+                  <div className="py-4 text-center text-xs text-muted-foreground">No options found.</div>
+                ) : (
+                  filteredOptions.map((opt, idx) => {
+                    const checked = isSelected(opt.value)
+                    const isFocused = idx === focusedIndex
+                    return (
+                      <div
+                        key={opt.value}
+                        id={`${listboxId}-opt-${idx}`}
+                        role="option"
+                        tabIndex={-1}
+                        aria-selected={checked}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          if (!opt.disabled) toggleOption(opt.value)
+                        }}
+                        onMouseEnter={() => setFocusedIndex(idx)}
+                        className={cn(
+                          "flex items-center justify-between rounded-md px-2.5 py-1.5 text-xs transition-colors cursor-pointer select-none",
+                          checked
+                            ? "bg-accent text-accent-foreground font-medium"
+                            : "hover:bg-accent hover:text-accent-foreground text-foreground",
+                          isFocused && !checked && "bg-muted text-foreground",
+                          opt.disabled && "cursor-not-allowed opacity-50"
+                        )}
+                      >
+                        <span className="flex items-center gap-2">
+                          {opt.icon && <span className="text-muted-foreground">{opt.icon}</span>}
+                          {opt.label}
+                        </span>
+                        {checked && <Check className="h-3.5 w-3.5 text-primary" />}
+                      </div>
+                    )
+                  })
+                )}
+              </div>
             </div>
           </Portal>
         )}
@@ -308,3 +397,5 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
 )
 
 MultiSelect.displayName = "MultiSelect"
+
+export default MultiSelect

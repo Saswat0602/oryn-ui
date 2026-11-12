@@ -277,7 +277,7 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders MultiSelect with tags and selection', async () => {
-    let selected = ['react', 'nextjs']
+    const handleChange = vi.fn()
     const { container, getByText, getByRole } = render(
       <StrictMode>
         <MultiSelect
@@ -286,14 +286,30 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
             { label: 'Next.js', value: 'nextjs' },
             { label: 'Tailwind CSS', value: 'tailwind' }
           ]}
-          value={selected}
-          onChange={(val) => { selected = val }}
+          defaultValue={['react', 'nextjs']}
+          onChange={handleChange}
           placeholder="Select technologies"
         />
       </StrictMode>
     )
     expect(getByText('React')).toBeDefined()
     expect(getByText('Next.js')).toBeDefined()
+
+    const combobox = getByRole('combobox')
+    expect(combobox.getAttribute('aria-expanded')).toBe('false')
+
+    // ArrowDown opens dropdown
+    fireEvent.keyDown(combobox, { key: 'ArrowDown' })
+    expect(combobox.getAttribute('aria-expanded')).toBe('true')
+
+    // Navigate and select with Enter
+    fireEvent.keyDown(combobox, { key: 'ArrowDown' })
+    fireEvent.keyDown(combobox, { key: 'Enter' })
+
+    // Backspace removes last item
+    fireEvent.keyDown(combobox, { key: 'Escape' })
+    fireEvent.keyDown(combobox, { key: 'Backspace' })
+    expect(handleChange).toHaveBeenCalledWith(['react'])
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

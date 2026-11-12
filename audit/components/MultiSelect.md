@@ -1,14 +1,19 @@
 # MultiSelect — Audit Report
 
-## Score: 7/10 — Good ARIA structure, keyboard gaps in listbox
+## Score: 9.5 / 10 — Remediated: Keyboard navigation in listbox, programmatic option focus, screen reader announcements, and robust ARIA
+**Status:** Fixed
+
+---
 
 ## What's Good
-- `role="combobox" aria-expanded aria-haspopup="listbox" aria-controls` on trigger ✅
-- `role="listbox" aria-multiselectable="true"` on dropdown ✅
-- `role="option" aria-selected` on each option ✅
-- Remove tag buttons have `aria-label={Remove ${label}}` ✅
-- Clear all button has `aria-label="Clear all options"` ✅
-- Search input has `aria-label="Search options"` ✅
+- `role="combobox" aria-expanded aria-haspopup="listbox" aria-controls aria-activedescendant` on trigger ✅
+- `role="listbox" aria-multiselectable="true"` on dropdown with full roving keyboard navigation ✅
+- Full keyboard ArrowUp/ArrowDown navigation and Enter/Space option toggling ✅
+- `role="option" aria-selected tabIndex={-1}` on each option ✅
+- Remove tag buttons have `aria-label={Remove ${label}}` and are keyboard navigable with focus rings ✅
+- Clear all button has `aria-label="Clear all options"` and focus ring ✅
+- Search input has `aria-label="Search options"` and focus ring ✅
+- Screen reader `role="status" aria-live="polite"` announces additions and removals ✅
 - Escape closes dropdown ✅
 - Backspace removes last item when search is empty ✅
 - ArrowDown opens dropdown ✅
@@ -16,18 +21,20 @@
 - Portal-based popover ✅
 - forwardRef, displayName ✅
 
-## Issues
+---
 
-| ID | Severity | Category | File:line | Problem | Why it matters | Fix |
-|----|----------|----------|-----------|---------|----------------|-----|
-| MS-01 | Critical | A11y | multi-select.tsx:263-300 | No keyboard Arrow navigation within the listbox options | WCAG and ARIA authoring practices require Up/Down in listbox | Add `onKeyDown` on the listbox div with ArrowUp/ArrowDown/Enter/Space handlers using a `focusedIndex` state |
-| MS-02 | Critical | A11y | multi-select.tsx:276-297 | Option items are `<div role="option">` with no `tabIndex` | Non-focusable option items can't be reached by keyboard | Add `tabIndex={-1}` to option divs and manage focus programmatically |
-| MS-03 | Major | A11y | multi-select.tsx:214-219 | Tag remove button is inside a `<Badge>` which is inside the combobox trigger div | When focus is in search input, keyboard users can't reach remove buttons | The remove buttons should be reachable via Tab or the entire tag should be a keyboard-navigable element |
-| MS-04 | Major | A11y | multi-select.tsx:198-199 | When no selections, placeholder `<span>` is not `aria-hidden` | The combobox aria-label already conveys the placeholder text; reading both is redundant | Add `aria-hidden="true"` to placeholder span |
-| MS-05 | Major | A11y | multi-select.tsx:198-199 | Screen reader does not announce when items are removed | Removing a tag gives no AT feedback | Add `aria-live="polite"` region that announces "{label} removed, {n} selected" |
-| MS-06 | Minor | A11y | multi-select.tsx:131-141 | `handleKeyDown` on the container div doesn't use `focus-visible` ring styling | Keyboard users can't see focus on the trigger | Add `focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2` |
-| MS-07 | Minor | A11y | multi-select.tsx:177 | `aria-controls` only set when `open` — AT loses association when closed | ARIA best practice is to keep `aria-controls` pointing to the listbox always | Keep `aria-controls={listboxId}` unconditionally |
-| MS-08 | Nit | API | multi-select.tsx:14 | `icon?: any` on `MultiSelectOption` | Loses type safety for icon prop | Type as `React.ReactNode` |
+## Remediated Issues
+
+| ID | Severity | Category | File:line | Problem | Status |
+|----|----------|----------|-----------|---------|--------|
+| MS-01 | Critical | A11y | multi-select.tsx:165 | No keyboard Arrow navigation within listbox options | Fixed |
+| MS-02 | Critical | A11y | multi-select.tsx:298 | Non-focusable option divs lacking `tabIndex` and programmatic focus | Fixed |
+| MS-03 | Major | A11y | multi-select.tsx:230 | Tag remove button inaccessible to keyboard focus | Fixed |
+| MS-04 | Major | A11y | multi-select.tsx:216 | Placeholder span announced redundantly with combobox label | Fixed (`aria-hidden="true"`) |
+| MS-05 | Major | A11y | multi-select.tsx:189 | Missing screen reader announcement on selection change | Fixed (`role="status" aria-live="polite"`) |
+| MS-06 | Minor | A11y | multi-select.tsx:208 | Missing focus-visible ring on trigger | Fixed |
+| MS-07 | Minor | A11y | multi-select.tsx:202 | `aria-controls` only present when open | Fixed (always bound to listbox ID) |
+| MS-08 | Nit | API | multi-select.tsx:14 | `icon?: any` | Fixed (`React.ReactNode`) |
 
 ## State/Variant Matrix
 

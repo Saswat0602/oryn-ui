@@ -165,3 +165,12 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **SL-04 (Major)**: Added `touch-none` directly to thumbs to prevent mobile touch conflict during dragging.
   - **SL-06 (Minor)**: Added `motion-safe:transition-colors` adhering to user motion preferences.
   - Added unit, vertical slider, range slider constraint, keyboard navigation (Home/End), and axe tests in `tests/smoke/core.test.tsx`.
+
+- **`MultiSelect`** (`src/components/forms/multi-select.tsx`):
+  - **MS-01 & MS-02 (Critical)**: Implemented full keyboard listbox navigation with `ArrowDown`/`ArrowUp`/`Enter`/`Space`, `focusedIndex` state, option auto-scrolling, `tabIndex={-1}`, and `aria-activedescendant`.
+  - **MS-03 (Major)**: Added keyboard focus and Enter/Space handlers to individual tag remove buttons.
+  - **MS-04 (Major)**: Marked empty placeholder span with `aria-hidden="true"`.
+  - **MS-05 (Major)**: Added screen reader live region (`role="status"` with `aria-live="polite"`) announcing item additions and removals.
+  - **MS-06 & MS-07 (Minor)**: Added `focus-visible:ring-2` to combobox trigger and bound `aria-controls` unconditionally to the listbox ID.
+  - **MS-08 (Nit)**: Replaced `icon?: any` with `React.ReactNode`.
+  - Added unit, arrow key listbox navigation, backspace removal, and axe tests in `tests/smoke/forms.test.tsx`.
