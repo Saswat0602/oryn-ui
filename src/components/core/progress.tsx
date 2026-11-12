@@ -12,6 +12,7 @@ export interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
   label?: string
   indeterminate?: boolean
   indicatorClassName?: string
+  barRef?: React.Ref<HTMLDivElement>
 }
 
 export const ProgressTrack = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
@@ -32,7 +33,7 @@ export const ProgressIndicator = React.forwardRef<
   const variantClasses: Record<string, string> = {
     default: "bg-primary",
     success: "bg-emerald-600 dark:bg-emerald-500",
-    warning: "bg-amber-500 dark:bg-amber-500",
+    warning: "bg-amber-600 dark:bg-amber-500",
     destructive: "bg-destructive",
   }
 
@@ -40,9 +41,9 @@ export const ProgressIndicator = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "h-full transition-all duration-500 ease-out",
+        "h-full motion-safe:transition-all duration-500 ease-out",
         indeterminate
-          ? "w-full animate-pulse bg-gradient-to-r from-transparent via-primary to-transparent"
+          ? "w-full motion-safe:animate-pulse bg-gradient-to-r from-transparent via-primary to-transparent"
           : (variantClasses[variant] || variantClasses.default),
         className
       )}
@@ -65,6 +66,7 @@ const ProgressRoot = React.forwardRef<HTMLDivElement, ProgressProps>(
       label,
       indeterminate = false,
       indicatorClassName,
+      barRef,
       ...props
     },
     ref
@@ -82,7 +84,7 @@ const ProgressRoot = React.forwardRef<HTMLDivElement, ProgressProps>(
 
     const barElement = (
       <div
-        ref={hasLabel ? undefined : ref}
+        ref={hasLabel ? (barRef as React.Ref<HTMLDivElement>) : ref}
         className={cn(
           "relative overflow-hidden rounded-full bg-secondary w-full",
           sizeClasses[size],
@@ -92,6 +94,7 @@ const ProgressRoot = React.forwardRef<HTMLDivElement, ProgressProps>(
         aria-valuenow={isIndeterminate ? undefined : (value ?? 0)}
         aria-valuemin={0}
         aria-valuemax={max}
+        aria-valuetext={isIndeterminate ? "Loading..." : `${Math.round(percentage)}%`}
         aria-label={label || "Progress bar"}
         {...(hasLabel ? {} : props)}
       >

@@ -235,3 +235,10 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **FU-03 (Major)**: Added `role="alert"` to error message container for screen reader announcements.
   - **FU-04 & FU-05 (Minor)**: Added `aria-disabled={disabled}` to dropzone and `tabIndex={-1} aria-hidden="true"` to hidden file input.
   - Added unit, accessible dropzone role, and axe tests in `tests/smoke/forms.test.tsx`.
+
+- **`Progress`** (`src/components/core/progress.tsx`):
+  - **PR-01 (Major)**: Enforced semantic design classes across success, warning, and destructive variants.
+  - **PR-02 & PR-05 (Major/Minor)**: Added `motion-safe:` prefixes on indicator transitions and indeterminate pulsing animations.
+  - **PR-03 (Major)**: Added accessible `aria-valuetext="Loading..."` during indeterminate loading and percentage readout during determinate progress.
+  - **PR-04 (Minor)**: Added `barRef` prop to allow direct ref attachment to the progressbar element in labeled mode.
+  - Added unit, aria-valuenow/aria-valuetext validation, and axe tests in `tests/smoke/core.test.tsx`.

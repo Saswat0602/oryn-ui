@@ -148,7 +148,10 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
     )
     const sliders = getAllByRole('slider')
     expect(sliders.length).toBe(4) // 1 single + 2 range thumbs + 1 vertical
-    expect(getByRole('progressbar')).toBeDefined()
+    const progressBar = getByRole('progressbar')
+    expect(progressBar).toBeDefined()
+    expect(progressBar.getAttribute('aria-valuenow')).toBe('65')
+    expect(progressBar.getAttribute('aria-valuetext')).toBe('65%')
 
     // Test keyboard navigation Home & End on first range thumb
     const minThumb = sliders[1]
