@@ -173,7 +173,7 @@ describe('Layout Domain Smoke & Accessibility Suite', () => {
         </ScrollArea>
 
         <TooltipProvider>
-          <Tooltip content="Helpful tooltip text">
+          <Tooltip defaultOpen content="Helpful tooltip text">
             <Button variant="outline">Hover trigger</Button>
           </Tooltip>
         </TooltipProvider>
@@ -181,6 +181,17 @@ describe('Layout Domain Smoke & Accessibility Suite', () => {
     )
     expect(getByText('Long scrollable content list')).toBeDefined()
     expect(getByText('Hover trigger')).toBeDefined()
+
+    // Assert tooltip role and content is in document
+    const tooltipContent = getByText('Helpful tooltip text')
+    expect(tooltipContent).toBeDefined()
+    const tooltipEl = document.querySelector('[role="tooltip"]')
+    expect(tooltipEl).toBeDefined()
+    expect(tooltipEl?.className).not.toContain('pointer-events-none')
+
+    // Escape key dismisses the tooltip
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(document.querySelector('[role="tooltip"]')).toBeNull()
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

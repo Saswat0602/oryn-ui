@@ -13,6 +13,7 @@ interface TooltipContextValue {
   updateTriggerRect: () => void
   delayDuration: number
   tooltipId: string
+  closeTimerRef: React.MutableRefObject<ReturnType<typeof setTimeout> | null>
 }
 
 const TooltipContext = React.createContext<TooltipContextValue | null>(null)
@@ -56,8 +57,8 @@ export interface TooltipTriggerProps extends React.HTMLAttributes<HTMLElement> {
 
 export const TooltipTrigger = React.forwardRef<HTMLElement, TooltipTriggerProps>(
   ({ asChild = false, children, onMouseEnter, onMouseLeave, onFocus, onBlur, ...props }, forwardedRef) => {
-    const { open, setOpen, triggerRef, updateTriggerRect, delayDuration, tooltipId } = useTooltipContext()
-    const timerRef = React.useRef<any>(null)
+    const { open, setOpen, triggerRef, updateTriggerRect, delayDuration, tooltipId, closeTimerRef } = useTooltipContext()
+    const openTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
     const Comp = asChild ? Slot : "button"
 
     const setMergedRef = React.useCallback(
@@ -66,23 +67,27 @@ export const TooltipTrigger = React.forwardRef<HTMLElement, TooltipTriggerProps>
         if (typeof forwardedRef === "function") {
           forwardedRef(node)
         } else if (forwardedRef) {
-          (forwardedRef as React.MutableRefObject<any>).current = node
+          (forwardedRef as React.MutableRefObject<HTMLElement | null>).current = node
         }
       },
       [forwardedRef, triggerRef]
     )
 
     const handleEnter = () => {
-      clearTimeout(timerRef.current)
-      timerRef.current = setTimeout(() => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+      if (openTimerRef.current) clearTimeout(openTimerRef.current)
+      openTimerRef.current = setTimeout(() => {
         updateTriggerRect()
         setOpen(true)
       }, delayDuration)
     }
 
     const handleLeave = () => {
-      clearTimeout(timerRef.current)
-      setOpen(false)
+      if (openTimerRef.current) clearTimeout(openTimerRef.current)
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = setTimeout(() => {
+        setOpen(false)
+      }, 100)
     }
 
     return (
@@ -120,8 +125,8 @@ export interface TooltipContentProps extends React.HTMLAttributes<HTMLDivElement
 }
 
 export const TooltipContent = React.forwardRef<HTMLDivElement, TooltipContentProps>(
-  ({ className, side = "top", sideOffset = 4, children, style, ...props }, ref) => {
-    const { open, triggerRect, tooltipId } = useTooltipContext()
+  ({ className, side = "top", sideOffset = 4, children, style, onMouseEnter, onMouseLeave, ...props }, ref) => {
+    const { open, triggerRect, tooltipId, closeTimerRef } = useTooltipContext()
 
     if (!open) return null
 
@@ -174,9 +179,20 @@ export const TooltipContent = React.forwardRef<HTMLDivElement, TooltipContentPro
           id={tooltipId}
           role="tooltip"
           data-side={effectiveSide}
+          onMouseEnter={(e) => {
+            if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+            onMouseEnter?.(e)
+          }}
+          onMouseLeave={(e) => {
+            if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+            closeTimerRef.current = setTimeout(() => {
+              if (open) closeTimerRef.current = null
+            }, 100)
+            onMouseLeave?.(e)
+          }}
           style={{ ...positioningStyle, ...style }}
           className={cn(
-            "fixed z-[80] overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground shadow-md animate-in fade-in-0 zoom-in-95 pointer-events-none",
+            "fixed z-[80] overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground shadow-md animate-in fade-in-0 zoom-in-95",
             className
           )}
           {...props}
@@ -218,6 +234,24 @@ export const Tooltip: React.FC<TooltipProps> = ({
 
   const triggerRef = React.useRef<HTMLElement | null>(null)
   const [triggerRect, setTriggerRect] = React.useState<DOMRect | null>(null)
+  const closeTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  React.useEffect(() => {
+    if (!open) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleOpenChange(false)
+      }
+    }
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+  }, [open])
+
+  React.useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current)
+    }
+  }, [])
 
   const updateTriggerRect = React.useCallback(() => {
     if (triggerRef.current) {
@@ -237,6 +271,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
     updateTriggerRect,
     delayDuration: resolvedDelay,
     tooltipId,
+    closeTimerRef,
   }
 
   if (content !== undefined) {
@@ -259,10 +294,13 @@ export const Tooltip: React.FC<TooltipProps> = ({
   )
 }
 
-export const useTooltip = () => ({
-  open: false,
-  setOpen: () => {},
-})
+export const useTooltip = () => {
+  const context = React.useContext(TooltipContext)
+  if (!context) {
+    return { open: false, setOpen: () => {} }
+  }
+  return { open: context.open, setOpen: context.setOpen }
+}
 
 // Compound component pattern attachment
 export type TooltipComponent = typeof Tooltip & {

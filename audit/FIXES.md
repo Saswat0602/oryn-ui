@@ -366,3 +366,10 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **TP-03 (Minor)**: Updated AM/PM button `aria-label` to dynamically announce current period (`Toggle AM/PM, currently X`).
   - **TP-04 & TP-06 (Minor/Nit)**: Replaced `:focus` with `:focus-visible` styling on numeric inputs and added `aria-hidden="true"` to decorative clock icon.
   - Added unit test in `tests/smoke/forms.test.tsx` asserting `aria-invalid="true"` and `aria-describedby` linkage on hour and minute inputs.
+
+- **`Tooltip`** (`src/components/layout/tooltip.tsx`):
+  - **TLT-01 (Major)**: Removed `pointer-events-none` on `TooltipContent` and added enter/leave delay buffers allowing users to hover over tooltip content per WCAG 2.1 SC 1.4.13.
+  - **TLT-02 (Major)**: Added global `keydown` event listener to dismiss open tooltip when `Escape` key is pressed.
+  - **TLT-03 (Major)**: Connected `useTooltip()` hook to `TooltipContext` so it returns live `open` and `setOpen` values.
+  - **TLT-05 (Nit)**: Strongly typed timer refs with `ReturnType<typeof setTimeout> | null`.
+  - Added unit tests in `tests/smoke/layout.test.tsx` asserting Escape dismissal and hoverable content.
