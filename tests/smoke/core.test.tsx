@@ -70,11 +70,12 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders Card with all compound subcomponents', async () => {
-    const { container, getByText } = render(
+    let cardClicked = false
+    const { container, getByText, getByRole } = render(
       <StrictMode>
-        <Card>
+        <Card clickable onClick={() => { cardClicked = true }}>
           <CardHeader>
-            <CardTitle>Enterprise Cloud</CardTitle>
+            <CardTitle as="h2">Enterprise Cloud</CardTitle>
             <CardDescription>Cluster telemetry settings</CardDescription>
           </CardHeader>
           <CardContent>Cluster is operating at 99.99% uptime.</CardContent>
@@ -85,6 +86,12 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
     expect(getByText('Enterprise Cloud')).toBeDefined()
     expect(getByText('Cluster telemetry settings')).toBeDefined()
     expect(getByText('Cluster is operating at 99.99% uptime.')).toBeDefined()
+
+    // Test clickable card keyboard activation
+    const cardBtn = getByRole('button')
+    expect(cardBtn.getAttribute('tabindex')).toBe('0')
+    fireEvent.keyDown(cardBtn, { key: 'Enter' })
+    expect(cardClicked).toBe(true)
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

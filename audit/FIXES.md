@@ -257,3 +257,10 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **PI-04 & PI-07 (Minor/Nit)**: Added `role="meter"`, `aria-label="Password strength"`, `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, and `aria-valuetext` to the strength meter container.
   - **PI-05 & PI-06 (Minor)**: Added `aria-live="polite"` to the requirements checklist and `role="status"` with `aria-live="assertive"` to the CapsLock detection badge.
   - Added unit, meter attributes validation, and axe tests in `tests/smoke/forms.test.tsx`.
+
+- **`Card`** (`src/components/core/card.tsx`):
+  - **C-01 (Major)**: Added automatic `role="button"`, `tabIndex={0}`, keyboard Enter/Space activation, and `focus-visible:ring-2` to clickable cards.
+  - **C-02 (Minor)**: Added `motion-safe:hover:-translate-y-0.5` guard to hoverable cards.
+  - **C-03 (Minor)**: Supported polymorphic `as` prop on `CardTitle` (defaulting to `"h3"`).
+  - **C-04 (Minor)**: Updated `CardFooter` text style to `text-card-foreground` so nested buttons retain proper contrast.
+  - Added unit, clickable card role and keyboard activation, and axe tests in `tests/smoke/core.test.tsx`.
