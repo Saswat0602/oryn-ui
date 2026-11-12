@@ -119,7 +119,7 @@ export const TimelineNode = React.forwardRef<HTMLDivElement, TimelineNodeProps>(
         </div>
 
         {!isLast && (
-          <div className="absolute top-7 bottom-[-24px] w-0.5 bg-zinc-200 dark:bg-zinc-800 -translate-x-1/2 left-1/2" />
+          <div className="absolute top-7 bottom-[-24px] w-0.5 bg-border -translate-x-1/2 left-1/2" />
         )}
       </div>
     )
@@ -141,7 +141,7 @@ export const TimelineTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h4
     ref={ref}
-    className={cn("text-sm font-semibold text-zinc-900 dark:text-zinc-100", className)}
+    className={cn("text-sm font-semibold text-foreground", className)}
     {...props}
   />
 ))
@@ -153,7 +153,7 @@ export const TimelineDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("mt-1 text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed", className)}
+    className={cn("mt-1 text-xs text-muted-foreground leading-relaxed", className)}
     {...props}
   />
 ))
@@ -165,7 +165,7 @@ export const TimelineTime = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <span
     ref={ref}
-    className={cn("text-xs font-medium text-zinc-400 dark:text-zinc-500 shrink-0", className)}
+    className={cn("text-xs font-medium text-muted-foreground shrink-0", className)}
     {...props}
   />
 ))

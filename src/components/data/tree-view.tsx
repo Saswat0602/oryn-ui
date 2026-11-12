@@ -127,7 +127,7 @@ export const TreeView = React.forwardRef<HTMLDivElement, TreeViewProps>(
               {hasChildren ? (
                 <ChevronRight
                   className={cn(
-                    "h-3.5 w-3.5 text-zinc-400 transition-transform duration-150",
+                    "h-3.5 w-3.5 text-muted-foreground transition-transform duration-150",
                     expandedNode && "rotate-90"
                   )}
                 />

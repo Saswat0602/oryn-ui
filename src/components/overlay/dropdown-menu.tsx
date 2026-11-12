@@ -240,7 +240,7 @@ export const DropdownMenuContent = React.forwardRef<HTMLDivElement, DropdownMenu
           aria-orientation="vertical"
           style={{ ...positioningStyle, ...style }}
           className={cn(
-            "fixed z-[70] min-w-[8rem] overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1 text-zinc-900 dark:text-zinc-100 shadow-xl duration-150 animate-in fade-in-0 zoom-in-95",
+            "fixed z-[70] min-w-[8rem] overflow-hidden rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-xl duration-150 animate-in fade-in-0 zoom-in-95",
             className
           )}
           {...props}
@@ -296,7 +296,7 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
         onClick={handleClick}
         onKeyDown={handleKeyDown}
         className={cn(
-          "relative flex cursor-pointer select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 focus:bg-zinc-100 focus:text-zinc-900 dark:focus:bg-zinc-800 dark:focus:text-zinc-100",
+          "relative flex cursor-pointer select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
           inset && "pl-8",
           disabled && "pointer-events-none opacity-50",
           className
@@ -335,7 +335,7 @@ export const DropdownMenuCheckboxItem = React.forwardRef<HTMLDivElement, Dropdow
         aria-disabled={disabled}
         onClick={handleClick}
         className={cn(
-          "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 focus:bg-zinc-100 focus:text-zinc-900 dark:focus:bg-zinc-800 dark:focus:text-zinc-100",
+          "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
           disabled && "pointer-events-none opacity-50",
           className
         )}
@@ -381,7 +381,7 @@ export const DropdownMenuRadioItem = React.forwardRef<HTMLDivElement, DropdownMe
         aria-disabled={disabled}
         onClick={handleClick}
         className={cn(
-          "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 focus:bg-zinc-100 focus:text-zinc-900 dark:focus:bg-zinc-800 dark:focus:text-zinc-100",
+          "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
           disabled && "pointer-events-none opacity-50",
           className
         )}
@@ -408,7 +408,7 @@ export const DropdownMenuLabel = React.forwardRef<HTMLDivElement, DropdownMenuLa
     <div
       ref={ref}
       className={cn(
-        "px-2.5 py-1.5 text-xs font-semibold text-zinc-900 dark:text-zinc-100",
+        "px-2.5 py-1.5 text-xs font-semibold text-foreground",
         inset && "pl-8",
         className
       )}
@@ -424,7 +424,7 @@ export const DropdownMenuSeparator = React.forwardRef<HTMLDivElement, DropdownMe
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("-mx-1 my-1 h-px bg-zinc-200 dark:bg-zinc-800", className)}
+      className={cn("-mx-1 my-1 h-px bg-border", className)}
       {...props}
     />
   )
@@ -439,7 +439,7 @@ export const DropdownMenuShortcut: React.FC<DropdownMenuShortcutProps> = ({
 }) => {
   return (
     <span
-      className={cn("ml-auto text-[10px] tracking-widest text-zinc-400", className)}
+      className={cn("ml-auto text-[10px] tracking-widest text-muted-foreground", className)}
       {...props}
     />
   )
@@ -464,7 +464,7 @@ export const DropdownMenuSubTrigger = React.forwardRef<HTMLDivElement, DropdownM
     <div
       ref={ref}
       className={cn(
-        "flex cursor-default select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:bg-zinc-100 dark:focus:bg-zinc-800",
+        "flex cursor-default select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
         inset && "pl-8",
         className
       )}
@@ -484,7 +484,7 @@ export const DropdownMenuSubContent = React.forwardRef<HTMLDivElement, DropdownM
     <div
       ref={ref}
       className={cn(
-        "z-[70] min-w-[8rem] overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1 text-zinc-900 dark:text-zinc-100 shadow-xl duration-150 animate-in fade-in-0 zoom-in-95",
+        "z-[70] min-w-[8rem] overflow-hidden rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-xl duration-150 animate-in fade-in-0 zoom-in-95",
         className
       )}
       {...props}

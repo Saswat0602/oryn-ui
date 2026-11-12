@@ -137,7 +137,7 @@ export const SelectValue = React.forwardRef<HTMLSpanElement, SelectValueProps>(
         ref={ref}
         className={cn(
           "line-clamp-1 block truncate",
-          !selectedLabel && !value && placeholder && "text-zinc-400 dark:text-zinc-500",
+          !selectedLabel && !value && placeholder && "text-muted-foreground",
           className
         )}
         {...props}
@@ -275,7 +275,7 @@ export const SelectContent = React.forwardRef<HTMLDivElement, SelectContentProps
           data-side={shouldFlip ? "top" : "bottom"}
           style={style}
           className={cn(
-            "fixed z-[9999] max-h-80 overflow-y-auto rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-2xl duration-150 animate-in fade-in-0 zoom-in-95 p-1",
+            "fixed z-[9999] max-h-80 overflow-y-auto rounded-xl border border-border bg-popover text-popover-foreground shadow-2xl duration-150 animate-in fade-in-0 zoom-in-95 p-1",
             className
           )}
           {...props}
@@ -294,7 +294,7 @@ export const SelectLabel = React.forwardRef<HTMLDivElement, SelectLabelProps>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("px-2.5 py-1.5 text-xs font-semibold text-zinc-900 dark:text-zinc-100", className)}
+      className={cn("px-2.5 py-1.5 text-xs font-semibold text-foreground", className)}
       {...props}
     />
   )
@@ -339,7 +339,7 @@ export const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
         data-disabled={disabled ? "" : undefined}
         onClick={handleClick}
         className={cn(
-          "relative flex w-full cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:bg-zinc-100 focus:text-zinc-900 dark:focus:bg-zinc-800 dark:focus:text-zinc-100",
+          "relative flex w-full cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
           disabled && "pointer-events-none opacity-50",
           className
         )}
@@ -363,7 +363,7 @@ export const SelectSeparator = React.forwardRef<HTMLDivElement, SelectSeparatorP
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("-mx-1 my-1 h-px bg-zinc-200 dark:bg-zinc-800", className)}
+      className={cn("-mx-1 my-1 h-px bg-border", className)}
       {...props}
     />
   )

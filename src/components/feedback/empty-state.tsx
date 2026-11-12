@@ -30,8 +30,8 @@ export const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
         ref={ref}
         className={cn(
           "flex flex-col items-center justify-center p-8 text-center rounded-xl",
-          variant === "dashed" && "border-2 border-dashed border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50",
-          variant === "outline" && "border border-zinc-200 dark:border-zinc-800 bg-card",
+          variant === "dashed" && "border-2 border-dashed border-border bg-muted/30",
+          variant === "outline" && "border border-border bg-card",
           variant === "default" && "bg-transparent",
           className
         )}
@@ -76,7 +76,7 @@ export const EmptyStateIcon = React.forwardRef<HTMLDivElement, EmptyStateIconPro
       <div
         ref={ref}
         className={cn(
-          "flex h-12 w-12 items-center justify-center rounded-full bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 mb-4 shadow-2xs",
+          "flex h-12 w-12 items-center justify-center rounded-full bg-muted text-muted-foreground mb-4 shadow-2xs",
           className
         )}
         {...props}
@@ -96,7 +96,7 @@ export const EmptyStateTitle = React.forwardRef<
   return (
     <h3
       ref={ref}
-      className={cn("text-base font-semibold text-zinc-900 dark:text-zinc-100 tracking-tight", className)}
+      className={cn("text-base font-semibold text-foreground tracking-tight", className)}
       {...props}
     />
   )
@@ -111,7 +111,7 @@ export const EmptyStateDescription = React.forwardRef<
   return (
     <p
       ref={ref}
-      className={cn("mt-1.5 text-sm text-zinc-500 dark:text-zinc-400 max-w-sm", className)}
+      className={cn("mt-1.5 text-sm text-muted-foreground max-w-sm", className)}
       {...props}
     />
   )

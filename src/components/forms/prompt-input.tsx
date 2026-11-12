@@ -109,8 +109,8 @@ export const PromptInput = React.forwardRef<HTMLDivElement, PromptInputProps>(
         ref={ref}
         className={cn(
           "relative flex flex-col rounded-2xl border bg-background p-2.5 transition-all shadow-sm",
-          "border-zinc-200 dark:border-zinc-800 focus-within:border-zinc-400 dark:focus-within:border-zinc-600 focus-within:ring-2 focus-within:ring-zinc-400/20 dark:focus-within:ring-zinc-600/20",
-          disabled && "opacity-60 cursor-not-allowed bg-zinc-50 dark:bg-zinc-900/50",
+          "border-input focus-within:border-ring focus-within:ring-2 focus-within:ring-ring/20",
+          disabled && "opacity-60 cursor-not-allowed bg-muted",
           className
         )}
         {...props}
@@ -124,7 +124,7 @@ export const PromptInput = React.forwardRef<HTMLDivElement, PromptInputProps>(
           disabled={disabled}
           autoFocus={autoFocus}
           rows={minRows}
-          className="w-full resize-none bg-transparent px-2 py-1 text-sm outline-none placeholder:text-zinc-400 dark:placeholder:text-zinc-500 text-zinc-900 dark:text-zinc-100"
+          className="w-full resize-none bg-transparent px-2 py-1 text-sm outline-none placeholder:text-muted-foreground text-foreground"
         />
 
         <div className="flex items-center justify-between gap-2 pt-2 px-1">
@@ -140,7 +140,7 @@ export const PromptInput = React.forwardRef<HTMLDivElement, PromptInputProps>(
                 type="button"
                 onClick={onStop}
                 aria-label="Stop generating"
-                className="flex h-8 w-8 items-center justify-center rounded-xl bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-zinc-100 dark:text-zinc-900 dark:hover:bg-zinc-200 transition-colors cursor-pointer"
+                className="flex h-8 w-8 items-center justify-center rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors cursor-pointer"
               >
                 <Square className="h-3.5 w-3.5 fill-current" />
               </button>

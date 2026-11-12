@@ -38,13 +38,13 @@ export interface DrawerProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const positionVariants = {
   right:
-    "inset-y-0 right-0 h-full border-l border-zinc-200 dark:border-zinc-800 data-[state=open]:animate-in data-[state=open]:slide-in-from-right-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right-full",
+    "inset-y-0 right-0 h-full border-l border-border data-[state=open]:animate-in data-[state=open]:slide-in-from-right-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right-full",
   left:
-    "inset-y-0 left-0 h-full border-r border-zinc-200 dark:border-zinc-800 data-[state=open]:animate-in data-[state=open]:slide-in-from-left-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left-full",
+    "inset-y-0 left-0 h-full border-r border-border data-[state=open]:animate-in data-[state=open]:slide-in-from-left-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left-full",
   top:
-    "inset-x-0 top-0 w-full border-b border-zinc-200 dark:border-zinc-800 data-[state=open]:animate-in data-[state=open]:slide-in-from-top-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-top-full",
+    "inset-x-0 top-0 w-full border-b border-border data-[state=open]:animate-in data-[state=open]:slide-in-from-top-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-top-full",
   bottom:
-    "inset-x-0 bottom-0 w-full border-t border-zinc-200 dark:border-zinc-800 data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom-full",
+    "inset-x-0 bottom-0 w-full border-t border-border data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom-full",
 }
 
 export const Drawer = React.forwardRef<HTMLDivElement, DrawerProps>(

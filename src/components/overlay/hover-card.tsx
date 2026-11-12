@@ -211,7 +211,7 @@ export const HoverCardContent = React.forwardRef<HTMLDivElement, HoverCardConten
             }, closeDelay)
           }}
           className={cn(
-            "fixed z-[70] w-64 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 text-zinc-900 dark:text-zinc-100 shadow-md outline-none duration-150 animate-in fade-in-0 zoom-in-95",
+            "fixed z-[70] w-64 rounded-xl border border-border bg-popover p-4 text-popover-foreground shadow-md outline-none duration-150 animate-in fade-in-0 zoom-in-95",
             className
           )}
           {...props}

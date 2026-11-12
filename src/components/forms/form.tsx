@@ -222,7 +222,7 @@ export const FormLabel = React.forwardRef<HTMLLabelElement, FormLabelProps>(
         ref={ref}
         htmlFor={htmlFor || formItemId}
         className={cn(
-          "text-xs font-semibold tracking-wide text-zinc-700 dark:text-zinc-300 select-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 transition-colors",
+          "text-xs font-semibold tracking-wide text-foreground select-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 transition-colors",
           error && "text-red-500 dark:text-red-400",
           className
         )}
@@ -287,7 +287,7 @@ export const FormDescription = React.forwardRef<HTMLParagraphElement, FormDescri
       <p
         ref={ref}
         id={formDescriptionId}
-        className={cn("text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed", className)}
+        className={cn("text-xs text-muted-foreground leading-relaxed", className)}
         {...props}
       >
         {children}
@@ -309,7 +309,7 @@ export const FormMessage = React.forwardRef<HTMLParagraphElement, FormMessagePro
     if (!body) return null
 
     const variantClasses = {
-      default: "text-zinc-500 dark:text-zinc-400",
+      default: "text-muted-foreground",
       error: "text-red-500 dark:text-red-400",
       success: "text-emerald-600 dark:text-emerald-400",
       warning: "text-amber-600 dark:text-amber-400",

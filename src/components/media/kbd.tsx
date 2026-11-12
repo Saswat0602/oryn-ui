@@ -8,15 +8,15 @@ export interface KbdProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const kbdVariants = createVariants({
-  base: "inline-flex items-center justify-center font-mono font-medium rounded select-none text-zinc-700 dark:text-zinc-300",
+  base: "inline-flex items-center justify-center font-mono font-medium rounded select-none text-muted-foreground",
   variants: {
     variant: {
       default:
-        "bg-zinc-100 dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 shadow-2xs",
+        "bg-muted text-muted-foreground border border-border shadow-2xs",
       outline:
-        "border border-zinc-300 dark:border-zinc-700 bg-transparent shadow-none",
+        "border border-border bg-transparent shadow-none",
       subtle:
-        "bg-zinc-100/70 dark:bg-zinc-800/60 border border-transparent",
+        "bg-muted/70 border border-transparent",
     },
     size: {
       xs: "min-h-[18px] min-w-[18px] px-1 text-[10px]",

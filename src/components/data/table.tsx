@@ -143,7 +143,7 @@ function Table<T extends Record<string, unknown>>({
   // This early return must come AFTER all hooks to satisfy Rules of Hooks
   if (!columns || !data) {
     return (
-      <div className={cn("relative w-full overflow-auto rounded-xl border border-zinc-200 dark:border-zinc-800", className)}>
+      <div className={cn("relative w-full overflow-auto rounded-xl border border-border", className)}>
         <table className="w-full caption-bottom text-sm" style={style} {...props}>
           {children}
         </table>
@@ -183,7 +183,7 @@ function Table<T extends Record<string, unknown>>({
   return (
     <div 
       className={cn(
-        "rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 overflow-hidden shadow-xs",
+        "rounded-xl border border-border bg-card text-card-foreground overflow-hidden shadow-xs",
         fullWidth && "w-full",
         className
       )}
@@ -196,7 +196,7 @@ function Table<T extends Record<string, unknown>>({
     >
       {/* Table Actions Toolbar */}
       {(showAddRowButton || showAddColumnButton) && (
-        <div className="p-3 border-b border-zinc-200 dark:border-zinc-800 flex items-center gap-2 bg-zinc-50/50 dark:bg-zinc-900/50">
+        <div className="p-3 border-b border-border flex items-center gap-2 bg-muted/40">
           {showAddRowButton && (
             <button
               onClick={onAddRow}
@@ -221,14 +221,14 @@ function Table<T extends Record<string, unknown>>({
       <div className="overflow-x-auto w-full">
         <table className="w-full caption-bottom text-sm">
           <thead>
-            <tr className="border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/75 dark:bg-zinc-900/75">
+            <tr className="border-b border-border bg-muted/50">
               {selectable && (
                 <th className={cn("w-12 text-left font-medium py-3 px-4", sizeClasses[size])}>
                   <input
                     type="checkbox"
                     checked={selectedRows.length === data.length && data.length > 0}
                     onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="h-4 w-4 rounded border-zinc-300 dark:border-zinc-700 text-primary focus:ring-primary/40 cursor-pointer"
+                    className="h-4 w-4 rounded border-input text-primary focus:ring-primary/40 cursor-pointer"
                   />
                 </th>
               )}
@@ -236,9 +236,9 @@ function Table<T extends Record<string, unknown>>({
                 <th
                   key={String(column.key)}
                   className={cn(
-                    "text-left font-semibold text-xs text-zinc-500 dark:text-zinc-400 uppercase tracking-wider py-3 px-4 select-none",
+                    "text-left font-semibold text-xs text-muted-foreground uppercase tracking-wider py-3 px-4 select-none",
                     sizeClasses[size],
-                    column.sortable && sortable && "cursor-pointer hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors",
+                    column.sortable && sortable && "cursor-pointer hover:text-foreground transition-colors",
                     column.className
                   )}
                   style={{
@@ -268,12 +268,12 @@ function Table<T extends Record<string, unknown>>({
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-200/60 dark:divide-zinc-800/60">
+          <tbody className="divide-y divide-border/60">
             {sortedData.length === 0 ? (
               <tr>
                 <td 
                   colSpan={columns.length + (selectable ? 1 : 0) + (showDeleteRowButton ? 1 : 0)}
-                  className="text-center py-12 text-zinc-500 dark:text-zinc-400 text-xs"
+                  className="text-center py-12 text-muted-foreground text-xs"
                 >
                   {emptyMessage}
                 </td>
@@ -288,8 +288,8 @@ function Table<T extends Record<string, unknown>>({
                     key={currentKey}
                     className={cn(
                       "transition-colors duration-150",
-                      hoverable && "hover:bg-zinc-500/5",
-                      striped && index % 2 === 1 && "bg-zinc-500/2",
+                      hoverable && "hover:bg-muted/50",
+                      striped && index % 2 === 1 && "bg-muted/20",
                       isSelected && "bg-primary/5",
                       onRowClick && "cursor-pointer"
                     )}
@@ -301,7 +301,7 @@ function Table<T extends Record<string, unknown>>({
                           type="checkbox"
                           checked={isSelected}
                           onChange={(e) => handleSelectRow(currentKey, e.target.checked)}
-                          className="h-4 w-4 rounded border-zinc-300 dark:border-zinc-700 text-primary focus:ring-primary/40 cursor-pointer"
+                          className="h-4 w-4 rounded border-input text-primary focus:ring-primary/40 cursor-pointer"
                         />
                       </td>
                     )}
@@ -309,7 +309,7 @@ function Table<T extends Record<string, unknown>>({
                       <td
                         key={String(column.key)}
                         className={cn(
-                          "py-3 px-4 text-zinc-800 dark:text-zinc-200",
+                          "py-3 px-4 text-card-foreground",
                           sizeClasses[size],
                           column.className
                         )}
@@ -341,7 +341,7 @@ function Table<T extends Record<string, unknown>>({
 
       {/* Pagination Footer */}
       {pagination && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 text-xs text-muted-foreground">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-border bg-muted/40 text-xs text-muted-foreground">
           <div>
             Showing <span className="font-medium text-foreground">{((pagination.current - 1) * pagination.pageSize) + 1}</span> to{" "}
             <span className="font-medium text-foreground">{Math.min(pagination.current * pagination.pageSize, pagination.total)}</span> of{" "}
@@ -351,7 +351,7 @@ function Table<T extends Record<string, unknown>>({
             <button
               onClick={() => pagination.onChange(pagination.current - 1)}
               disabled={pagination.current === 1}
-              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs border border-zinc-200 dark:border-zinc-800 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs border border-border rounded-md hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
               <span>Previous</span>
@@ -362,7 +362,7 @@ function Table<T extends Record<string, unknown>>({
             <button
               onClick={() => pagination.onChange(pagination.current + 1)}
               disabled={pagination.current >= Math.ceil(pagination.total / pagination.pageSize)}
-              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs border border-zinc-200 dark:border-zinc-800 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-800 disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs border border-border rounded-md hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
             >
               <span>Next</span>
               <ChevronRight className="h-3.5 w-3.5" />
@@ -379,49 +379,49 @@ Table.displayName = "Table"
 // Declarative composable subcomponents
 const TableHeader = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => (
-    <thead ref={ref} className={cn("[&_tr]:border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50/75 dark:bg-zinc-900/75", className)} {...props} />
+    <thead ref={ref} className={cn("[&_tr]:border-b border-border bg-muted/50", className)} {...props} />
   )
 )
 TableHeader.displayName = "TableHeader"
 
 const TableBody = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => (
-    <tbody ref={ref} className={cn("[&_tr:last-child]:border-0 divide-y divide-zinc-200/60 dark:divide-zinc-800/60", className)} {...props} />
+    <tbody ref={ref} className={cn("[&_tr:last-child]:border-0 divide-y divide-border/60", className)} {...props} />
   )
 )
 TableBody.displayName = "TableBody"
 
 const TableFooter = React.forwardRef<HTMLTableSectionElement, React.HTMLAttributes<HTMLTableSectionElement>>(
   ({ className, ...props }, ref) => (
-    <tfoot ref={ref} className={cn("border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 font-medium", className)} {...props} />
+    <tfoot ref={ref} className={cn("border-t border-border bg-muted/40 font-medium", className)} {...props} />
   )
 )
 TableFooter.displayName = "TableFooter"
 
 const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTMLTableRowElement>>(
   ({ className, ...props }, ref) => (
-    <tr ref={ref} className={cn("border-b border-zinc-200/60 dark:border-zinc-800/60 transition-colors hover:bg-zinc-500/5 data-[state=selected]:bg-muted", className)} {...props} />
+    <tr ref={ref} className={cn("border-b border-border/60 transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted", className)} {...props} />
   )
 )
 TableRow.displayName = "TableRow"
 
 const TableHead = React.forwardRef<HTMLTableCellElement, React.ThHTMLAttributes<HTMLTableCellElement>>(
   ({ className, ...props }, ref) => (
-    <th ref={ref} className={cn("h-10 px-4 text-left align-middle font-semibold text-xs text-zinc-500 dark:text-zinc-400 uppercase tracking-wider [&:has([role=checkbox])]:pr-0", className)} {...props} />
+    <th ref={ref} className={cn("h-10 px-4 text-left align-middle font-semibold text-xs text-muted-foreground uppercase tracking-wider [&:has([role=checkbox])]:pr-0", className)} {...props} />
   )
 )
 TableHead.displayName = "TableHead"
 
 const TableCell = React.forwardRef<HTMLTableCellElement, React.TdHTMLAttributes<HTMLTableCellElement>>(
   ({ className, ...props }, ref) => (
-    <td ref={ref} className={cn("p-4 align-middle text-sm text-zinc-800 dark:text-zinc-200 [&:has([role=checkbox])]:pr-0", className)} {...props} />
+    <td ref={ref} className={cn("p-4 align-middle text-sm text-card-foreground [&:has([role=checkbox])]:pr-0", className)} {...props} />
   )
 )
 TableCell.displayName = "TableCell"
 
 const TableCaption = React.forwardRef<HTMLTableCaptionElement, React.HTMLAttributes<HTMLTableCaptionElement>>(
   ({ className, ...props }, ref) => (
-    <caption ref={ref} className={cn("mt-4 text-xs text-zinc-500 dark:text-zinc-400", className)} {...props} />
+    <caption ref={ref} className={cn("mt-4 text-xs text-muted-foreground", className)} {...props} />
   )
 )
 TableCaption.displayName = "TableCaption"

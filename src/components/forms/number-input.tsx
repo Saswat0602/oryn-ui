@@ -175,7 +175,7 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
           {...props}
         />
         {!hideStepper && !readOnly && (
-          <div className="absolute right-1 top-1/2 -translate-y-1/2 flex flex-col items-center border-l border-zinc-200 dark:border-zinc-800 pl-1">
+          <div className="absolute right-1 top-1/2 -translate-y-1/2 flex flex-col items-center border-l border-border pl-1">
             <button
               type="button"
               tabIndex={-1}
@@ -184,7 +184,7 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
               onPointerUp={stopHolding}
               onPointerLeave={stopHolding}
               aria-label="Increment value"
-              className="flex h-3.5 w-5 items-center justify-center rounded text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 disabled:opacity-30 disabled:pointer-events-none"
+              className="flex h-3.5 w-5 items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-30 disabled:pointer-events-none"
             >
               <ChevronUp className="h-3 w-3" />
             </button>
@@ -196,7 +196,7 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
               onPointerUp={stopHolding}
               onPointerLeave={stopHolding}
               aria-label="Decrement value"
-              className="flex h-3.5 w-5 items-center justify-center rounded text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 disabled:opacity-30 disabled:pointer-events-none"
+              className="flex h-3.5 w-5 items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-30 disabled:pointer-events-none"
             >
               <ChevronDown className="h-3 w-3" />
             </button>

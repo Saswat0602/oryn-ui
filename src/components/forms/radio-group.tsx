@@ -141,7 +141,7 @@ export const RadioGroupItem = forwardRef<HTMLButtonElement, RadioGroupItemProps>
             }
           }}
           className={cn(
-            'text-sm font-medium leading-none text-zinc-900 dark:text-zinc-100 cursor-pointer select-none',
+            'text-sm font-medium leading-none text-foreground cursor-pointer select-none',
             disabled && 'cursor-not-allowed opacity-70'
           )}
         >

@@ -27,15 +27,15 @@ export const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(
     }
 
     const styleClasses = {
-      solid: 'bg-zinc-200 dark:bg-zinc-800',
+      solid: 'bg-border',
       dashed:
         orientation === 'horizontal'
-          ? 'border-b border-dashed border-zinc-200 dark:border-zinc-800 bg-transparent'
-          : 'border-r border-dashed border-zinc-200 dark:border-zinc-800 bg-transparent',
+          ? 'border-b border-dashed border-border bg-transparent'
+          : 'border-r border-dashed border-border bg-transparent',
       dotted:
         orientation === 'horizontal'
-          ? 'border-b border-dotted border-zinc-200 dark:border-zinc-800 bg-transparent'
-          : 'border-r border-dotted border-zinc-200 dark:border-zinc-800 bg-transparent',
+          ? 'border-b border-dotted border-border bg-transparent'
+          : 'border-r border-dotted border-border bg-transparent',
     }
 
     return (

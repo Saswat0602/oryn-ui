@@ -236,7 +236,7 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
             error
               ? "border-destructive focus-visible:border-destructive focus-visible:ring-1 focus-visible:ring-destructive/30"
               : "border-input focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring",
-            disabled && "cursor-not-allowed opacity-50 bg-zinc-50 dark:bg-zinc-900",
+            disabled && "cursor-not-allowed opacity-50 bg-muted",
             !range?.from && "text-muted-foreground"
           )}
         >
@@ -251,7 +251,7 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
                 role="button"
                 onClick={clearRange}
                 aria-label="Clear date range"
-                className="p-0.5 rounded text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
+                className="p-0.5 rounded text-muted-foreground hover:text-foreground"
               >
                 <X className="h-3.5 w-3.5" />
               </span>
@@ -269,7 +269,7 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
               className="fixed z-[70] flex flex-col sm:flex-row gap-3 rounded-xl border border-border bg-popover p-4 text-popover-foreground shadow-2xl max-w-[calc(100vw-32px)] max-h-[calc(100vh-32px)] overflow-y-auto animate-in fade-in-0 zoom-in-95"
           >
             {presets && presets.length > 0 && (
-              <div className="flex sm:flex-col gap-1 border-b sm:border-b-0 sm:border-r border-zinc-100 dark:border-zinc-800 pb-3 sm:pb-0 sm:pr-3">
+              <div className="flex sm:flex-col gap-1 border-b sm:border-b-0 sm:border-r border-border pb-3 sm:pb-0 sm:pr-3">
                 {presets.map((preset) => (
                   <button
                     key={preset.label}
@@ -278,7 +278,7 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
                       setRange(preset.getRange())
                       setOpen(false)
                     }}
-                    className="rounded-md px-2.5 py-1.5 text-left text-xs font-medium text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
+                    className="rounded-md px-2.5 py-1.5 text-left text-xs font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   >
                     {preset.label}
                   </button>
@@ -294,7 +294,7 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
                     type="button"
                     onClick={prevMonth}
                     aria-label="Previous month"
-                    className="p-1 rounded text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                    className="p-1 rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
@@ -302,14 +302,14 @@ export const DateRangePicker = React.forwardRef<HTMLDivElement, DateRangePickerP
                     type="button"
                     onClick={nextMonth}
                     aria-label="Next month"
-                    className="p-1 rounded text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                    className="p-1 rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-medium text-zinc-400">
+              <div className="grid grid-cols-7 gap-1 text-center text-[11px] font-medium text-muted-foreground">
                 <span>Su</span>
                 <span>Mo</span>
                 <span>Tu</span>

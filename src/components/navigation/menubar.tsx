@@ -140,8 +140,8 @@ export const MenubarTrigger = React.forwardRef<HTMLButtonElement, MenubarTrigger
         className={cn(
           "flex cursor-pointer select-none items-center rounded-lg px-3 py-1 text-xs font-medium outline-none transition-colors",
           isOpen
-            ? "bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
-            : "hover:bg-zinc-100 focus:bg-zinc-100 dark:hover:bg-zinc-800 dark:focus:bg-zinc-800",
+            ? "bg-accent text-accent-foreground"
+            : "hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
           className
         )}
         {...props}
@@ -236,7 +236,7 @@ export const MenubarItem = React.forwardRef<HTMLDivElement, MenubarItemProps>(
         data-disabled={disabled ? "" : undefined}
         onClick={handleClick}
         className={cn(
-          "relative flex cursor-pointer select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 focus:bg-zinc-100 focus:text-zinc-900 dark:focus:bg-zinc-800 dark:focus:text-zinc-100",
+          "relative flex cursor-pointer select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
           inset && "pl-8",
           disabled && "pointer-events-none opacity-50",
           className
@@ -275,7 +275,7 @@ export const MenubarCheckboxItem = React.forwardRef<HTMLDivElement, MenubarCheck
         aria-disabled={disabled}
         onClick={handleClick}
         className={cn(
-          "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 focus:bg-zinc-100 focus:text-zinc-900 dark:focus:bg-zinc-800 dark:focus:text-zinc-100",
+          "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
           disabled && "pointer-events-none opacity-50",
           className
         )}
@@ -321,7 +321,7 @@ export const MenubarRadioItem = React.forwardRef<HTMLDivElement, MenubarRadioIte
         aria-disabled={disabled}
         onClick={handleClick}
         className={cn(
-          "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 focus:bg-zinc-100 focus:text-zinc-900 dark:focus:bg-zinc-800 dark:focus:text-zinc-100",
+          "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
           disabled && "pointer-events-none opacity-50",
           className
         )}
@@ -348,7 +348,7 @@ export const MenubarLabel = React.forwardRef<HTMLDivElement, MenubarLabelProps>(
     <div
       ref={ref}
       className={cn(
-        "px-2.5 py-1.5 text-xs font-semibold text-zinc-900 dark:text-zinc-100",
+        "px-2.5 py-1.5 text-xs font-semibold text-foreground",
         inset && "pl-8",
         className
       )}
@@ -364,7 +364,7 @@ export const MenubarSeparator = React.forwardRef<HTMLDivElement, MenubarSeparato
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("-mx-1 my-1 h-px bg-zinc-200 dark:bg-zinc-800", className)}
+      className={cn("-mx-1 my-1 h-px bg-border", className)}
       {...props}
     />
   )
@@ -376,7 +376,7 @@ export interface MenubarShortcutProps extends React.HTMLAttributes<HTMLSpanEleme
 export const MenubarShortcut: React.FC<MenubarShortcutProps> = ({ className, ...props }) => {
   return (
     <span
-      className={cn("ml-auto text-[10px] tracking-widest text-zinc-400", className)}
+      className={cn("ml-auto text-[10px] tracking-widest text-muted-foreground", className)}
       {...props}
     />
   )
@@ -409,7 +409,7 @@ export const MenubarSubTrigger = React.forwardRef<HTMLDivElement, MenubarSubTrig
     <div
       ref={ref}
       className={cn(
-        "flex cursor-default select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:bg-zinc-100 dark:focus:bg-zinc-800",
+        "flex cursor-default select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
         inset && "pl-8",
         className
       )}
@@ -429,7 +429,7 @@ export const MenubarSubContent = React.forwardRef<HTMLDivElement, MenubarSubCont
     <div
       ref={ref}
       className={cn(
-        "z-50 min-w-[8rem] overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1 text-zinc-900 dark:text-zinc-100 shadow-xl duration-150 animate-in fade-in-0 zoom-in-95",
+        "z-50 min-w-[8rem] overflow-hidden rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-xl duration-150 animate-in fade-in-0 zoom-in-95",
         className
       )}
       {...props}

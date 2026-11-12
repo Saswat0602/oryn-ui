@@ -66,7 +66,7 @@ export const AvatarFallback = forwardRef<HTMLDivElement, AvatarFallbackProps>(
       <div
         ref={ref}
         className={cn(
-          'flex h-full w-full items-center justify-center bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 font-semibold uppercase tracking-tight select-none',
+          'flex h-full w-full items-center justify-center bg-muted text-foreground font-semibold uppercase tracking-tight select-none',
           className
         )}
         {...props}
@@ -120,7 +120,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
           <div
             ref={ref}
             className={cn(
-              'relative inline-flex shrink-0 overflow-hidden font-semibold select-none border border-zinc-200/60 dark:border-zinc-800/60',
+              'relative inline-flex shrink-0 overflow-hidden font-semibold select-none border border-border/60',
               sizeClasses[size],
               shapeClasses[shape],
               className
@@ -138,7 +138,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
         <div
           ref={ref}
           className={cn(
-            'relative inline-flex shrink-0 overflow-hidden font-semibold select-none border border-zinc-200/60 dark:border-zinc-800/60',
+            'relative inline-flex shrink-0 overflow-hidden font-semibold select-none border border-border/60',
             sizeClasses[size],
             shapeClasses[shape],
             className
@@ -174,12 +174,12 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({
   return (
     <div className={cn('flex -space-x-2.5 items-center', className)} {...props}>
       {childrenArray.slice(0, displayCount).map((child, index) => (
-        <div key={index} className="ring-2 ring-white dark:ring-zinc-950 rounded-full shrink-0">
+        <div key={index} className="ring-2 ring-background rounded-full shrink-0">
           {child}
         </div>
       ))}
       {hiddenCount > 0 && (
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-200 dark:bg-zinc-800 text-xs font-semibold text-zinc-700 dark:text-zinc-300 ring-2 ring-white dark:ring-zinc-950 shrink-0">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground ring-2 ring-background shrink-0">
           +{hiddenCount}
         </div>
       )}

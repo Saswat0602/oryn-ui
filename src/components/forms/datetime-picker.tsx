@@ -266,21 +266,21 @@ export const DateTimePicker = React.forwardRef<HTMLDivElement, DateTimePickerPro
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={() => navigateMonth(-1)}
-          className="p-1.5 hover:bg-zinc-100 rounded-full transition-colors"
+          className="p-1.5 hover:bg-accent rounded-full transition-colors"
         >
-          <ChevronLeft size={18} className="text-zinc-600" />
+          <ChevronLeft size={18} className="text-muted-foreground" />
         </button>
 
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setShowMonthModal(true)}
-            className="font-semibold text-zinc-800 hover:bg-zinc-100 px-3 py-1.5 rounded transition-colors"
+            className="font-semibold text-foreground hover:bg-accent px-3 py-1.5 rounded transition-colors"
           >
             {months[viewDate.getMonth()]}
           </button>
           <button
             onClick={() => setShowYearModal(true)}
-            className="font-semibold text-zinc-800 hover:bg-zinc-100 px-3 py-1.5 rounded transition-colors"
+            className="font-semibold text-foreground hover:bg-accent px-3 py-1.5 rounded transition-colors"
           >
             {viewDate.getFullYear()}
           </button>
@@ -288,15 +288,15 @@ export const DateTimePicker = React.forwardRef<HTMLDivElement, DateTimePickerPro
 
         <button
           onClick={() => navigateMonth(1)}
-          className="p-1.5 hover:bg-zinc-100 rounded-full transition-colors"
+          className="p-1.5 hover:bg-accent rounded-full transition-colors"
         >
-          <ChevronRight size={18} className="text-zinc-600" />
+          <ChevronRight size={18} className="text-muted-foreground" />
         </button>
       </div>
 
       <div className="grid grid-cols-7 gap-0 mb-2" style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
         {weekDays.map(day => (
-          <div key={day} className="h-8 text-center text-xs font-semibold text-zinc-500 flex items-center justify-center">
+          <div key={day} className="h-8 text-center text-xs font-semibold text-muted-foreground flex items-center justify-center">
             {day}
           </div>
         ))}
@@ -316,7 +316,7 @@ export const DateTimePicker = React.forwardRef<HTMLDivElement, DateTimePickerPro
             }}
             className={cn(
               'h-8 w-8 text-sm rounded-md transition-all duration-200 hover:bg-accent flex items-center justify-center font-medium',
-              !dayObj.isCurrentMonth ? 'text-zinc-300 hover:text-zinc-500' : 'text-zinc-700 hover:text-zinc-900',
+              !dayObj.isCurrentMonth ? 'text-muted-foreground/40 hover:text-muted-foreground' : 'text-foreground hover:bg-accent',
               isSelected(dayObj.date) ? 'bg-primary text-primary-foreground hover:bg-primary/90' : '',
               isToday(dayObj.date) && !isSelected(dayObj.date) ? 'bg-accent text-accent-foreground font-bold' : ''
             )}
@@ -331,17 +331,17 @@ export const DateTimePicker = React.forwardRef<HTMLDivElement, DateTimePickerPro
   const renderTimePicker = () => (
     <div className="p-4">
       <div className="text-center mb-6">
-        <div className="text-3xl font-bold text-zinc-800 mb-2">
+        <div className="text-3xl font-bold text-foreground mb-2">
           {String(getHourDisplay()).padStart(2, '0')}:{String(selectedDate.getMinutes()).padStart(2, '0')}
           {timeFormat === '12' && (
-            <span className="ml-2 text-xl text-zinc-600">{getAMPM()}</span>
+            <span className="ml-2 text-xl text-muted-foreground">{getAMPM()}</span>
           )}
         </div>
       </div>
 
       <div className="flex items-center justify-center space-x-4">
         <div className="flex flex-col items-center">
-          <label className="text-xs font-semibold text-zinc-600 mb-2 uppercase tracking-wide">Hour</label>
+          <label className="text-xs font-semibold text-muted-foreground mb-2 uppercase tracking-wide">Hour</label>
           <select
             value={getHourDisplay()}
             onChange={(e) => handleTimeChange('hour', e.target.value)}

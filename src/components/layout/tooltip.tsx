@@ -176,7 +176,7 @@ export const TooltipContent = React.forwardRef<HTMLDivElement, TooltipContentPro
           data-side={effectiveSide}
           style={{ ...positioningStyle, ...style }}
           className={cn(
-            "fixed z-[80] overflow-hidden rounded-md bg-zinc-900 px-3 py-1.5 text-xs text-zinc-50 shadow-md animate-in fade-in-0 zoom-in-95 dark:bg-zinc-100 dark:text-zinc-900 pointer-events-none",
+            "fixed z-[80] overflow-hidden rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground shadow-md animate-in fade-in-0 zoom-in-95 pointer-events-none",
             className
           )}
           {...props}

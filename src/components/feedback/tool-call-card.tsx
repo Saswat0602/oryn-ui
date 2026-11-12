@@ -51,7 +51,7 @@ export const ToolCallCard = React.forwardRef<HTMLDivElement, ToolCallCardProps>(
 
     const statusBadges = {
       pending: (
-        <span className="inline-flex items-center gap-1 rounded-md bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+        <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
           Pending
         </span>
       ),
@@ -88,7 +88,7 @@ export const ToolCallCard = React.forwardRef<HTMLDivElement, ToolCallCardProps>(
       <div
         ref={ref}
         className={cn(
-          "w-full rounded-xl border border-zinc-200/80 bg-card text-card-foreground shadow-2xs dark:border-zinc-800 transition-all",
+          "w-full rounded-xl border border-border bg-card text-card-foreground shadow-2xs transition-all",
           className
         )}
         {...props}
@@ -103,21 +103,21 @@ export const ToolCallCard = React.forwardRef<HTMLDivElement, ToolCallCardProps>(
           <div className="flex items-center gap-2 min-w-0">
             <ChevronRight
               className={cn(
-                "h-3.5 w-3.5 text-zinc-400 transition-transform duration-150 shrink-0",
+                "h-3.5 w-3.5 text-muted-foreground transition-transform duration-150 shrink-0",
                 open && "rotate-90"
               )}
             />
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 shrink-0">
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-muted text-muted-foreground shrink-0">
               <Wrench className="h-3.5 w-3.5" />
             </div>
-            <span className="font-mono font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+            <span className="font-mono font-semibold text-card-foreground truncate">
               {displayName}
             </span>
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
             {duration && (
-              <span className="text-[11px] font-medium text-zinc-400 dark:text-zinc-500">
+              <span className="text-[11px] font-medium text-muted-foreground">
                 {typeof duration === "number" ? `${duration}ms` : duration}
               </span>
             )}
@@ -128,14 +128,14 @@ export const ToolCallCard = React.forwardRef<HTMLDivElement, ToolCallCardProps>(
         {open && (
           <div
             id={contentId}
-            className="border-t border-zinc-100 dark:border-zinc-800/80 px-4 py-3 text-xs flex flex-col gap-3 bg-zinc-50/50 dark:bg-zinc-950/40 rounded-b-xl"
+            className="border-t border-border px-4 py-3 text-xs flex flex-col gap-3 bg-muted/30 rounded-b-xl"
           >
             {args !== undefined && (
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                   Arguments
                 </span>
-                <pre className="mt-1 overflow-x-auto rounded-lg border border-zinc-200/60 bg-zinc-100/60 p-2.5 font-mono text-[11px] text-zinc-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
+                <pre className="mt-1 overflow-x-auto rounded-lg border border-border bg-muted/50 p-2.5 font-mono text-[11px] text-foreground">
                   {formatPayload(args)}
                 </pre>
               </div>
@@ -143,10 +143,10 @@ export const ToolCallCard = React.forwardRef<HTMLDivElement, ToolCallCardProps>(
 
             {result !== undefined && (
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                   Result
                 </span>
-                <pre className="mt-1 max-h-48 overflow-auto rounded-lg border border-zinc-200/60 bg-zinc-100/60 p-2.5 font-mono text-[11px] text-zinc-800 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-200">
+                <pre className="mt-1 max-h-48 overflow-auto rounded-lg border border-border bg-muted/50 p-2.5 font-mono text-[11px] text-foreground">
                   {formatPayload(result)}
                 </pre>
               </div>

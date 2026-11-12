@@ -59,7 +59,7 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
 
     const variantStyles = {
       default:
-        "bg-zinc-100 text-zinc-900 border-zinc-200 dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-800",
+        "bg-muted text-foreground border-border",
       info:
         "bg-muted text-foreground border-border",
       success:
@@ -95,7 +95,7 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
           {renderedIcon}
           <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5 min-w-0">
             {title && <span className="font-semibold">{title}</span>}
-            <div className="text-zinc-600 dark:text-zinc-300">{children}</div>
+            <div className="text-muted-foreground">{children}</div>
           </div>
         </div>
 

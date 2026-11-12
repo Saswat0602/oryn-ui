@@ -191,12 +191,12 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
             error
               ? "border-destructive focus-visible:border-destructive focus-visible:ring-1 focus-visible:ring-destructive/30"
               : "border-input focus-visible:border-ring focus-visible:ring-1 focus-visible:ring-ring",
-            disabled && "cursor-not-allowed opacity-50 bg-zinc-50 dark:bg-zinc-900",
+            disabled && "cursor-not-allowed opacity-50 bg-muted",
             sizeClasses
           )}
         >
           {(selected ?? []).length === 0 ? (
-            <span className="text-zinc-400 dark:text-zinc-500">{placeholder}</span>
+            <span className="text-muted-foreground">{placeholder}</span>
           ) : (
             (selected ?? []).map((val) => {
               const opt = options.find((o) => o.value === val)
@@ -212,7 +212,7 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
                     type="button"
                     onClick={(e) => removeOption(e, val)}
                     aria-label={`Remove ${label}`}
-                    className="ml-0.5 rounded-full p-0.5 text-zinc-400 hover:bg-zinc-200 hover:text-zinc-700 dark:hover:bg-zinc-700 dark:hover:text-zinc-200"
+                    className="ml-0.5 rounded-full p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground"
                   >
                     <X className="h-3 w-3" />
                   </button>
@@ -221,13 +221,13 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
             })
           )}
 
-          <div className="ml-auto flex items-center gap-1 text-zinc-400">
+          <div className="ml-auto flex items-center gap-1 text-muted-foreground">
             {clearable && (selected ?? []).length > 0 && !disabled && (
               <button
                 type="button"
                 onClick={clearAll}
                 aria-label="Clear all options"
-                className="p-1 rounded text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200"
+                className="p-1 rounded text-muted-foreground hover:text-foreground"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -246,7 +246,7 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
               className="fixed z-[70] max-h-60 overflow-hidden flex flex-col rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-2xl animate-in fade-in-0 zoom-in-95"
             >
             {searchable && (
-              <div className="p-1 border-b border-zinc-100 dark:border-zinc-800 mb-1">
+              <div className="p-1 border-b border-border mb-1">
                 <input
                   ref={searchInputRef}
                   type="text"
@@ -255,7 +255,7 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   onClick={(e) => e.stopPropagation()}
-                  className="w-full bg-transparent px-2 py-1 text-xs outline-none placeholder:text-zinc-400"
+                  className="w-full bg-transparent px-2 py-1 text-xs outline-none placeholder:text-muted-foreground"
                 />
               </div>
             )}
@@ -268,7 +268,7 @@ export const MultiSelect = React.forwardRef<HTMLDivElement, MultiSelectProps>(
               className="overflow-auto max-h-48"
             >
               {filteredOptions.length === 0 ? (
-                <div className="py-4 text-center text-xs text-zinc-500">No options found.</div>
+                <div className="py-4 text-center text-xs text-muted-foreground">No options found.</div>
               ) : (
                 filteredOptions.map((opt) => {
                   const checked = isSelected(opt.value)

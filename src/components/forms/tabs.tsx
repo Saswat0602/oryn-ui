@@ -240,12 +240,12 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
               'flex gap-1',
               orientation === 'vertical' ? 'flex-col shrink-0 h-auto' : 'flex-row items-center',
               variant === 'default' &&
-                'rounded-xl bg-zinc-100 dark:bg-zinc-800/80 p-1 text-zinc-500 dark:text-zinc-400',
-              variant === 'pills' && 'rounded-full bg-zinc-100 dark:bg-zinc-800/80 p-1',
+                'rounded-xl bg-muted p-1 text-muted-foreground',
+              variant === 'pills' && 'rounded-full bg-muted p-1',
               variant === 'underline' &&
-                'border-b border-zinc-200 dark:border-zinc-800 gap-2 pb-px bg-transparent rounded-none h-auto',
+                'border-b border-border gap-2 pb-px bg-transparent rounded-none h-auto',
               variant === 'cards' &&
-                'rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-1',
+                'rounded-xl border border-border bg-muted/40 p-1',
               variant === 'minimal' && 'gap-2 bg-transparent rounded-none h-auto',
               fullWidth && 'w-full'
             )}
@@ -293,7 +293,7 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
                   {item.icon && <span className="shrink-0">{item.icon}</span>}
                   <span>{item.label}</span>
                   {item.badge !== undefined && (
-                    <span className="ml-1.5 rounded-full bg-zinc-200 dark:bg-zinc-700 px-2 py-0.5 text-[11px] font-medium text-zinc-800 dark:text-zinc-200">
+                    <span className="ml-1.5 rounded-full bg-secondary text-secondary-foreground px-2 py-0.5 text-[11px] font-medium">
                       {item.badge}
                     </span>
                   )}

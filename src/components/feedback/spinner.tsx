@@ -17,7 +17,7 @@ const spinnerVariants = createVariants({
       default: "text-muted-foreground",
       primary: "text-primary",
       secondary: "text-foreground",
-      muted: "text-zinc-400 dark:text-zinc-600",
+      muted: "text-muted-foreground/60",
       white: "text-white",
     },
     size: {

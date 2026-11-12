@@ -1609,7 +1609,7 @@ export const COMPONENT_PROPS: Record<string, ComponentProp[]> = {
   badge: [
     {
       name: 'variant',
-      type: "'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' | 'info'",
+      type: "'default' | 'primary' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' | 'info'",
       required: false,
       default: 'default',
       description: 'Visual accent styling of the badge pill'

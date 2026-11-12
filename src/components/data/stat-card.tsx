@@ -36,9 +36,9 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
     ref
   ) => {
     const variantClasses = {
-      default: "bg-card text-card-foreground border-zinc-200 dark:border-zinc-800 shadow-2xs",
-      outline: "bg-transparent border-zinc-300 dark:border-zinc-700",
-      subtle: "bg-zinc-50/80 dark:bg-zinc-900/60 border-transparent",
+      default: "bg-card text-card-foreground border-border shadow-2xs",
+      outline: "bg-transparent border-border",
+      subtle: "bg-muted/50 border-transparent",
     }[variant]
 
     const sizeClasses = {
@@ -67,13 +67,13 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         {...props}
       >
         <div className="flex items-center justify-between gap-2">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
+          <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             {title}
           </span>
           <div className="flex items-center gap-1.5">
             {badge && <div>{badge}</div>}
             {icon && (
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 shrink-0">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-muted-foreground shrink-0">
                 {icon}
               </div>
             )}
@@ -81,7 +81,7 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         </div>
 
         <div className="flex items-baseline justify-between gap-2 pt-1">
-          <div className={cn("text-zinc-900 dark:text-zinc-50 font-sans", valueSizeClasses)}>
+          <div className={cn("text-card-foreground font-sans", valueSizeClasses)}>
             {value}
           </div>
 
@@ -94,7 +94,7 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
                 trend.direction === "down" &&
                   "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-200/50 dark:border-rose-800/40",
                 (!trend.direction || trend.direction === "neutral") &&
-                  "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
+                  "bg-muted text-muted-foreground"
               )}
             >
               {trend.direction === "up" && <TrendingUp className="h-3.5 w-3.5 shrink-0" />}
@@ -108,7 +108,7 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
         </div>
 
         {(description || (trend && trend.label)) && (
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
+          <p className="text-xs text-muted-foreground">
             {description ?? (trend && trend.label)}
           </p>
         )}

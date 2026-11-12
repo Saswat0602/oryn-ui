@@ -148,7 +148,7 @@ export const TimePicker = React.forwardRef<HTMLDivElement, TimePickerProps>(
           error
             ? "border-destructive focus-within:border-destructive focus-within:ring-1 focus-within:ring-destructive/30"
             : "border-input focus-within:border-ring focus-within:ring-1 focus-within:ring-ring",
-          disabled && "cursor-not-allowed opacity-50 bg-zinc-50 dark:bg-zinc-900",
+          disabled && "cursor-not-allowed opacity-50 bg-muted",
           sizeClasses,
           className
         )}
@@ -169,7 +169,7 @@ export const TimePicker = React.forwardRef<HTMLDivElement, TimePickerProps>(
           disabled={disabled}
           onChange={handleHourChange}
           onKeyDown={handleKeyDownHour}
-          className="w-7 bg-transparent text-center outline-none focus:bg-zinc-100 dark:focus:bg-zinc-800 rounded font-semibold"
+          className="w-7 bg-transparent text-center outline-none focus:bg-accent focus:text-accent-foreground rounded font-semibold text-foreground"
         />
 
         <span className="text-muted-foreground font-semibold">:</span>
@@ -186,7 +186,7 @@ export const TimePicker = React.forwardRef<HTMLDivElement, TimePickerProps>(
           disabled={disabled}
           onChange={handleMinuteChange}
           onKeyDown={handleKeyDownMinute}
-          className="w-7 bg-transparent text-center outline-none focus:bg-zinc-100 dark:focus:bg-zinc-800 rounded font-semibold"
+          className="w-7 bg-transparent text-center outline-none focus:bg-accent focus:text-accent-foreground rounded font-semibold text-foreground"
         />
 
         {format === "12h" && (
@@ -195,7 +195,7 @@ export const TimePicker = React.forwardRef<HTMLDivElement, TimePickerProps>(
             disabled={disabled}
             onClick={togglePeriod}
             aria-label="Toggle AM/PM"
-            className="ml-1 rounded px-1.5 py-0.5 text-xs font-semibold uppercase text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800 cursor-pointer"
+            className="ml-1 rounded px-1.5 py-0.5 text-xs font-semibold uppercase text-muted-foreground hover:bg-accent hover:text-accent-foreground cursor-pointer"
           >
             {parsed.period}
           </button>

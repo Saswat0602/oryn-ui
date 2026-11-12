@@ -259,7 +259,7 @@ export function DataTable<T extends Record<string, any>>({
         <div className="flex flex-wrap items-center justify-between gap-3">
           {searchable && (
             <div className="relative w-full max-w-xs sm:w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-400 dark:text-zinc-500 pointer-events-none" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
               <input
                 type="text"
                 placeholder="Search table..."
@@ -274,8 +274,8 @@ export function DataTable<T extends Record<string, any>>({
           )}
 
           {selectable && selectedRows.length > 0 && (
-            <div className="flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400 ml-auto">
-              <span className="font-medium text-zinc-900 dark:text-zinc-100">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground ml-auto">
+              <span className="font-medium text-foreground">
                 {selectedRows.length} selected
               </span>
               {renderBulkActions?.(selectedRows)}
@@ -288,7 +288,7 @@ export function DataTable<T extends Record<string, any>>({
       <div
         ref={virtualized ? scrollContainerRef : undefined}
         className={cn(
-          "rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 shadow-2xs overflow-x-auto w-full",
+          "rounded-xl border border-border bg-card text-card-foreground shadow-2xs overflow-x-auto w-full",
           virtualized ? "max-h-[480px] overflow-auto relative" : ""
         )}
       >
@@ -328,7 +328,7 @@ export function DataTable<T extends Record<string, any>>({
                   className="h-32 text-center"
                 >
                   {emptyState || (
-                    <div className="flex flex-col items-center justify-center space-y-1 text-zinc-500 dark:text-zinc-400 py-6">
+                    <div className="flex flex-col items-center justify-center space-y-1 text-muted-foreground py-6">
                       <SlidersHorizontal className="h-5 w-5 opacity-40 mb-1" />
                       <p className="text-xs font-medium">{emptyMessage}</p>
                     </div>
@@ -444,7 +444,7 @@ export const DataTableHeader = <T extends Record<string, any>>({
                 <button
                   type="button"
                   onClick={() => onSort?.(column.key)}
-                  className="group inline-flex items-center gap-1.5 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors cursor-pointer"
+                  className="group inline-flex items-center gap-1.5 hover:text-foreground transition-colors cursor-pointer"
                 >
                   <span>{column.header}</span>
                   {isSorted ? (
@@ -530,19 +530,19 @@ export const DataTablePagination: React.FC<DataTablePaginationProps> = ({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-600 dark:text-zinc-400 px-1",
+        "flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground px-1",
         className
       )}
     >
       <div className="flex items-center gap-2">
         <span>
-          Showing <span className="font-medium text-zinc-900 dark:text-zinc-100">{startRecord}</span> to{" "}
-          <span className="font-medium text-zinc-900 dark:text-zinc-100">{endRecord}</span> of{" "}
-          <span className="font-medium text-zinc-900 dark:text-zinc-100">{totalRecords}</span> records
+          Showing <span className="font-medium text-foreground">{startRecord}</span> to{" "}
+          <span className="font-medium text-foreground">{endRecord}</span> of{" "}
+          <span className="font-medium text-foreground">{totalRecords}</span> records
         </span>
         {onPageSizeChange && (
           <div className="flex items-center gap-1.5 ml-3">
-            <span className="text-zinc-400">Rows:</span>
+            <span className="text-muted-foreground">Rows:</span>
             <select
               aria-label="Rows per page"
               value={pageSize}
@@ -565,7 +565,7 @@ export const DataTablePagination: React.FC<DataTablePaginationProps> = ({
           onClick={() => onPageChange(1)}
           disabled={currentPage <= 1}
           aria-label="First page"
-          className="p-1 rounded-md border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-850 disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
+          className="p-1 rounded-md border border-border hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
         >
           <ChevronsLeft className="h-3.5 w-3.5" />
         </button>
@@ -574,12 +574,12 @@ export const DataTablePagination: React.FC<DataTablePaginationProps> = ({
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage <= 1}
           aria-label="Previous page"
-          className="p-1 rounded-md border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-850 disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
+          className="p-1 rounded-md border border-border hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
         >
           <ChevronLeft className="h-3.5 w-3.5" />
         </button>
 
-        <span className="px-2.5 py-0.5 text-xs font-mono font-medium text-zinc-900 dark:text-zinc-100">
+        <span className="px-2.5 py-0.5 text-xs font-mono font-medium text-foreground">
           {currentPage} / {totalPages}
         </span>
 
@@ -588,7 +588,7 @@ export const DataTablePagination: React.FC<DataTablePaginationProps> = ({
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
           aria-label="Next page"
-          className="p-1 rounded-md border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-850 disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
+          className="p-1 rounded-md border border-border hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
         >
           <ChevronRight className="h-3.5 w-3.5" />
         </button>
@@ -597,7 +597,7 @@ export const DataTablePagination: React.FC<DataTablePaginationProps> = ({
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage >= totalPages}
           aria-label="Last page"
-          className="p-1 rounded-md border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-850 disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
+          className="p-1 rounded-md border border-border hover:bg-accent hover:text-accent-foreground disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
         >
           <ChevronsRight className="h-3.5 w-3.5" />
         </button>

@@ -90,10 +90,10 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
             className
           )}
         >
-          <span className={cn("truncate", !selectedOption && "text-zinc-400 dark:text-zinc-500")}>
+          <span className={cn("truncate", !selectedOption && "text-muted-foreground")}>
             {selectedOption ? selectedOption.label : placeholder}
           </span>
-          <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-zinc-400 ml-2 opacity-60" />
+          <ChevronsUpDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground ml-2 opacity-60" />
         </button>
       </PopoverTrigger>
 
@@ -103,15 +103,15 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
         className="w-64 min-w-[12rem] p-1 shadow-xl"
       >
         {searchable && (
-          <div className="flex items-center gap-1.5 px-2.5 py-1.5 border-b border-zinc-100 dark:border-zinc-800 mb-1">
-            <Search className="h-3.5 w-3.5 text-zinc-400 shrink-0" />
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 border-b border-border mb-1">
+            <Search className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
             <input
               ref={inputRef}
               type="text"
               value={searchValue}
               onChange={(e) => setSearchValue(e.target.value)}
               placeholder="Search..."
-              className="w-full bg-transparent text-xs outline-none placeholder:text-zinc-400"
+              className="w-full bg-transparent text-xs outline-none placeholder:text-muted-foreground"
             />
           </div>
         )}
@@ -141,7 +141,7 @@ export const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
               )
             })
           ) : (
-            <div className="px-3 py-2 text-center text-xs text-zinc-400">
+            <div className="px-3 py-2 text-center text-xs text-muted-foreground">
               No matching options.
             </div>
           )}

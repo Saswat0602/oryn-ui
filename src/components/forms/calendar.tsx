@@ -354,13 +354,13 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
             dayClasses += " rounded-lg hover:scale-105"
             break
           case "minimal":
-            dayClasses += " rounded-none border-b border-zinc-200 dark:border-zinc-800"
+            dayClasses += " rounded-none border-b border-border"
             break
           case "card":
             dayClasses += " rounded-md shadow-sm hover:shadow-md"
             break
           case "grid":
-            dayClasses += " rounded-none border border-zinc-200 dark:border-zinc-800"
+            dayClasses += " rounded-none border border-border"
             break
           default:
             dayClasses += " rounded-full"
@@ -378,7 +378,7 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
         }
         
         if (disabled) {
-          dayClasses += " text-zinc-400 cursor-not-allowed opacity-50"
+          dayClasses += " text-muted-foreground cursor-not-allowed opacity-50"
         } else {
           dayClasses += " cursor-pointer"
         }
@@ -465,7 +465,7 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
           />
           {showIcon && (
             <span 
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-zinc-400"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
             >
               <CalendarIcon size={16} />
             </span>

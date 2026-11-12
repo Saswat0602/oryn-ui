@@ -160,17 +160,17 @@ export const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
             aria-label="Upload files"
           />
 
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300 mb-3 shadow-2xs">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground mb-3 shadow-2xs">
             <UploadCloud className="h-5 w-5" />
           </div>
 
-          <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{title}</p>
-          <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400 max-w-xs text-center">
+          <p className="text-sm font-semibold text-foreground">{title}</p>
+          <p className="mt-1 text-xs text-muted-foreground max-w-xs text-center">
             {description}
           </p>
 
           {maxSize && (
-            <p className="mt-2 text-[11px] text-zinc-400">
+            <p className="mt-2 text-[11px] text-muted-foreground">
               Max file size: {formatBytes(maxSize)}
             </p>
           )}
@@ -188,11 +188,11 @@ export const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
             {(files ?? []).map((file, idx) => (
               <div
                 key={`${file.name}-${idx}`}
-                className="flex items-center justify-between p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-card text-xs shadow-2xs"
+                className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-card text-xs shadow-2xs"
               >
                 <div className="flex items-center gap-2.5 truncate">
                   {getFileIcon(file)}
-                  <span className="font-medium text-zinc-800 dark:text-zinc-200 truncate">
+                  <span className="font-medium text-foreground truncate">
                     {file.name}
                   </span>
                   <span className="text-muted-foreground shrink-0 text-[11px]">
@@ -207,7 +207,7 @@ export const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
                     removeFile(idx)
                   }}
                   aria-label={`Remove file ${file.name}`}
-                  className="p-1 rounded text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
+                  className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>

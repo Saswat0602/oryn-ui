@@ -154,12 +154,12 @@ export const SheetClose = React.forwardRef<HTMLButtonElement, SheetCloseProps>(
 SheetClose.displayName = "SheetClose"
 
 const sheetVariants = {
-  top: "inset-x-0 top-0 border-b border-zinc-200 dark:border-zinc-800 data-[state=open]:animate-in data-[state=open]:slide-in-from-top-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-top-full",
+  top: "inset-x-0 top-0 border-b border-border data-[state=open]:animate-in data-[state=open]:slide-in-from-top-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-top-full",
   bottom:
-    "inset-x-0 bottom-0 border-t border-zinc-200 dark:border-zinc-800 data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom-full",
-  left: "inset-y-0 left-0 h-full w-3/4 border-r border-zinc-200 dark:border-zinc-800 data-[state=open]:animate-in data-[state=open]:slide-in-from-left-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left-full sm:max-w-sm",
+    "inset-x-0 bottom-0 border-t border-border data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom-full",
+  left: "inset-y-0 left-0 h-full w-3/4 border-r border-border data-[state=open]:animate-in data-[state=open]:slide-in-from-left-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left-full sm:max-w-sm",
   right:
-    "inset-y-0 right-0 h-full w-3/4 border-l border-zinc-200 dark:border-zinc-800 data-[state=open]:animate-in data-[state=open]:slide-in-from-right-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right-full sm:max-w-sm",
+    "inset-y-0 right-0 h-full w-3/4 border-l border-border data-[state=open]:animate-in data-[state=open]:slide-in-from-right-full data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right-full sm:max-w-sm",
 }
 
 export interface SheetContentProps extends React.HTMLAttributes<HTMLDivElement> {

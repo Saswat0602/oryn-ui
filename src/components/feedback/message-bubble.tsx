@@ -50,7 +50,7 @@ export const MessageBubble = React.forwardRef<HTMLDivElement, MessageBubbleProps
 
     const defaultAvatars = {
       user: (
-        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300 text-xs font-semibold shrink-0">
+        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-secondary text-secondary-foreground text-xs font-semibold shrink-0">
           <User className="h-4 w-4" />
         </div>
       ),
@@ -71,7 +71,7 @@ export const MessageBubble = React.forwardRef<HTMLDivElement, MessageBubbleProps
           role="status"
           aria-label="System notification"
           className={cn(
-            "flex w-full items-center justify-center py-2 px-4 text-xs font-medium text-zinc-500 dark:text-zinc-400 italic",
+            "flex w-full items-center justify-center py-2 px-4 text-xs font-medium text-muted-foreground italic",
             className
           )}
           {...props}
@@ -99,8 +99,8 @@ export const MessageBubble = React.forwardRef<HTMLDivElement, MessageBubbleProps
 
         <div className={cn("flex flex-col flex-1 min-w-0", isUser && "items-end")}>
           {(author || timestamp) && (
-            <div className="flex items-center gap-2 mb-1 text-xs text-zinc-500 dark:text-zinc-400">
-              {author && <span className="font-semibold text-zinc-800 dark:text-zinc-200">{author}</span>}
+            <div className="flex items-center gap-2 mb-1 text-xs text-muted-foreground">
+              {author && <span className="font-semibold text-foreground">{author}</span>}
               {timestamp && <span>{timestamp}</span>}
             </div>
           )}
@@ -125,7 +125,7 @@ export const MessageBubble = React.forwardRef<HTMLDivElement, MessageBubbleProps
                 type="button"
                 onClick={handleCopy}
                 aria-label="Copy message"
-                className="flex items-center gap-1 rounded-md p-1 text-xs text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors cursor-pointer"
+                className="flex items-center gap-1 rounded-md p-1 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
               >
                 {copied ? (
                   <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />

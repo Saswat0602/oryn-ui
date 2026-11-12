@@ -145,7 +145,7 @@ export const ContextMenuContent = React.forwardRef<HTMLDivElement, ContextMenuCo
             ...style,
           }}
           className={cn(
-            "fixed z-[70] min-w-[8rem] overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1 text-zinc-900 dark:text-zinc-100 shadow-xl duration-150 animate-in fade-in-0 zoom-in-95",
+            "fixed z-[70] min-w-[8rem] overflow-hidden rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-xl duration-150 animate-in fade-in-0 zoom-in-95",
             className
           )}
           {...props}
@@ -188,7 +188,7 @@ export const ContextMenuItem = React.forwardRef<HTMLDivElement, ContextMenuItemP
         data-disabled={disabled ? "" : undefined}
         onClick={handleClick}
         className={cn(
-          "relative flex cursor-pointer select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 focus:bg-zinc-100 focus:text-zinc-900 dark:focus:bg-zinc-800 dark:focus:text-zinc-100",
+          "relative flex cursor-pointer select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
           inset && "pl-8",
           disabled && "pointer-events-none opacity-50",
           className
@@ -227,7 +227,7 @@ export const ContextMenuCheckboxItem = React.forwardRef<HTMLDivElement, ContextM
         aria-disabled={disabled}
         onClick={handleClick}
         className={cn(
-          "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 focus:bg-zinc-100 focus:text-zinc-900 dark:focus:bg-zinc-800 dark:focus:text-zinc-100",
+          "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
           disabled && "pointer-events-none opacity-50",
           className
         )}
@@ -273,7 +273,7 @@ export const ContextMenuRadioItem = React.forwardRef<HTMLDivElement, ContextMenu
         aria-disabled={disabled}
         onClick={handleClick}
         className={cn(
-          "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-zinc-100 focus:bg-zinc-100 focus:text-zinc-900 dark:focus:bg-zinc-800 dark:focus:text-zinc-100",
+          "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
           disabled && "pointer-events-none opacity-50",
           className
         )}
@@ -300,7 +300,7 @@ export const ContextMenuLabel = React.forwardRef<HTMLDivElement, ContextMenuLabe
     <div
       ref={ref}
       className={cn(
-        "px-2.5 py-1.5 text-xs font-semibold text-zinc-900 dark:text-zinc-100",
+        "px-2.5 py-1.5 text-xs font-semibold text-foreground",
         inset && "pl-8",
         className
       )}
@@ -316,7 +316,7 @@ export const ContextMenuSeparator = React.forwardRef<HTMLDivElement, ContextMenu
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("-mx-1 my-1 h-px bg-zinc-200 dark:bg-zinc-800", className)}
+      className={cn("-mx-1 my-1 h-px bg-border", className)}
       {...props}
     />
   )
@@ -331,7 +331,7 @@ export const ContextMenuShortcut: React.FC<ContextMenuShortcutProps> = ({
 }) => {
   return (
     <span
-      className={cn("ml-auto text-[10px] tracking-widest text-zinc-400", className)}
+      className={cn("ml-auto text-[10px] tracking-widest text-muted-foreground", className)}
       {...props}
     />
   )
@@ -356,7 +356,7 @@ export const ContextMenuSubTrigger = React.forwardRef<HTMLDivElement, ContextMen
     <div
       ref={ref}
       className={cn(
-        "flex cursor-default select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none hover:bg-zinc-100 dark:hover:bg-zinc-800 focus:bg-zinc-100 dark:focus:bg-zinc-800",
+        "flex cursor-default select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
         inset && "pl-8",
         className
       )}
@@ -376,7 +376,7 @@ export const ContextMenuSubContent = React.forwardRef<HTMLDivElement, ContextMen
     <div
       ref={ref}
       className={cn(
-        "z-[70] min-w-[8rem] overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1 text-zinc-900 dark:text-zinc-100 shadow-xl duration-150 animate-in fade-in-0 zoom-in-95",
+        "z-[70] min-w-[8rem] overflow-hidden rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-xl duration-150 animate-in fade-in-0 zoom-in-95",
         className
       )}
       {...props}

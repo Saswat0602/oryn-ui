@@ -42,7 +42,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
         <div
           ref={ref}
           data-state={disabled ? 'disabled' : undefined}
-          className={cn('border-b border-zinc-200 dark:border-zinc-800 last:border-b-0', className)}
+          className={cn('border-b border-border last:border-b-0', className)}
           {...props}
         >
           {children}
@@ -94,7 +94,7 @@ export const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerPr
           <span className="flex-1 text-left">{children}</span>
           <IconComponent
             className={cn(
-              'h-4 w-4 shrink-0 transition-transform duration-200 text-zinc-500',
+              'h-4 w-4 shrink-0 transition-transform duration-200 text-muted-foreground',
               open && 'rotate-180'
             )}
           />
@@ -124,7 +124,7 @@ export const AccordionContent = forwardRef<HTMLDivElement, AccordionContentProps
         )}
       >
         <div className="overflow-hidden">
-          <div className={cn('pb-4 pt-0 px-5 text-sm text-zinc-600 dark:text-zinc-400', className)} {...props}>
+          <div className={cn('pb-4 pt-0 px-5 text-sm text-muted-foreground', className)} {...props}>
             {children}
           </div>
         </div>
@@ -264,7 +264,7 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(
           aria-label={ariaLabel || props['aria-label']}
           data-testid={dataTestId || props['data-testid']}
           className={cn(
-            'rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden divide-y divide-zinc-200 dark:divide-zinc-800 shadow-sm',
+            'rounded-xl border border-border bg-card text-card-foreground overflow-hidden divide-y divide-border shadow-xs',
             className
           )}
           {...props}

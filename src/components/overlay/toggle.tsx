@@ -41,9 +41,9 @@ export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(
 
     const variantClasses = {
       default:
-        'bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 data-[state=on]:bg-zinc-900 data-[state=on]:text-white dark:data-[state=on]:bg-zinc-100 dark:data-[state=on]:text-zinc-900 shadow-2xs',
+        'bg-transparent hover:bg-muted text-muted-foreground hover:text-foreground data-[state=on]:bg-accent data-[state=on]:text-accent-foreground shadow-2xs',
       outline:
-        'border border-zinc-200 dark:border-zinc-800 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 data-[state=on]:bg-zinc-900 data-[state=on]:text-white dark:data-[state=on]:bg-zinc-100 dark:data-[state=on]:text-zinc-900 shadow-2xs',
+        'border border-input bg-transparent hover:bg-muted text-muted-foreground hover:text-foreground data-[state=on]:bg-accent data-[state=on]:text-accent-foreground shadow-2xs',
     }
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -146,7 +146,7 @@ export const ToggleGroup = forwardRef<HTMLDivElement, ToggleGroupProps>(
           ref={ref}
           role="group"
           className={cn(
-            'inline-flex items-center justify-center gap-1 rounded-lg border border-zinc-200 dark:border-zinc-800 p-1',
+            'inline-flex items-center justify-center gap-1 rounded-lg border border-border p-1',
             className
           )}
           {...props}
@@ -185,9 +185,9 @@ export const ToggleGroupItem = forwardRef<HTMLButtonElement, ToggleGroupItemProp
 
     const variantClasses = {
       default:
-        'bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 data-[state=on]:bg-zinc-900 data-[state=on]:text-white dark:data-[state=on]:bg-zinc-100 dark:data-[state=on]:text-zinc-900 shadow-2xs',
+        'bg-transparent hover:bg-muted text-muted-foreground hover:text-foreground data-[state=on]:bg-accent data-[state=on]:text-accent-foreground shadow-2xs',
       outline:
-        'border border-zinc-200 dark:border-zinc-800 bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300 data-[state=on]:bg-zinc-900 data-[state=on]:text-white dark:data-[state=on]:bg-zinc-100 dark:data-[state=on]:text-zinc-900 shadow-2xs',
+        'border border-input bg-transparent hover:bg-muted text-muted-foreground hover:text-foreground data-[state=on]:bg-accent data-[state=on]:text-accent-foreground shadow-2xs',
     }
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {

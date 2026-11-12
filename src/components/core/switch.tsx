@@ -166,7 +166,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
                 }
               }}
               className={cn(
-                'text-sm font-medium leading-none cursor-pointer text-zinc-900 dark:text-zinc-100',
+                'text-sm font-medium leading-none cursor-pointer text-foreground',
                 disabled && 'cursor-not-allowed opacity-70'
               )}
             >
@@ -174,7 +174,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
             </label>
           )}
           {description && (
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">
+            <p className="text-xs text-muted-foreground">
               {description}
             </p>
           )}

@@ -36,7 +36,7 @@ export const TypographyH2: React.FC<TypographyH2Props> = ({
   className
 }) => {
   return (
-    <h2 className={cn('scroll-m-20 border-b border-zinc-200 dark:border-zinc-800 pb-2 text-3xl font-semibold tracking-tight first:mt-0', className)}>
+    <h2 className={cn('scroll-m-20 border-b border-border pb-2 text-3xl font-semibold tracking-tight first:mt-0', className)}>
       {children}
     </h2>
   )
@@ -102,7 +102,7 @@ export const TypographyBlockquote: React.FC<TypographyBlockquoteProps> = ({
   className
 }) => {
   return (
-    <blockquote className={cn('mt-6 border-l-2 border-zinc-200 dark:border-zinc-800 pl-6 italic', className)}>
+    <blockquote className={cn('mt-6 border-l-2 border-border pl-6 italic', className)}>
       {children}
     </blockquote>
   )
@@ -113,7 +113,7 @@ export const TypographyCode: React.FC<TypographyCodeProps> = ({
   className
 }) => {
   return (
-    <code className={cn('relative rounded bg-zinc-100 dark:bg-zinc-800 px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold text-zinc-900 dark:text-zinc-100', className)}>
+    <code className={cn('relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold text-foreground', className)}>
       {children}
     </code>
   )
@@ -124,7 +124,7 @@ export const TypographyLead: React.FC<TypographyLeadProps> = ({
   className
 }) => {
   return (
-    <p className={cn('text-xl text-zinc-600 dark:text-zinc-400', className)}>
+    <p className={cn('text-xl text-muted-foreground', className)}>
       {children}
     </p>
   )
@@ -157,7 +157,7 @@ export const TypographyMuted: React.FC<TypographyMutedProps> = ({
   className
 }) => {
   return (
-    <p className={cn('text-sm text-zinc-500 dark:text-zinc-400', className)}>
+    <p className={cn('text-sm text-muted-foreground', className)}>
       {children}
     </p>
   )

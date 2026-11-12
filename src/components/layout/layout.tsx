@@ -78,7 +78,7 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
       <div
         ref={ref}
         className={cn(
-          "min-h-screen bg-zinc-50 dark:bg-zinc-950",
+          "min-h-screen bg-background text-foreground",
           fullHeight && "h-screen",
           className
         )}

@@ -249,7 +249,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         </div>
 
         {showMarks && marks.length > 0 && (
-          <div className="relative w-full flex justify-between px-1 text-[11px] text-zinc-400">
+          <div className="relative w-full flex justify-between px-1 text-[11px] text-muted-foreground">
             {marks.map((m: { value: number; label?: string }) => (
               <span key={m.value}>{m.label || m.value}</span>
             ))}

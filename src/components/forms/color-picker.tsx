@@ -509,7 +509,7 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
               }}
             >
               <div
-                className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white border-2 border-zinc-200 dark:border-zinc-800 shadow-md pointer-events-none ring-1 ring-black/20"
+                className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white border-2 border-border shadow-md pointer-events-none ring-1 ring-black/20"
                 style={{ left: `${(hsv.h / 360) * 100}%` }}
               />
             </div>
@@ -536,7 +536,7 @@ export const ColorPicker = React.forwardRef<HTMLDivElement, ColorPickerProps>(
                   }}
                 />
                 <div
-                  className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white border-2 border-zinc-200 dark:border-zinc-800 shadow-md pointer-events-none ring-1 ring-black/20"
+                  className="absolute top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-white border-2 border-border shadow-md pointer-events-none ring-1 ring-black/20"
                   style={{ left: `${hsv.a * 100}%` }}
                 />
               </div>
