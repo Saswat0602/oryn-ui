@@ -109,3 +109,10 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **CMD-04 (Major)**: Bound `role="status"` and `aria-live="polite"` to `CommandEmpty`.
   - **CMD-06 (Nit)**: Enforced strict TypeScript `CommandComponent` compound typing, eliminating unsafe monkey-patching.
   - Added unit, arrow key navigation, enter execution, and axe tests in `tests/smoke/navigation.test.tsx`.
+
+- **`DropdownMenu`** (`src/components/overlay/dropdown-menu.tsx`):
+  - **DM-01 (Critical)**: Implemented functional nested submenus (`DropdownMenuSub`, `DropdownMenuSubTrigger`, `DropdownMenuSubContent`) with hover open/close, `ArrowRight` to expand submenu, and `ArrowLeft`/`Escape` to return to parent menu.
+  - **DM-02 (Major)**: Added keyboard `onKeyDown` handlers for Enter and Space to `DropdownMenuCheckboxItem` and `DropdownMenuRadioItem`, enabling keyboard selection.
+  - **DM-03 & DM-04 (Major)**: Added trigger measurement fallback for programmatic/controlled `open={true}`, scroll/resize reposition listeners, and viewport boundary clamping.
+  - **DM-05 (Minor)**: Removed invalid `onClick?.(e as any)` call inside `DropdownMenuItem.handleKeyDown`.
+  - Added unit, keyboard checkbox/radio toggle, submenus, and axe tests in `tests/smoke/overlay.test.tsx`.

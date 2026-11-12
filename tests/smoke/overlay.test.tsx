@@ -6,7 +6,17 @@ import { axe } from 'vitest-axe'
 
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from '../../src/components/overlay/dialog'
 import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle } from '../../src/components/overlay/alert-dialog'
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '../../src/components/overlay/dropdown-menu'
+import { 
+  DropdownMenu, 
+  DropdownMenuTrigger, 
+  DropdownMenuContent, 
+  DropdownMenuItem,
+  DropdownMenuCheckboxItem,
+  DropdownMenuRadioItem,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent
+} from '../../src/components/overlay/dropdown-menu'
 import { ContextMenu, ContextMenuTrigger, ContextMenuContent, ContextMenuItem } from '../../src/components/overlay/context-menu'
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '../../src/components/overlay/hover-card'
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '../../src/components/overlay/collapsible'
@@ -111,6 +121,48 @@ describe('Overlay Domain Smoke & Accessibility Suite', () => {
 
     // Escape closes context menu
     fireEvent.keyDown(document, { key: 'Escape' })
+
+    const results = await axe(container)
+    expect(results.violations).toEqual([])
+  })
+
+  it('supports checkbox, radio, submenus, and keyboard interaction in DropdownMenu', async () => {
+    const handleCheckedChange = vi.fn()
+    const handleRadioSelect = vi.fn()
+    const { container, getByText } = render(
+      <StrictMode>
+        <DropdownMenu defaultOpen={true}>
+          <DropdownMenuTrigger asChild>
+            <Button>Settings</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuCheckboxItem checked={false} onCheckedChange={handleCheckedChange}>
+              Show Status Bar
+            </DropdownMenuCheckboxItem>
+            <DropdownMenuRadioItem checked={true} onSelect={handleRadioSelect}>
+              Dark Mode
+            </DropdownMenuRadioItem>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>More Tools</DropdownMenuSubTrigger>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem>Developer Tools</DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </StrictMode>
+    )
+
+    const checkboxItem = getByText('Show Status Bar')
+    const radioItem = getByText('Dark Mode')
+    expect(checkboxItem.getAttribute('role')).toBe('menuitemcheckbox')
+    expect(checkboxItem.getAttribute('aria-checked')).toBe('false')
+    expect(radioItem.getAttribute('role')).toBe('menuitemradio')
+    expect(radioItem.getAttribute('aria-checked')).toBe('true')
+
+    // Toggle with Space
+    fireEvent.keyDown(checkboxItem, { key: ' ' })
+    expect(handleCheckedChange).toHaveBeenCalledWith(true)
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

@@ -54,6 +54,23 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
     }
   }, [])
 
+  // Re-measure trigger position on scroll and resize when open
+  React.useEffect(() => {
+    if (!open) return
+    if (!triggerRect && triggerRef.current) {
+      updateTriggerRect()
+    }
+    const handleReposition = () => {
+      updateTriggerRect()
+    }
+    window.addEventListener("scroll", handleReposition, true)
+    window.addEventListener("resize", handleReposition)
+    return () => {
+      window.removeEventListener("scroll", handleReposition, true)
+      window.removeEventListener("resize", handleReposition)
+    }
+  }, [open, triggerRect, updateTriggerRect])
+
   return (
     <DropdownMenuContext.Provider
       value={{
@@ -82,9 +99,9 @@ export const DropdownMenuTrigger = React.forwardRef<HTMLButtonElement, DropdownM
       (node: HTMLElement | null) => {
         triggerRef.current = node
         if (typeof forwardedRef === "function") {
-          forwardedRef(node as any)
+          forwardedRef(node as HTMLButtonElement | null)
         } else if (forwardedRef) {
-          (forwardedRef as React.MutableRefObject<any>).current = node
+          forwardedRef.current = node as HTMLButtonElement | null
         }
       },
       [forwardedRef, triggerRef]
@@ -100,7 +117,7 @@ export const DropdownMenuTrigger = React.forwardRef<HTMLButtonElement, DropdownM
 
     return (
       <Comp
-        ref={setMergedRef as any}
+        ref={setMergedRef}
         type={asChild ? undefined : "button"}
         aria-haspopup="menu"
         aria-expanded={open}
@@ -141,12 +158,16 @@ export const DropdownMenuContent = React.forwardRef<HTMLDivElement, DropdownMenu
     const { open, setOpen, triggerRef, triggerRect } = useDropdownMenuContext()
     const contentRef = React.useRef<HTMLDivElement | null>(null)
 
-    useClickOutside(contentRef, (e) => {
-      if (triggerRef.current && triggerRef.current.contains(e.target as Node)) {
-        return
-      }
-      setOpen(false)
-    }, open)
+    useClickOutside(
+      contentRef,
+      (e) => {
+        if (triggerRef.current && triggerRef.current.contains(e.target as Node)) {
+          return
+        }
+        setOpen(false)
+      },
+      open
+    )
 
     React.useEffect(() => {
       if (!open) return
@@ -203,14 +224,23 @@ export const DropdownMenuContent = React.forwardRef<HTMLDivElement, DropdownMenu
 
     if (!open) return null
 
-    const left =
-      triggerRect
-        ? align === "end"
-          ? triggerRect.right
-          : align === "center"
-          ? triggerRect.left + triggerRect.width / 2
-          : triggerRect.left
-        : 0
+    const rect =
+      triggerRect ||
+      (typeof window !== "undefined" && triggerRef.current
+        ? triggerRef.current.getBoundingClientRect()
+        : null)
+
+    const viewportWidth = typeof window !== "undefined" ? window.innerWidth : 1024
+    const maxLeft = Math.max(8, viewportWidth - 200)
+    const clampedLeft = rect ? Math.max(8, Math.min(rect.left, maxLeft)) : 8
+
+    const left = rect
+      ? align === "end"
+        ? rect.right
+        : align === "center"
+        ? rect.left + rect.width / 2
+        : clampedLeft
+      : 8
 
     const transform =
       align === "end"
@@ -219,10 +249,10 @@ export const DropdownMenuContent = React.forwardRef<HTMLDivElement, DropdownMenu
         ? "translateX(-50%)"
         : undefined
 
-    const positioningStyle: React.CSSProperties = triggerRect
+    const positioningStyle: React.CSSProperties = rect
       ? {
           position: "fixed",
-          top: `${triggerRect.bottom + sideOffset}px`,
+          top: `${rect.bottom + sideOffset}px`,
           left: `${left}px`,
           transform,
         }
@@ -261,7 +291,7 @@ export interface DropdownMenuItemProps extends React.HTMLAttributes<HTMLDivEleme
 }
 
 export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuItemProps>(
-  ({ className, inset, disabled = false, asChild = false, onSelect, onClick, ...props }, ref) => {
+  ({ className, inset, disabled = false, asChild = false, onSelect, onClick, onKeyDown, ...props }, ref) => {
     const { setOpen, triggerRef } = useDropdownMenuContext()
 
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -274,7 +304,7 @@ export const DropdownMenuItem = React.forwardRef<HTMLDivElement, DropdownMenuIte
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-      onClick?.(e as any)
+      onKeyDown?.(e)
       if (disabled || e.defaultPrevented) return
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault()
@@ -315,8 +345,8 @@ export interface DropdownMenuCheckboxItemProps extends React.HTMLAttributes<HTML
 }
 
 export const DropdownMenuCheckboxItem = React.forwardRef<HTMLDivElement, DropdownMenuCheckboxItemProps>(
-  ({ className, children, checked = false, disabled = false, onCheckedChange, onClick, ...props }, ref) => {
-    const { setOpen } = useDropdownMenuContext()
+  ({ className, children, checked = false, disabled = false, onCheckedChange, onClick, onKeyDown, ...props }, ref) => {
+    const { setOpen, triggerRef } = useDropdownMenuContext()
 
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
       if (disabled) return
@@ -327,13 +357,26 @@ export const DropdownMenuCheckboxItem = React.forwardRef<HTMLDivElement, Dropdow
       }
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      onKeyDown?.(e)
+      if (disabled || e.defaultPrevented) return
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault()
+        onCheckedChange?.(!checked)
+        setOpen(false)
+        triggerRef.current?.focus()
+      }
+    }
+
     return (
       <div
         ref={ref}
         role="menuitemcheckbox"
         aria-checked={checked}
         aria-disabled={disabled}
+        tabIndex={disabled ? undefined : -1}
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
         className={cn(
           "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
           disabled && "pointer-events-none opacity-50",
@@ -343,7 +386,7 @@ export const DropdownMenuCheckboxItem = React.forwardRef<HTMLDivElement, Dropdow
       >
         {checked && (
           <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-            <Check className="h-3.5 w-3.5" />
+            <Check className="h-3.5 w-3.5" aria-hidden="true" />
           </span>
         )}
         {children}
@@ -361,8 +404,8 @@ export interface DropdownMenuRadioItemProps extends React.HTMLAttributes<HTMLDiv
 }
 
 export const DropdownMenuRadioItem = React.forwardRef<HTMLDivElement, DropdownMenuRadioItemProps>(
-  ({ className, children, checked = false, disabled = false, onSelect, onClick, ...props }, ref) => {
-    const { setOpen } = useDropdownMenuContext()
+  ({ className, children, checked = false, disabled = false, onSelect, onClick, onKeyDown, ...props }, ref) => {
+    const { setOpen, triggerRef } = useDropdownMenuContext()
 
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
       if (disabled) return
@@ -373,13 +416,26 @@ export const DropdownMenuRadioItem = React.forwardRef<HTMLDivElement, DropdownMe
       }
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      onKeyDown?.(e)
+      if (disabled || e.defaultPrevented) return
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault()
+        onSelect?.()
+        setOpen(false)
+        triggerRef.current?.focus()
+      }
+    }
+
     return (
       <div
         ref={ref}
         role="menuitemradio"
         aria-checked={checked}
         aria-disabled={disabled}
+        tabIndex={disabled ? undefined : -1}
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
         className={cn(
           "relative flex cursor-pointer select-none items-center rounded-lg py-1.5 pl-8 pr-2.5 text-xs outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
           disabled && "pointer-events-none opacity-50",
@@ -389,7 +445,7 @@ export const DropdownMenuRadioItem = React.forwardRef<HTMLDivElement, DropdownMe
       >
         {checked && (
           <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-            <Circle className="h-2 w-2 fill-current" />
+            <Circle className="h-2 w-2 fill-current" aria-hidden="true" />
           </span>
         )}
         {children}
@@ -424,6 +480,7 @@ export const DropdownMenuSeparator = React.forwardRef<HTMLDivElement, DropdownMe
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
+      role="separator"
       className={cn("-mx-1 my-1 h-px bg-border", className)}
       {...props}
     />
@@ -447,12 +504,31 @@ export const DropdownMenuShortcut: React.FC<DropdownMenuShortcutProps> = ({
 DropdownMenuShortcut.displayName = "DropdownMenuShortcut"
 
 // Submenus
+interface DropdownMenuSubContextValue {
+  subOpen: boolean
+  setSubOpen: (open: boolean) => void
+}
+
+const DropdownMenuSubContext = React.createContext<DropdownMenuSubContextValue | null>(null)
+
 export interface DropdownMenuSubProps {
   children?: React.ReactNode
 }
 
 export const DropdownMenuSub: React.FC<DropdownMenuSubProps> = ({ children }) => {
-  return <div className="relative">{children}</div>
+  const [subOpen, setSubOpen] = React.useState(false)
+
+  return (
+    <DropdownMenuSubContext.Provider value={{ subOpen, setSubOpen }}>
+      <div
+        className="relative"
+        onMouseEnter={() => setSubOpen(true)}
+        onMouseLeave={() => setSubOpen(false)}
+      >
+        {children}
+      </div>
+    </DropdownMenuSubContext.Provider>
+  )
 }
 
 export interface DropdownMenuSubTriggerProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -460,36 +536,75 @@ export interface DropdownMenuSubTriggerProps extends React.HTMLAttributes<HTMLDi
 }
 
 export const DropdownMenuSubTrigger = React.forwardRef<HTMLDivElement, DropdownMenuSubTriggerProps>(
-  ({ className, inset, children, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "flex cursor-default select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-        inset && "pl-8",
-        className
-      )}
-      {...props}
-    >
-      {children}
-      <ChevronRight className="ml-auto h-3.5 w-3.5" />
-    </div>
-  )
+  ({ className, inset, children, onKeyDown, ...props }, ref) => {
+    const subContext = React.useContext(DropdownMenuSubContext)
+    const subOpen = subContext?.subOpen ?? false
+    const setSubOpen = subContext?.setSubOpen
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      onKeyDown?.(e)
+      if (e.key === "ArrowRight") {
+        e.preventDefault()
+        setSubOpen?.(true)
+      }
+    }
+
+    return (
+      <div
+        ref={ref}
+        role="menuitem"
+        tabIndex={-1}
+        aria-haspopup="menu"
+        aria-expanded={subOpen}
+        onKeyDown={handleKeyDown}
+        className={cn(
+          "flex cursor-default select-none items-center rounded-lg px-2.5 py-1.5 text-xs outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:ring-1 focus-visible:ring-ring",
+          inset && "pl-8",
+          className
+        )}
+        {...props}
+      >
+        {children}
+        <ChevronRight className="ml-auto h-3.5 w-3.5" aria-hidden="true" />
+      </div>
+    )
+  }
 )
 DropdownMenuSubTrigger.displayName = "DropdownMenuSubTrigger"
 
 export interface DropdownMenuSubContentProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const DropdownMenuSubContent = React.forwardRef<HTMLDivElement, DropdownMenuSubContentProps>(
-  ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "z-[70] min-w-[8rem] overflow-hidden rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-xl duration-150 animate-in fade-in-0 zoom-in-95",
-        className
-      )}
-      {...props}
-    />
-  )
+  ({ className, onKeyDown, ...props }, ref) => {
+    const subContext = React.useContext(DropdownMenuSubContext)
+    const subOpen = subContext?.subOpen ?? false
+    const setSubOpen = subContext?.setSubOpen
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      onKeyDown?.(e)
+      if (e.key === "ArrowLeft" || e.key === "Escape") {
+        e.preventDefault()
+        e.stopPropagation()
+        setSubOpen?.(false)
+      }
+    }
+
+    if (!subOpen) return null
+
+    return (
+      <div
+        ref={ref}
+        role="menu"
+        aria-orientation="vertical"
+        onKeyDown={handleKeyDown}
+        className={cn(
+          "absolute left-full top-0 z-[75] min-w-[8rem] overflow-hidden rounded-xl border border-border bg-popover p-1 text-popover-foreground shadow-xl duration-150 animate-in fade-in-0 zoom-in-95",
+          className
+        )}
+        {...props}
+      />
+    )
+  }
 )
 DropdownMenuSubContent.displayName = "DropdownMenuSubContent"
 
@@ -506,3 +621,4 @@ export const DropdownMenuRadioGroup = React.forwardRef<HTMLDivElement, DropdownM
 DropdownMenuRadioGroup.displayName = "DropdownMenuRadioGroup"
 
 export default DropdownMenu
+
