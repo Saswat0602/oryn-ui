@@ -115,6 +115,11 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
     const switchEl = getByRole('switch')
     expect(switchEl).toBeDefined()
 
+    const radio = getByLabelText('Pro plan') as HTMLInputElement
+    expect(radio.checked).toBe(false)
+    fireEvent.click(radio)
+    expect(radio.checked).toBe(true)
+
     const results = await axe(container)
     expect(results.violations).toEqual([])
   })

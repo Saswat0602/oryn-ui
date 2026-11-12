@@ -116,3 +116,10 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **DM-03 & DM-04 (Major)**: Added trigger measurement fallback for programmatic/controlled `open={true}`, scroll/resize reposition listeners, and viewport boundary clamping.
   - **DM-05 (Minor)**: Removed invalid `onClick?.(e as any)` call inside `DropdownMenuItem.handleKeyDown`.
   - Added unit, keyboard checkbox/radio toggle, submenus, and axe tests in `tests/smoke/overlay.test.tsx`.
+
+- **`Radio`** (`src/components/core/radio.tsx`):
+  - **R-01 (Critical)**: Replaced JS-only `{props.checked && ...}` indicator with a CSS-driven `peer-checked:flex` dot indicator, making the selected dot reliably render in both uncontrolled and controlled modes.
+  - **R-02 (Major)**: Changed `focus:outline-none` to `focus-visible:outline-none`, restoring natural focus visibility.
+  - **R-03 (Major)**: Added `pt-0.5` to label/description column for vertical baseline alignment with multi-line text.
+  - **R-04 (Minor)**: Added `peer` class to native `<input>` element, activating `peer-disabled:` styling on labels.
+  - Added unit, click toggle, and axe tests in `tests/smoke/core.test.tsx`.
