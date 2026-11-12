@@ -400,3 +400,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **OTP-02 (Major)**: Forwarded `id`, `name`, `aria-describedby`, and `aria-invalid` props directly to the interactive hidden `<input>` element so Form validation and helper text link accurately.
   - **OTP-04 (Minor)**: Added `aria-hidden="true"` to each `InputOTPSlot` container div to prevent screen readers from announcing duplicate visual slot elements.
   - Added unit test in `tests/smoke/forms.test.tsx` asserting uncontrolled state, value change, and `id`/`aria-describedby` forwarding.
+
+- **`NumberInput`** (`src/components/forms/number-input.tsx`):
+  - **NI-01 (Major)**: Strongly typed `timeoutRef` and `intervalRef` as `ReturnType<typeof setTimeout> | null` and `ReturnType<typeof setInterval> | null` to preserve TypeScript type safety.
+  - **NI-02 (Major)**: Automatically set `aria-invalid={ariaInvalid}` on the spinbutton `<input>` element whenever `error` or `props["aria-invalid"]` is active.
+  - Added unit test in `tests/smoke/forms.test.tsx` verifying error state and `aria-invalid="true"` propagation.

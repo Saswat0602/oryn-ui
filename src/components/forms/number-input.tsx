@@ -79,8 +79,8 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
     }
 
     // Auto-repeat on holding buttons
-    const timeoutRef = React.useRef<any>(null)
-    const intervalRef = React.useRef<any>(null)
+    const timeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+    const intervalRef = React.useRef<ReturnType<typeof setInterval> | null>(null)
 
     const stopHolding = () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
@@ -145,7 +145,8 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       lg: "h-10 text-base px-3.5",
     }[inputSize]
 
-    const isError = error || props["aria-invalid"] === true || props["aria-invalid"] === "true"
+    const isError = Boolean(error || props["aria-invalid"] === true || props["aria-invalid"] === "true")
+    const ariaInvalid = props["aria-invalid"] !== undefined ? props["aria-invalid"] : (isError ? "true" : undefined)
 
     return (
       <div className={cn("relative inline-flex w-full items-center", className)}>
@@ -173,6 +174,7 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
             sizeClasses
           )}
           {...props}
+          aria-invalid={ariaInvalid}
         />
         {!hideStepper && !readOnly && (
           <div className="absolute right-1 top-1/2 -translate-y-1/2 flex flex-col items-center border-l border-border pl-1">
@@ -186,7 +188,7 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
               aria-label="Increment value"
               className="flex h-3.5 w-5 items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-30 disabled:pointer-events-none"
             >
-              <ChevronUp className="h-3 w-3" />
+              <ChevronUp className="h-3 w-3" aria-hidden="true" />
             </button>
             <button
               type="button"
@@ -198,7 +200,7 @@ export const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
               aria-label="Decrement value"
               className="flex h-3.5 w-5 items-center justify-center rounded text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:opacity-30 disabled:pointer-events-none"
             >
-              <ChevronDown className="h-3 w-3" />
+              <ChevronDown className="h-3 w-3" aria-hidden="true" />
             </button>
           </div>
         )}

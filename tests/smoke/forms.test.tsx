@@ -292,7 +292,7 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
 
   it('renders NumberInput stepper and clamp bounds', async () => {
     let count = 5
-    const { container, getByRole } = render(
+    const { container, getByRole, getAllByRole, getByLabelText } = render(
       <StrictMode>
         <NumberInput
           value={count}
@@ -302,14 +302,22 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
           onChange={(val) => { count = val }}
           aria-label="Cluster Nodes"
         />
+        <NumberInput
+          error
+          defaultValue={1}
+          aria-label="Error Nodes"
+        />
       </StrictMode>
     )
-    const spinbutton = getByRole('spinbutton')
+    const spinbutton = getByRole('spinbutton', { name: 'Cluster Nodes' })
     expect(spinbutton).toBeDefined()
-    const incBtn = getByRole('button', { name: /increment value/i })
+    const incBtn = getAllByRole('button', { name: /increment value/i })[0]
     fireEvent.pointerDown(incBtn)
     fireEvent.pointerUp(incBtn)
     expect(count).toBe(6)
+
+    const errorInput = getByLabelText('Error Nodes')
+    expect(errorInput.getAttribute('aria-invalid')).toBe('true')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
