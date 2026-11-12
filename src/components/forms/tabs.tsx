@@ -17,6 +17,7 @@ interface TabsContextValue {
   value: string
   setValue: (value: string) => void
   orientation: 'horizontal' | 'vertical'
+  baseId: string
 }
 
 const TabsContext = createContext<TabsContextValue | null>(null)
@@ -95,9 +96,11 @@ export interface TabsTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonE
 }
 
 export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
-  ({ className, value: triggerValue, disabled = false, onClick, onKeyDown, ...props }, ref) => {
-    const { value, setValue } = useTabsContext()
+  ({ className, value: triggerValue, disabled = false, id, onClick, onKeyDown, ...props }, ref) => {
+    const { value, setValue, baseId } = useTabsContext()
     const isActive = value === triggerValue
+    const tabId = id || `${baseId}-tab-${triggerValue}`
+    const panelId = `${baseId}-panel-${triggerValue}`
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       onClick?.(e)
@@ -119,6 +122,8 @@ export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
         ref={ref}
         type="button"
         role="tab"
+        id={tabId}
+        aria-controls={props['aria-controls'] || panelId}
         aria-selected={isActive}
         tabIndex={isActive ? 0 : -1}
         disabled={disabled}
@@ -139,23 +144,44 @@ TabsTrigger.displayName = 'TabsTrigger'
 
 export interface TabsContentProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string
+  forceMount?: boolean
 }
 
 export const TabsContent = forwardRef<HTMLDivElement, TabsContentProps>(
-  ({ className, value: contentValue, children, ...props }, ref) => {
-    const { value } = useTabsContext()
+  ({ className, value: contentValue, forceMount, id, children, ...props }, ref) => {
+    const { value, baseId } = useTabsContext()
     const isActive = value === contentValue
+    const panelId = id || `${baseId}-panel-${contentValue}`
+    const tabId = `${baseId}-tab-${contentValue}`
 
-    if (!isActive) return null
+    if (!isActive && !forceMount) {
+      return (
+        <div
+          ref={ref}
+          role="tabpanel"
+          id={panelId}
+          aria-labelledby={props['aria-labelledby'] || tabId}
+          hidden
+          tabIndex={0}
+          data-state="inactive"
+          className={cn('hidden', className)}
+          {...props}
+        />
+      )
+    }
 
     return (
       <div
         ref={ref}
         role="tabpanel"
+        id={panelId}
+        aria-labelledby={props['aria-labelledby'] || tabId}
         tabIndex={0}
+        hidden={!isActive}
         data-state={isActive ? 'active' : 'inactive'}
         className={cn(
           'mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 animate-in fade-in-50 duration-200',
+          !isActive && 'hidden',
           className
         )}
         {...props}
@@ -201,6 +227,8 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
     },
     ref
   ) => {
+    const generatedId = React.useId()
+    const baseId = props.id || generatedId
     const initialDefault = defaultValue || defaultActiveTab || items?.[0]?.id || ''
 
     const [value, setValue] = useControllableState<string>({
@@ -214,7 +242,7 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
 
     if (!items) {
       return (
-        <TabsContext.Provider value={{ value, setValue, orientation }}>
+        <TabsContext.Provider value={{ value, setValue, orientation, baseId }}>
           <div ref={ref} className={cn('w-full', className)} {...props}>
             {children}
           </div>
@@ -229,7 +257,7 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
     }
 
     return (
-      <TabsContext.Provider value={{ value, setValue, orientation }}>
+      <TabsContext.Provider value={{ value, setValue, orientation, baseId }}>
         <div
           ref={ref}
           className={cn('w-full', orientation === 'vertical' && 'flex gap-4', className)}

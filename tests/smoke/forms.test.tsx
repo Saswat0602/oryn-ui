@@ -83,6 +83,18 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
     expect(securityPage.getAttribute('role')).toBeNull()
     expect(getByText('Overview Content')).toBeDefined()
 
+    // Verify Tabs aria-controls and aria-labelledby linkage
+    const overviewTab = getByRole('tab', { name: 'Overview' })
+    const billingTab = getByRole('tab', { name: 'Billing' })
+    const controlsId = overviewTab.getAttribute('aria-controls')
+    expect(controlsId).toBeDefined()
+    expect(controlsId).toContain('panel-tab-overview')
+
+    // Navigate to Billing using arrow key
+    fireEvent.keyDown(overviewTab, { key: 'ArrowRight' })
+    expect(billingTab.getAttribute('aria-selected')).toBe('true')
+    expect(getByText('Billing Content')).toBeDefined()
+
     const results = await axe(container)
     expect(results.violations).toEqual([])
   })

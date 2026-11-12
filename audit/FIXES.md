@@ -349,3 +349,9 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **DTT-02 (Major)**: Added accessible descriptive `aria-label` to column header sort buttons (`Sort by X in ascending/descending order`).
   - **DTT-03 (Minor)**: Explicitly passed `scope="col"` on header cells.
   - Added unit test in `tests/smoke/data.test.tsx` asserting `scope="col"`, sort button `aria-label`, and `aria-sort` toggling.
+
+- **`Tabs`** (`src/components/forms/tabs.tsx`):
+  - **TB-01 & TB-03 (Major)**: Preserved inactive panels in the DOM with `hidden` attribute and matching `id` so `aria-controls` targets always resolve for assistive technologies.
+  - **TB-02 (Major)**: Automatically wired `aria-controls` on `TabsTrigger` pointing directly to the corresponding `TabsContent` panel ID.
+  - **TB-04 (Minor)**: Bound `aria-labelledby` on `TabsContent` pointing to the matching `TabsTrigger` ID.
+  - Added unit and keyboard tests in `tests/smoke/forms.test.tsx` verifying arrow navigation and `aria-controls`/`aria-labelledby` IDs.
