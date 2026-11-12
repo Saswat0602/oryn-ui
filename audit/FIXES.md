@@ -329,3 +329,10 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **ST-01 (Major)**: Implemented full visual rendering for `dots` (compact indicators with halo rings) and `progress` (segmented horizontal progress bars).
   - **ST-04 (Nit)**: Added support for `optional?: boolean` on `StepItem` rendering `(Optional)` tags and appending to accessible `aria-label`.
   - Added unit, dots/progress variants, optional step readout, and axe tests in `tests/smoke/navigation.test.tsx`.
+
+- **`Switch`** (`src/components/core/switch.tsx`):
+  - **SW-01 (Major)**: Exported strongly typed `SwitchChangeEvent` interface and typed `onChange?: (e: SwitchChangeEvent) => void`.
+  - **SW-02 (Major)**: Removed redundant `onClick` handler from label element, eliminating double-toggle bug caused by native `htmlFor` click synthesis on buttons.
+  - **SW-03 (Minor)**: Added `motion-safe:transition-transform` on thumb element to respect reduced-motion settings.
+  - **SW-05 (Minor)**: Linked `aria-describedby` on the switch button to description paragraph element ID.
+  - Added unit test in `tests/smoke/core.test.tsx` asserting label click toggles state cleanly without double-toggle and binds `aria-describedby`.

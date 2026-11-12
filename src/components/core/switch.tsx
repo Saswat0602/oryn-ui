@@ -4,6 +4,13 @@ import React from 'react'
 import { cn } from '../../lib/utils'
 import { useControllableState } from '../../lib/use-controllable-state'
 
+export interface SwitchChangeEvent {
+  target: { checked: boolean; value: string }
+  currentTarget: { checked: boolean }
+  preventDefault: () => void
+  stopPropagation: () => void
+}
+
 export interface SwitchProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'> {
   label?: string
@@ -14,7 +21,7 @@ export interface SwitchProps
   checked?: boolean
   defaultChecked?: boolean
   onCheckedChange?: (checked: boolean) => void
-  onChange?: (e: any) => void
+  onChange?: (e: SwitchChangeEvent) => void
 }
 
 export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
@@ -40,6 +47,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
   ) => {
     const generatedId = React.useId()
     const switchId = id || generatedId
+    const descId = description ? `switch-desc-${switchId}` : undefined
 
     const [checked, setChecked] = useControllableState<boolean>({
       prop: controlledChecked,
@@ -125,6 +133,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
           aria-disabled={disabled}
           disabled={disabled}
           data-state={checked ? 'checked' : 'unchecked'}
+          aria-describedby={props['aria-describedby'] || descId}
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           className={cn(
@@ -140,7 +149,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
           <span
             data-state={checked ? 'checked' : 'unchecked'}
             className={cn(
-              'pointer-events-none block rounded-full bg-background shadow-md ring-0 transition-transform duration-200 ease-in-out',
+              'pointer-events-none block rounded-full bg-background shadow-md ring-0 motion-safe:transition-transform duration-200 ease-in-out',
               thumbSizes[size],
               translateClasses[size]
             )}
@@ -160,11 +169,6 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
           {label && (
             <label
               htmlFor={switchId}
-              onClick={() => {
-                if (!disabled) {
-                  setChecked(!checked)
-                }
-              }}
               className={cn(
                 'text-sm font-medium leading-none cursor-pointer text-foreground',
                 disabled && 'cursor-not-allowed opacity-70'
@@ -174,7 +178,7 @@ export const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
             </label>
           )}
           {description && (
-            <p className="text-xs text-muted-foreground">
+            <p id={descId} className="text-xs text-muted-foreground">
               {description}
             </p>
           )}

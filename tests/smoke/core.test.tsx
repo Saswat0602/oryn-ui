@@ -274,5 +274,33 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
     const results = await axe(container)
     expect(results.violations).toEqual([])
   })
+
+  it('toggles Switch state cleanly when label is clicked without double-toggle and links aria-describedby', async () => {
+    let switchState = false
+    let changeEventReceived: any = null
+    const { container, getByText, getByRole } = render(
+      <StrictMode>
+        <Switch
+          label="Enable telemetry"
+          description="Send anonymous crash reports"
+          onCheckedChange={(val) => { switchState = val }}
+          onChange={(e) => { changeEventReceived = e }}
+        />
+      </StrictMode>
+    )
+    const switchBtn = getByRole('switch')
+    expect(switchBtn.getAttribute('aria-checked')).toBe('false')
+    expect(switchBtn.getAttribute('aria-describedby')).toMatch(/^switch-desc-/)
+
+    const labelText = getByText('Enable telemetry')
+    fireEvent.click(labelText)
+    expect(switchState).toBe(true)
+    expect(switchBtn.getAttribute('aria-checked')).toBe('true')
+    expect(changeEventReceived).not.toBeNull()
+    expect(changeEventReceived.target.checked).toBe(true)
+
+    const results = await axe(container)
+    expect(results.violations).toEqual([])
+  })
 })
 
