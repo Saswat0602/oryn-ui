@@ -362,7 +362,7 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders FileUpload dropzone', async () => {
-    const { container, getByText } = render(
+    const { container, getByText, getByRole } = render(
       <StrictMode>
         <FileUpload
           maxFiles={2}
@@ -373,6 +373,9 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
       </StrictMode>
     )
     expect(getByText('Upload architectural diagram')).toBeDefined()
+    const dropzone = getByRole('button', { name: /upload files/i })
+    expect(dropzone).toBeDefined()
+    expect(dropzone.getAttribute('tabIndex')).toBe('0')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

@@ -128,7 +128,21 @@ export const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
 
     return (
       <div ref={ref} className={cn("w-full space-y-3", className)} {...props}>
+        <input
+          ref={inputRef}
+          type="file"
+          accept={accept}
+          multiple={multiple}
+          disabled={disabled}
+          onChange={handleFileSelect}
+          className="sr-only"
+          tabIndex={-1}
+          aria-hidden="true"
+        />
         <div
+          role="button"
+          aria-label="Upload files. Click or drag and drop."
+          aria-disabled={disabled}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
@@ -149,17 +163,6 @@ export const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
             disabled && "cursor-not-allowed opacity-50 pointer-events-none"
           )}
         >
-          <input
-            ref={inputRef}
-            type="file"
-            accept={accept}
-            multiple={multiple}
-            disabled={disabled}
-            onChange={handleFileSelect}
-            className="sr-only"
-            aria-label="Upload files"
-          />
-
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground mb-3 shadow-2xs">
             <UploadCloud className="h-5 w-5" />
           </div>
@@ -177,7 +180,7 @@ export const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
         </div>
 
         {errorMessage && (
-          <div className="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+          <div role="alert" className="flex items-center gap-1.5 text-xs text-destructive">
             <AlertCircle className="h-3.5 w-3.5 shrink-0" />
             <span>{errorMessage}</span>
           </div>

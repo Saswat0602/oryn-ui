@@ -228,3 +228,10 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **POP-04 (Minor)**: Added viewport boundary collision detection with vertical auto-flipping.
   - **POP-05 (Nit)**: Removed `[key: string]: any` from `PopoverProps` and typed refs strictly without `any` casts.
   - Added unit, aria-controls linkage, Escape dismissal, and axe tests in `tests/smoke/layout.test.tsx`.
+
+- **`FileUpload`** (`src/components/forms/file-upload.tsx`):
+  - **FU-01 (Major)**: Replaced hardcoded `text-red-600 dark:text-red-400` with semantic design token `text-destructive`.
+  - **FU-02 (Major)**: Added `role="button"` and `aria-label="Upload files. Click or drag and drop."` to dropzone container, and made the hidden file input a non-nested sibling to avoid axe `nested-interactive` violations.
+  - **FU-03 (Major)**: Added `role="alert"` to error message container for screen reader announcements.
+  - **FU-04 & FU-05 (Minor)**: Added `aria-disabled={disabled}` to dropzone and `tabIndex={-1} aria-hidden="true"` to hidden file input.
+  - Added unit, accessible dropzone role, and axe tests in `tests/smoke/forms.test.tsx`.
