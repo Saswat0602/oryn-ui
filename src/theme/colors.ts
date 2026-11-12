@@ -51,7 +51,7 @@ export const lightColors: ColorScheme = {
   // Text
   'text-primary': '#09090b',
   'text-secondary': '#52525b',
-  'text-muted': '#71717a',
+  'text-muted': '#64646b',
   'text-inverse': '#ffffff',
   
   // Borders
@@ -64,7 +64,7 @@ export const lightColors: ColorScheme = {
   'accent-secondary': '#27272a',
   'accent-success': '#10b981',
   'accent-warning': '#f59e0b',
-  'accent-error': '#ef4444',
+  'accent-error': '#dc2626',
   'accent-info': '#18181b',
   
   // Shadows
@@ -76,7 +76,7 @@ export const lightColors: ColorScheme = {
   // Status
   'success': '#10b981',
   'warning': '#f59e0b',
-  'error': '#ef4444',
+  'error': '#dc2626',
   'info': '#18181b',
 };
 
@@ -92,7 +92,7 @@ export const darkColors: ColorScheme = {
   // Text
   'text-primary': '#fafafa',
   'text-secondary': '#a1a1aa',
-  'text-muted': '#71717a',
+  'text-muted': '#a1a1aa',
   'text-inverse': '#09090b',
   
   // Borders
@@ -134,11 +134,11 @@ export const normalLightColors: ColorScheme = {
 // Normal dark theme colors (vibrant blue)
 export const normalDarkColors: ColorScheme = {
   ...darkColors,
-  'accent-primary': '#3b82f6',
-  'accent-secondary': '#60a5fa',
-  'border-focus': '#3b82f6',
-  'accent-info': '#3b82f6',
-  'info': '#3b82f6',
+  'accent-primary': '#2563eb',
+  'accent-secondary': '#1d4ed8',
+  'border-focus': '#2563eb',
+  'accent-info': '#2563eb',
+  'info': '#2563eb',
 };
 
 export const monochromeLightColors = lightColors;
