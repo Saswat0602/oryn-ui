@@ -3,17 +3,104 @@
 
 import { siteConfig } from '@/lib/site-config'
 
+export type PkgManager = 'npm' | 'pnpm' | 'yarn' | 'bun'
+export type FrameworkKey = 'nextjs' | 'vite' | 'astro' | 'manual'
+
 export const pkgCommands = siteConfig.installCommands
+
+export const getInstallCommand = (pm: PkgManager, pkg = siteConfig.packageName) => {
+  switch (pm) {
+    case 'pnpm':
+      return `pnpm add ${pkg}`
+    case 'yarn':
+      return `yarn add ${pkg}`
+    case 'bun':
+      return `bun add ${pkg}`
+    default:
+      return `npm install ${pkg}`
+  }
+}
+
+export const getCreateAppCommand = (framework: 'nextjs' | 'vite' | 'astro', pm: PkgManager) => {
+  switch (framework) {
+    case 'nextjs':
+      switch (pm) {
+        case 'pnpm':
+          return 'pnpm create next-app@latest my-app --typescript --tailwind --eslint --app'
+        case 'yarn':
+          return 'yarn create next-app my-app --typescript --tailwind --eslint --app'
+        case 'bun':
+          return 'bun create next-app my-app --typescript --tailwind --eslint --app'
+        default:
+          return 'npx create-next-app@latest my-app --typescript --tailwind --eslint --app'
+      }
+    case 'vite':
+      switch (pm) {
+        case 'pnpm':
+          return 'pnpm create vite my-app --template react-ts'
+        case 'yarn':
+          return 'yarn create vite my-app --template react-ts'
+        case 'bun':
+          return 'bun create vite my-app --template react-ts'
+        default:
+          return 'npm create vite@latest my-app -- --template react-ts'
+      }
+    case 'astro':
+      switch (pm) {
+        case 'pnpm':
+          return 'pnpm create astro@latest my-app --template minimal'
+        case 'yarn':
+          return 'yarn create astro my-app --template minimal'
+        case 'bun':
+          return 'bun create astro@latest my-app --template minimal'
+        default:
+          return 'npm create astro@latest my-app -- --template minimal'
+      }
+  }
+}
+
+export const getAstroIntegrationsCommand = (pm: PkgManager) => {
+  switch (pm) {
+    case 'pnpm':
+      return 'pnpm astro add react tailwind'
+    case 'yarn':
+      return 'yarn astro add react tailwind'
+    case 'bun':
+      return 'bunx astro add react tailwind'
+    default:
+      return 'npx astro add react tailwind'
+  }
+}
 
 export const nextjs = {
   createApp: "npx create-next-app@latest my-app --typescript --tailwind --eslint --app",
   install: siteConfig.installCommands.npm,
   methodCss: `// app/layout.tsx (Method 1: Zero-config precompiled CSS)
-import "${siteConfig.packageName}/styles.css"`,
+import "${siteConfig.packageName}/styles.css"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "My ORYN UI App",
+  description: "Built with Next.js and ORYN UI",
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="en" className="dark">
+      <body className="min-h-screen bg-background text-foreground antialiased">
+        {children}
+      </body>
+    </html>
+  )
+}`,
   methodTailwindV4: `/* app/globals.css (Method 2: Tailwind CSS v4) */
 @import "tailwindcss";
 @source "../node_modules/${siteConfig.packageName}/dist";`,
-  tailwindConfig: `// tailwind.config.js (Method 3: Tailwind v3 Monorepo-Safe)
+  tailwindConfig: `// tailwind.config.js (Method 3: Tailwind v3 Monorepo & Workspaces Safe)
 const path = require("path")
 
 /** @type {import('tailwindcss').Config} */
@@ -23,7 +110,7 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    // Monorepo-safe path: resolves accurately in Turborepo, pnpm workspaces, and standard apps
+    // Resolves accurately across Turborepo, pnpm workspaces, and standard node_modules
     path.dirname(require.resolve("${siteConfig.packageName}/package.json")) + "/dist/**/*.{mjs,js}"
   ],
   theme: {
@@ -31,17 +118,43 @@ module.exports = {
   },
   plugins: [],
 }`,
+  themeProvider: `// components/theme-provider.tsx (Optional Dark/Light Theme Switching)
+'use client'
+
+import * as React from 'react'
+import { ThemeProvider as OrynThemeProvider } from '${siteConfig.packageName}'
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <OrynThemeProvider defaultTheme="dark" storageKey="app-theme">
+      {children}
+    </OrynThemeProvider>
+  )
+}`,
   pageUsage: `'use client'
 
-import { Button, Card, Input } from '${siteConfig.packageName}'
+import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, Input, Badge } from '${siteConfig.packageName}'
 
 export default function Home() {
   return (
-    <main className="p-8 max-w-md mx-auto space-y-4">
-      <Card className="p-6 space-y-4">
-        <h1 className="text-xl font-bold">Welcome to ${siteConfig.fullName}</h1>
-        <Input placeholder="Enter your email" />
-        <Button className="w-full">Get Started</Button>
+    <main className="min-h-screen flex items-center justify-center p-6 bg-background">
+      <Card className="max-w-md w-full p-6 space-y-4 shadow-lg border-border">
+        <div className="flex items-center justify-between">
+          <Badge variant="primary">Next.js 16 + React 19</Badge>
+          <span className="text-xs text-muted-foreground">Ready</span>
+        </div>
+        <CardHeader className="p-0">
+          <CardTitle className="text-xl font-bold">Welcome to ${siteConfig.fullName}</CardTitle>
+          <CardDescription>
+            Zero external dependencies, accessible, high-craft UI components.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-0 space-y-3 pt-2">
+          <Input placeholder="Enter your email" type="email" />
+          <Button variant="default" className="w-full">
+            Get Started
+          </Button>
+        </CardContent>
       </Card>
     </main>
   )
@@ -50,8 +163,19 @@ export default function Home() {
 
 export const vite = {
   createApp: "npm create vite@latest my-app -- --template react-ts",
-  install: `npm install -D tailwindcss postcss autoprefixer\nnpx tailwindcss init -p\n${siteConfig.installCommands.npm}`,
-  tailwindConfig: `// tailwind.config.js (Monorepo & Vite safe)
+  installTailwind: (pm: PkgManager) => {
+    switch (pm) {
+      case 'pnpm':
+        return 'pnpm add -D tailwindcss postcss autoprefixer\npnpm dlx tailwindcss init -p'
+      case 'yarn':
+        return 'yarn add -D tailwindcss postcss autoprefixer\nnpx tailwindcss init -p'
+      case 'bun':
+        return 'bun add -d tailwindcss postcss autoprefixer\nbunx tailwindcss init -p'
+      default:
+        return 'npm install -D tailwindcss postcss autoprefixer\nnpx tailwindcss init -p'
+    }
+  },
+  tailwindConfig: `// tailwind.config.js (Vite + React)
 import path from "path"
 import { createRequire } from "module"
 const require = createRequire(import.meta.url)
@@ -69,15 +193,43 @@ export default {
   },
   plugins: [],
 }`,
-  appUsage: `import { Button, Card, Badge } from '${siteConfig.packageName}'
+  indexCss: `/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import ORYN UI styles */
+@import "${siteConfig.packageName}/styles.css";`,
+  mainTsx: `// src/main.tsx
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.tsx'
+import './index.css'
+import '${siteConfig.packageName}/styles.css'
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)`,
+  appUsage: `import { Button, Card, Badge, Input } from '${siteConfig.packageName}'
 
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <Card className="p-6 space-y-4 max-w-sm">
-        <Badge variant="secondary">Vite + React</Badge>
-        <h2 className="text-lg font-bold">Fast & Modern UI</h2>
-        <Button variant="default">Click Me</Button>
+    <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
+      <Card className="p-6 space-y-4 max-w-sm w-full border border-border">
+        <div className="flex items-center justify-between">
+          <Badge variant="secondary">Vite + React 19</Badge>
+          <span className="text-xs text-muted-foreground font-mono">v3.2</span>
+        </div>
+        <h2 className="text-lg font-bold">Fast &amp; Modern UI</h2>
+        <p className="text-xs text-muted-foreground">
+          Lightning-fast HMR with zero external UI runtime bloat.
+        </p>
+        <Input placeholder="Search components..." />
+        <Button variant="default" className="w-full">
+          Explore Library
+        </Button>
       </Card>
     </div>
   )
@@ -86,9 +238,112 @@ function App() {
 export default App`
 }
 
+export const astro = {
+  createApp: "npm create astro@latest my-app -- --template minimal",
+  addIntegrations: "npx astro add react tailwind",
+  astroConfig: `// astro.config.mjs
+import { defineConfig } from 'astro/config'
+import react from '@astrojs/react'
+import tailwind from '@astrojs/tailwind'
+
+// https://astro.build/config
+export default defineConfig({
+  integrations: [
+    react(),
+    tailwind({
+      applyBaseStyles: false,
+    }),
+  ],
+})`,
+  layoutAstro: `---
+// src/layouts/Layout.astro
+import '${siteConfig.packageName}/styles.css'
+
+interface Props {
+  title?: string
+}
+
+const { title = "${siteConfig.fullName} + Astro" } = Astro.props
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+  </head>
+  <body class="min-h-screen bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
+    <slot />
+  </body>
+</html>`,
+  pageAstro: `---
+// src/pages/index.astro
+import Layout from '../layouts/Layout.astro'
+import { Button, Card, Badge, Input } from '${siteConfig.packageName}'
+---
+
+<Layout title="ORYN UI in Astro">
+  <main class="min-h-screen flex items-center justify-center p-6">
+    <Card className="max-w-md w-full p-6 space-y-4 border border-border">
+      <div class="flex items-center justify-between">
+        <Badge variant="primary">Astro Islands</Badge>
+        <span class="text-xs text-muted-foreground font-mono">Zero JS Default</span>
+      </div>
+      <h1 class="text-xl font-bold">Astro + ORYN UI</h1>
+      <p class="text-xs text-muted-foreground leading-relaxed">
+        Server-rendered HTML by default. Hydrate interactive components on demand with client:* directives.
+      </p>
+      
+      <Input placeholder="Static rendered input" />
+      
+      {/* Interactive client-hydrated button */}
+      <Button client:load variant="default" className="w-full">
+        Interactive Hydrated Button
+      </Button>
+    </Card>
+  </main>
+</Layout>`
+}
+
 export const manual = {
-  install: `npm install react react-dom ${siteConfig.packageName}`,
-  css: `@tailwind base;\n@tailwind components;\n@tailwind utilities;`
+  install: (pm: PkgManager) => {
+    switch (pm) {
+      case 'pnpm':
+        return `pnpm add react react-dom ${siteConfig.packageName}`
+      case 'yarn':
+        return `yarn add react react-dom ${siteConfig.packageName}`
+      case 'bun':
+        return `bun add react react-dom ${siteConfig.packageName}`
+      default:
+        return `npm install react react-dom ${siteConfig.packageName}`
+    }
+  },
+  css: `/* Primary CSS Entry (e.g., src/index.css or src/globals.css) */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import ORYN UI bundled styles (includes all component styles + animations) */
+@import "${siteConfig.packageName}/styles.css";`,
+  appUsage: `import React from 'react'
+import { Button, Card, Badge } from '${siteConfig.packageName}'
+import '${siteConfig.packageName}/styles.css'
+
+export function App() {
+  return (
+    <div className="min-h-screen bg-background text-foreground p-8 flex items-center justify-center">
+      <Card className="p-6 space-y-3 max-w-sm border border-border">
+        <Badge variant="outline">Manual React Setup</Badge>
+        <h2 className="text-base font-semibold">Ready to Build</h2>
+        <p className="text-xs text-muted-foreground">
+          Import any of the 75+ components directly into your view tree.
+        </p>
+        <Button variant="default">Confirm</Button>
+      </Card>
+    </div>
+  )
+}`
 }
 
 export const themeVariables = `/* HSL Channel Tokens (enables Tailwind opacity modifiers like bg-primary/80) */
