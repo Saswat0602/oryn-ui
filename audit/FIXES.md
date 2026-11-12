@@ -285,3 +285,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **TRV-01 & TRV-02 (Major/Minor)**: Implemented full roving tabindex with dynamic visible node tracking, ArrowUp/ArrowDown vertical navigation, and Home/End jumping across visible tree nodes.
   - **TRV-03 (Minor)**: Marked chevron toggle wrapper with `aria-hidden="true"` and added `focus-visible:ring-2` to tree items.
   - Added unit, roving tabindex validation, ArrowDown navigation, and axe tests in `tests/smoke/data.test.tsx`.
+
+- **`Sonner`** (`src/components/feedback/sonner.tsx`):
+  - **SON-01 (Major)**: Added accessible `<span className="sr-only">Loading</span>` to `Loader2` spinner container and `motion-safe:animate-spin` on loading toast items.
+  - **SON-02 (Minor)**: Added `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1` on action and dismiss buttons.
+  - Added unit tests for loading state toast with accessible sr-only text in `tests/smoke/feedback.test.tsx`.

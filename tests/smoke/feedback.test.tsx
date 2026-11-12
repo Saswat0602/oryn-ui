@@ -163,7 +163,8 @@ describe('Feedback Domain Smoke & Accessibility Suite', () => {
     let dismissedId = ''
     const toasts = [
       { id: 't1', title: 'Upload complete', description: 'File saved to cloud' },
-      { id: 't2', title: 'Backup created', description: 'Daily backup complete' }
+      { id: 't2', title: 'Backup created', description: 'Daily backup complete' },
+      { id: 't3', title: 'Processing data', type: 'loading' as const }
     ]
 
     const { container, getByText, getAllByRole } = render(
@@ -175,6 +176,8 @@ describe('Feedback Domain Smoke & Accessibility Suite', () => {
     expect(getByText('Upload complete')).toBeDefined()
     expect(getByText('File saved to cloud')).toBeDefined()
     expect(getByText('Backup created')).toBeDefined()
+    expect(getByText('Processing data')).toBeDefined()
+    expect(getByText('Loading')).toBeDefined()
 
     // Dismiss first toast
     const dismissButtons = getAllByRole('button')

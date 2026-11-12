@@ -306,11 +306,16 @@ const SonnerToastCard: React.FC<SonnerToastCardProps> = ({
 
   const typeIcons = {
     default: null,
-    success: <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />,
-    error: <AlertCircle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />,
-    warning: <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />,
-    info: <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />,
-    loading: <Loader2 className="h-4 w-4 text-muted-foreground animate-spin shrink-0 mt-0.5" />,
+    success: <CheckCircle2 aria-hidden="true" className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />,
+    error: <AlertCircle aria-hidden="true" className="h-4 w-4 text-destructive shrink-0 mt-0.5" />,
+    warning: <AlertTriangle aria-hidden="true" className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />,
+    info: <Info aria-hidden="true" className="h-4 w-4 text-primary shrink-0 mt-0.5" />,
+    loading: (
+      <span className="shrink-0 mt-0.5 inline-flex items-center">
+        <Loader2 aria-hidden="true" className="h-4 w-4 text-muted-foreground motion-safe:animate-spin" />
+        <span className="sr-only">Loading</span>
+      </span>
+    ),
   }
 
   const richStyles = {
@@ -352,7 +357,7 @@ const SonnerToastCard: React.FC<SonnerToastCardProps> = ({
           <button
             type="button"
             onClick={toast.action.onClick}
-            className="mt-2 inline-flex h-6 items-center justify-center rounded-md border border-input bg-background px-2 text-xs font-medium hover:bg-accent hover:text-accent-foreground cursor-pointer"
+            className="mt-2 inline-flex h-6 items-center justify-center rounded-md border border-input bg-background px-2 text-xs font-medium hover:bg-accent hover:text-accent-foreground cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
           >
             {toast.action.label}
           </button>
@@ -363,10 +368,10 @@ const SonnerToastCard: React.FC<SonnerToastCardProps> = ({
         <button
           type="button"
           onClick={onDismiss}
-          aria-label="Dismiss"
-          className="shrink-0 -mr-1 -mt-1 p-1 text-muted-foreground hover:text-foreground rounded-md transition-colors cursor-pointer"
+          aria-label="Dismiss toast"
+          className="shrink-0 -mr-1 -mt-1 p-1 text-muted-foreground hover:text-foreground rounded-md transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
         >
-          <X className="h-3.5 w-3.5" />
+          <X aria-hidden="true" className="h-3.5 w-3.5" />
         </button>
       )}
     </div>
