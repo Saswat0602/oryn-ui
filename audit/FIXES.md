@@ -274,3 +274,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **B-01 (Major)**: Removed misleading `role="link"` and `aria-disabled="true"` on non-navigable `BreadcrumbPage`, adhering to WAI-ARIA breadcrumb guidelines with `aria-current="page"`.
   - **B-02 (Minor)**: Added `focus-visible:ring-2 focus-visible:ring-ring` and `disabled:pointer-events-none` to action button breadcrumb items.
   - Added unit, aria-current="page" validation, role=link exclusion, and axe tests in `tests/smoke/forms.test.tsx`.
+
+- **`TreeView`** (`src/components/data/tree-view.tsx`):
+  - **TRV-01 & TRV-02 (Major/Minor)**: Implemented full roving tabindex with dynamic visible node tracking, ArrowUp/ArrowDown vertical navigation, and Home/End jumping across visible tree nodes.
+  - **TRV-03 (Minor)**: Marked chevron toggle wrapper with `aria-hidden="true"` and added `focus-visible:ring-2` to tree items.
+  - Added unit, roving tabindex validation, ArrowDown navigation, and axe tests in `tests/smoke/data.test.tsx`.

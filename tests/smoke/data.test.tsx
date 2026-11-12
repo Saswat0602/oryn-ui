@@ -127,7 +127,7 @@ describe('Data Display Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders TreeView with branch expansion', async () => {
-    const { container, getByText } = render(
+    const { container, getByText, getAllByRole } = render(
       <StrictMode>
         <TreeView
           data={[
@@ -146,6 +146,14 @@ describe('Data Display Domain Smoke & Accessibility Suite', () => {
     )
     expect(getByText('src')).toBeDefined()
     expect(getByText('index.ts')).toBeDefined()
+
+    const treeitems = getAllByRole('treeitem')
+    expect(treeitems.length).toBe(3)
+    expect(treeitems[0].getAttribute('tabindex')).toBe('0')
+    expect(treeitems[1].getAttribute('tabindex')).toBe('-1')
+
+    // Navigate down with ArrowDown
+    fireEvent.keyDown(treeitems[0], { key: 'ArrowDown' })
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
