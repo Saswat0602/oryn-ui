@@ -22,7 +22,7 @@
 
 | ID | Severity | Category | File:Line | Problem | Why It Matters | Fix |
 |----|----------|----------|-----------|---------|----------------|-----|
-| AD-01 | Critical | A11y | alert-dialog.tsx:159 | No `aria-labelledby` or `aria-describedby` on the `alertdialog` element | Screen readers won't announce title/description when dialog opens | Add `aria-labelledby={titleId}` and `aria-describedby={descId}`; pass IDs through context to `AlertDialogTitle`/`AlertDialogDescription` |
+| AD-01 | Critical | A11y | alert-dialog.tsx:159 | No `aria-labelledby` or `aria-describedby` on the `alertdialog` element | Fixed | Added `titleId` and `descriptionId` in `AlertDialog` root provider, auto-wiring `aria-labelledby` and `aria-describedby` on `AlertDialogContent` |
 | AD-02 | Major | A11y | alert-dialog.tsx:140–142 | Escape key closes AlertDialog — this is correct for a **Dialog**, but AlertDialog semantics imply "you must acknowledge"; consider blocking Escape or making it configurable | WCAG pattern for `alertdialog` discourages easy dismiss | Add `closeOnEscape?: boolean` prop (default `false` for AlertDialog) |
 | AD-03 | Major | A11y | alert-dialog.tsx:70 | `ref={ref as any}` on Trigger — `any` cast bypasses TypeScript | Type safety loss | Use `React.MutableRefObject<HTMLButtonElement | null>` merge pattern |
 | AD-04 | Major | A11y | alert-dialog.tsx:299–302 | `useAlertDialog()` hook always returns hardcoded `open: false` and no-op — useless for consumers | Misleading API | Remove or implement properly to read from context (or document clearly that it's decorative) |

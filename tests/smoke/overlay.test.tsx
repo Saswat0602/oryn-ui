@@ -41,8 +41,12 @@ describe('Overlay Domain Smoke & Accessibility Suite', () => {
         </Dialog>
       </StrictMode>
     )
-    expect(getByText('Deploy Revision')).toBeDefined()
+    const title = getByText('Deploy Revision')
+    expect(title).toBeDefined()
     expect(getByText('Deploying production release v3.0.0.')).toBeDefined()
+    const dialog = document.querySelector('[role="dialog"]')!
+    expect(dialog).toBeDefined()
+    expect(dialog.getAttribute('aria-labelledby')).toBe(title.getAttribute('id'))
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

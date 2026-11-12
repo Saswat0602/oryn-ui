@@ -199,3 +199,10 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **SE-06 (Minor)**: Added `SelectGroupContext` with deterministic `labelId` auto-wiring `aria-labelledby` on `SelectGroup`.
   - **SE-07 (Minor)**: Added `motion-safe:` prefixes on enter/exit animations.
   - Added unit, dropdown selection, keyboard navigation, and axe tests in `tests/smoke/core.test.tsx`.
+
+- **`Dialog`** (`src/components/overlay/dialog.tsx`):
+  - **DG-01 (Major)**: Preserved `triggerRef` in `DialogContext` and automatically restored focus to the trigger upon modal close.
+  - **DG-02 (Major)**: Implemented deterministic `titleId` and `descriptionId` in root provider, automatically linking `aria-labelledby` and `aria-describedby` on `DialogContent` to `DialogTitle` and `DialogDescription`.
+  - **DG-03 (Major)**: Implemented `useDialog()` and `useDialogContext()` to safely read active state and `onOpenChange` handler from `DialogContext`.
+  - **DG-06 (Nit)**: Cleaned typed ref forwarding without unsafe `(ref as any)` casts.
+  - Added unit, dialog `aria-labelledby` validation, and axe tests in `tests/smoke/overlay.test.tsx`.
