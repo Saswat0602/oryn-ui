@@ -318,3 +318,9 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **SIB-01 (Major)**: Added `aria-expanded` and `aria-controls="sidebar-navigation"` on `SidebarTrigger` and collapse/expand toggle buttons, with `id="sidebar-navigation"` on `<aside>`.
   - **SIB-02 (Major)**: Added `group-focus-visible:flex` to collapsed-mode tooltip popovers ensuring keyboard users can inspect navigation item labels.
   - Added unit, aria-expanded/controls validation, and axe tests in `tests/smoke/layout.test.tsx`.
+
+- **`Skeleton`** (`src/components/core/skeleton.tsx`):
+  - **SK-01 (Major)**: Added `role="status"`, `aria-label="Loading..."`, `aria-busy="true"`, and a hidden `<span className="sr-only">Loading...</span>` landmark for screen readers.
+  - **SK-02 (Major)**: Forwarded `ref` and native `{...props}` to the outer wrapper element on multi-line skeletons (`lines > 1`).
+  - **SK-03 (Minor)**: Guarded animations with `motion-safe:animate-pulse` to respect user motion preferences.
+  - Added unit, multi-line ref forwarding, role=status, and axe tests in `tests/smoke/core.test.tsx`.

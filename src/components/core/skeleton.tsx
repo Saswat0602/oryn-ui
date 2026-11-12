@@ -23,14 +23,21 @@ const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
     }
 
     const animationClasses = {
-      pulse: "animate-pulse",
-      wave: "animate-pulse bg-gradient-to-r from-muted via-muted/50 to-muted bg-[length:200%_100%]",
+      pulse: "motion-safe:animate-pulse",
+      wave: "motion-safe:animate-pulse bg-gradient-to-r from-muted via-muted/50 to-muted bg-[length:200%_100%]",
       none: ""
     }
 
     if (lines > 1) {
       return (
-        <div className="space-y-2 w-full">
+        <div
+          ref={ref}
+          role="status"
+          aria-label={props["aria-label"] || "Loading..."}
+          aria-busy="true"
+          className={cn("space-y-2 w-full", className)}
+          {...props}
+        >
           {Array.from({ length: lines }, (_, index) => (
             <div
               key={index}
@@ -38,12 +45,12 @@ const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
                 "bg-muted",
                 variantClasses[variant],
                 animationClasses[animation],
-                index === lines - 1 && "w-3/4",
-                className
+                index === lines - 1 && "w-3/4"
               )}
               style={{ height: variant === "text" ? "1rem" : undefined }}
             />
           ))}
+          <span className="sr-only">Loading...</span>
         </div>
       )
     }
@@ -51,6 +58,9 @@ const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
     return (
       <div
         ref={ref}
+        role="status"
+        aria-label={props["aria-label"] || "Loading..."}
+        aria-busy="true"
         className={cn(
           "bg-muted",
           variantClasses[variant],

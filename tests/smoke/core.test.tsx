@@ -206,13 +206,23 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
     expect(results.violations).toEqual([])
   })
 
-  it('renders Skeleton placeholders', async () => {
-    const { container } = render(
+  it('renders Skeleton placeholders with role status and ref forwarding in single and multi-line modes', async () => {
+    const singleRef = React.createRef<HTMLDivElement>()
+    const multiRef = React.createRef<HTMLDivElement>()
+
+    const { container, getAllByRole } = render(
       <StrictMode>
-        <Skeleton className="h-4 w-32" />
+        <Skeleton ref={singleRef} className="h-4 w-32" />
+        <Skeleton ref={multiRef} lines={3} />
       </StrictMode>
     )
-    expect(container.firstChild).toBeDefined()
+    expect(singleRef.current).toBeDefined()
+    expect(multiRef.current).toBeDefined()
+
+    const statuses = getAllByRole('status')
+    expect(statuses.length).toBe(2)
+    expect(statuses[0].getAttribute('aria-label')).toBe('Loading...')
+    expect(statuses[1].getAttribute('aria-busy')).toBe('true')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
