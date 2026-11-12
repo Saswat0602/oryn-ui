@@ -28,7 +28,14 @@ function useAccordionContext() {
   return ctx
 }
 
-const AccordionItemContext = createContext<{ value: string; disabled?: boolean } | null>(null)
+interface AccordionItemContextValue {
+  value: string
+  disabled?: boolean
+  triggerId: string
+  contentId: string
+}
+
+const AccordionItemContext = createContext<AccordionItemContextValue | null>(null)
 
 export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string
@@ -36,12 +43,17 @@ export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement>
 }
 
 export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
-  ({ className, value, disabled, children, ...props }, ref) => {
+  ({ className, value, disabled, children, id, ...props }, ref) => {
+    const triggerId = `accordion-trigger-${value}`
+    const contentId = `accordion-content-${value}`
+
     return (
-      <AccordionItemContext.Provider value={{ value, disabled }}>
+      <AccordionItemContext.Provider value={{ value, disabled, triggerId, contentId }}>
         <div
           ref={ref}
+          id={id}
           data-state={disabled ? 'disabled' : undefined}
+          aria-disabled={disabled ? 'true' : undefined}
           className={cn('border-b border-border last:border-b-0', className)}
           {...props}
         >
@@ -75,11 +87,16 @@ export const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerPr
       }
     }
 
+    const triggerId = props.id || itemCtx?.triggerId
+    const contentId = props['aria-controls'] || itemCtx?.contentId
+
     return (
       <div className="flex">
         <button
           ref={ref}
           type="button"
+          id={triggerId}
+          aria-controls={contentId}
           aria-expanded={open}
           disabled={disabled}
           data-state={open ? 'open' : 'closed'}
@@ -93,6 +110,7 @@ export const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerPr
         >
           <span className="flex-1 text-left">{children}</span>
           <IconComponent
+            aria-hidden="true"
             className={cn(
               'h-4 w-4 shrink-0 transition-transform duration-200 text-muted-foreground',
               open && 'rotate-180'
@@ -108,15 +126,21 @@ AccordionTrigger.displayName = 'AccordionTrigger'
 export interface AccordionContentProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const AccordionContent = forwardRef<HTMLDivElement, AccordionContentProps>(
-  ({ className, children, ...props }, ref) => {
+  ({ className, children, id, role = 'region', ...props }, ref) => {
     const { isOpen } = useAccordionContext()
     const itemCtx = useContext(AccordionItemContext)
     const val = itemCtx?.value || ''
     const open = isOpen(val)
+    const contentId = id || itemCtx?.contentId
+    const triggerId = props['aria-labelledby'] || itemCtx?.triggerId
 
     return (
       <div
         ref={ref}
+        id={contentId}
+        role={role}
+        aria-labelledby={triggerId}
+        aria-hidden={!open}
         data-state={open ? 'open' : 'closed'}
         className={cn(
           'grid transition-all duration-200 ease-in-out',
@@ -134,7 +158,7 @@ export const AccordionContent = forwardRef<HTMLDivElement, AccordionContentProps
 )
 AccordionContent.displayName = 'AccordionContent'
 
-export interface AccordionProps {
+export interface AccordionProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'defaultValue' | 'onChange'> {
   items?: AccordionItemData[]
   allowMultiple?: boolean
   defaultOpen?: number[]
@@ -149,9 +173,21 @@ export interface AccordionProps {
   collapsible?: boolean
   value?: string | string[]
   defaultValue?: string | string[]
-  onValueChange?: (value: any) => void
+  onValueChange?: (value: string | string[]) => void
   children?: React.ReactNode
-  [key: string]: any
+  analyticsId?: string
+  analyticsEvent?: string
+  analyticsData?: Record<string, unknown>
+  ariaLabel?: string
+  dataTestId?: string
+  onAnalytics?: (event: string, data?: unknown) => void
+  variant?: string
+  size?: string
+  searchable?: boolean
+  searchPlaceholder?: string
+  onSearch?: (query: string) => void
+  onToggle?: (value: string, isOpen: boolean) => void
+  keyboardNavigation?: boolean
 }
 
 export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(
@@ -262,7 +298,7 @@ export const Accordion = forwardRef<HTMLDivElement, AccordionProps>(
         <div
           ref={ref}
           aria-label={ariaLabel || props['aria-label']}
-          data-testid={dataTestId || props['data-testid']}
+          data-testid={dataTestId || (props as Record<string, unknown>)['data-testid'] as string | undefined}
           className={cn(
             'rounded-xl border border-border bg-card text-card-foreground overflow-hidden divide-y divide-border shadow-xs',
             className

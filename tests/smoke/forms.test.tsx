@@ -42,9 +42,16 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
       </StrictMode>
     )
     expect(getByText('What is Mad UI?')).toBeDefined()
-    const trigger = getByText('What is Mad UI?')
+    const trigger = getByText('What is Mad UI?').closest('button')!
+    expect(trigger.getAttribute('aria-controls')).toBe('accordion-content-item-1')
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+
     fireEvent.click(trigger)
+    expect(trigger.getAttribute('aria-expanded')).toBe('true')
     expect(getByText('An enterprise React component library.')).toBeDefined()
+    const region = container.querySelector('#accordion-content-item-1')
+    expect(region).toBeDefined()
+    expect(region?.getAttribute('role')).toBe('region')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

@@ -16,3 +16,11 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **ALT-03 (Major)**: Automatically configure accessible default `role`: `role="alert"` for `destructive`/`error` variants and `role="status"` for `success`/`info`/`warning`.
   - Added unit and a11y tests in `tests/smoke/feedback.test.tsx` for accessible dismiss, automatic roles, and axe verification.
 
+- **`Accordion`** (`src/components/forms/accordion.tsx`):
+  - **A-01 (Critical)**: Added deterministic `id` and `aria-controls` on `AccordionTrigger` pointing directly to content panel ID.
+  - **A-02 (Critical)**: Bound `id`, `role="region"`, `aria-labelledby`, and `aria-hidden` on `AccordionContent` for screen reader landmarks.
+  - **A-03 (Major)**: Added `aria-hidden="true"` to decorative chevron vector icon.
+  - **A-04 (Major)**: Removed catch-all `[key: string]: any` index signature from `AccordionProps` to restore strict TypeScript checking.
+  - **A-05 (Major)**: Added typed signature `onValueChange?: (value: string | string[]) => void`.
+  - Added automated tests in `tests/smoke/forms.test.tsx` verifying `aria-controls`, `aria-expanded`, and `role="region"`.
+
