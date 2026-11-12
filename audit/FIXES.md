@@ -157,3 +157,11 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **CO-03 (Major)**: Fixed typed ref forwarding on `CollapsibleTrigger` removing unsafe `as any`.
   - **CO-04 & CO-05 (Minor)**: Added `aria-hidden={!open}` and `pointer-events-none` on collapsed content to ensure screen readers and pointers ignore hidden content.
   - Added unit, aria-controls linkage, toggle click, and axe tests in `tests/smoke/overlay.test.tsx`.
+
+- **`Slider`** (`src/components/core/slider.tsx`):
+  - **SL-01 (Critical)**: Removed unsafe `[key: string]: any` index signature from `SliderProps`, restoring full TypeScript type safety while preserving standard HTML attribute spreading.
+  - **SL-02 (Major)**: Implemented full vertical orientation positioning (`bottom: Y%`, `transform: translate(-50%, 50%)`, vertical active range height, and min-height track styling).
+  - **SL-03 (Major)**: Bound `aria-orientation={orientation}` and explicit `aria-label`/`aria-labelledby` directly on slider thumbs.
+  - **SL-04 (Major)**: Added `touch-none` directly to thumbs to prevent mobile touch conflict during dragging.
+  - **SL-06 (Minor)**: Added `motion-safe:transition-colors` adhering to user motion preferences.
+  - Added unit, vertical slider, range slider constraint, keyboard navigation (Home/End), and axe tests in `tests/smoke/core.test.tsx`.

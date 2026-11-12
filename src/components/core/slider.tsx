@@ -21,7 +21,8 @@ export interface SliderProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 
   fullWidth?: boolean
   onChange?: (value: number | number[] | [number, number]) => void
   onValueChange?: (value: number | number[] | [number, number]) => void
-  [key: string]: any
+  'aria-label'?: string
+  'aria-labelledby'?: string
 }
 
 function clamp(value: number, min: number, max: number): number {
@@ -195,27 +196,36 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           className={cn(
-            'relative flex touch-none items-center cursor-pointer py-1.5',
-            orientation === 'horizontal' ? 'w-full' : 'h-full flex-col',
+            'relative flex touch-none items-center cursor-pointer select-none',
+            orientation === 'horizontal' ? 'w-full py-1.5' : 'h-full min-h-[160px] flex-col px-1.5 justify-center',
             disabled && 'opacity-50 cursor-not-allowed'
           )}
         >
           {/* Track background */}
           <div
             className={cn(
-              'relative grow overflow-hidden rounded-full bg-secondary transition-colors',
+              'relative grow overflow-hidden rounded-full bg-secondary',
               orientation === 'horizontal'
                 ? trackSizes[size as 'sm' | 'md' | 'lg' || 'md']
-                : 'w-1.5'
+                : 'w-1.5 h-full'
             )}
           >
             {/* Active Range */}
             <div
-              className="absolute h-full bg-primary rounded-full"
-              style={{
-                left: `${rangeLeft}%`,
-                width: `${rangeWidth}%`,
-              }}
+              className="absolute bg-primary rounded-full"
+              style={
+                orientation === 'vertical'
+                  ? {
+                      bottom: `${rangeLeft}%`,
+                      height: `${rangeWidth}%`,
+                      width: '100%',
+                    }
+                  : {
+                      left: `${rangeLeft}%`,
+                      width: `${rangeWidth}%`,
+                      height: '100%',
+                    }
+              }
             />
           </div>
 
@@ -226,19 +236,33 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
               <div
                 key={idx}
                 role="slider"
-                aria-label={props['aria-label'] || (values.length > 1 ? (idx === 0 ? 'Minimum' : 'Maximum') : 'Value')}
+                aria-label={
+                  props['aria-label'] ||
+                  (values.length > 1 ? (idx === 0 ? 'Minimum' : 'Maximum') : 'Value')
+                }
+                aria-labelledby={props['aria-labelledby']}
+                aria-orientation={orientation}
                 tabIndex={disabled ? -1 : 0}
                 aria-valuenow={val}
                 aria-valuemin={min}
                 aria-valuemax={max}
                 aria-disabled={disabled}
                 onKeyDown={(e) => handleKeyDown(idx, e)}
-                style={{
-                  left: `${percent}%`,
-                  transform: 'translateX(-50%)',
-                }}
+                style={
+                  orientation === 'vertical'
+                    ? {
+                        bottom: `${percent}%`,
+                        left: '50%',
+                        transform: 'translate(-50%, 50%)',
+                      }
+                    : {
+                        left: `${percent}%`,
+                        top: '50%',
+                        transform: 'translate(-50%, -50%)',
+                      }
+                }
                 className={cn(
-                  'absolute top-1/2 -translate-y-1/2 block rounded-full border-2 border-primary bg-background shadow-md transition-colors ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                  'absolute block rounded-full border-2 border-primary bg-background shadow-md touch-none motion-safe:transition-colors ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                   'cursor-grab active:cursor-grabbing',
                   disabled && 'pointer-events-none',
                   thumbSizes[size as 'sm' | 'md' | 'lg' || 'md']

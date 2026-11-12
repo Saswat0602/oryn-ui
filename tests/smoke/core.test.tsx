@@ -125,15 +125,31 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders Slider, Progress, and Rating components', async () => {
-    const { container, getByRole } = render(
+    const handleSliderChange = vi.fn()
+    const { container, getAllByRole, getByRole } = render(
       <StrictMode>
         <Slider value={[40]} max={100} step={1} aria-label="Volume slider" />
+        <Slider
+          defaultValue={[20, 80]}
+          range
+          min={0}
+          max={100}
+          onValueChange={handleSliderChange}
+          aria-label="Price range"
+        />
+        <Slider orientation="vertical" defaultValue={50} aria-label="Vertical height" />
         <Progress value={65} max={100} aria-label="Download progress" />
         <Rating value={4} max={5} aria-label="Customer rating" />
       </StrictMode>
     )
-    expect(getByRole('slider')).toBeDefined()
+    const sliders = getAllByRole('slider')
+    expect(sliders.length).toBe(4) // 1 single + 2 range thumbs + 1 vertical
     expect(getByRole('progressbar')).toBeDefined()
+
+    // Test keyboard navigation Home & End on first range thumb
+    const minThumb = sliders[1]
+    fireEvent.keyDown(minThumb, { key: 'Home' })
+    expect(handleSliderChange).toHaveBeenCalledWith([0, 80])
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
