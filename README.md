@@ -33,91 +33,101 @@ Features **75+ standalone components, AI primitives, and modules** with **zero e
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Zero-Config, 2 Steps)
 
-### 1. Installation
-
-Install `oryn-ui` into your project:
+### 1. Install
 
 ```bash
-# npm
 npm install oryn-ui
-
-# pnpm
-pnpm add oryn-ui
-
-# yarn
-yarn add oryn-ui
-
-# bun
-bun add oryn-ui
 ```
 
-### Alternative: Direct CLI Component Addition (shadcn-style)
+*(No external UI dependencies. Supports React 18 and React 19).*
 
-If you prefer copying components directly into your codebase:
+### 2. Import Styles & Choose Your Palette
 
-```bash
-# Add components with all primitives and hooks auto-resolved:
-npx oryn-ui add button
-npx oryn-ui add dialog
-npx oryn-ui add data-table
-npx oryn-ui add form
+Import pre-compiled styles in your root layout (`app/layout.tsx` in Next.js or `src/main.tsx` in Vite):
 
-# Explore the complete 55-component catalog:
-npx oryn-ui list
-```
-
-### 2. Configure Tailwind CSS
-
-ORYN UI provides 3 straightforward options:
-
-#### Option A: Self-Contained Precompiled CSS (Simplest)
-Import pre-compiled styles directly in your root layout (`app/layout.tsx` or `src/main.tsx`):
 ```tsx
 import "oryn-ui/styles.css"
 ```
 
-#### Option B: Tailwind CSS v4 (@source directive)
-Add the `@source` directive in your main CSS file (`globals.css`):
+#### Choose Your Base Style (Zero Effort):
+- **B&W / Monochrome (Default)**: Active automatically! No attributes or CSS editing needed. All components render with sleek monochrome zinc contrast:
+  ```html
+  <html lang="en" class="dark">
+  ```
+- **Normal (Vibrant Blue)**: Simply add `data-style="normal"` to your `<html>` element. All components instantly adopt royal blue accents:
+  ```html
+  <html lang="en" class="dark" data-style="normal">
+  ```
+
+### 3. Use Components
+
+```tsx
+import { Button, Card, Badge, Input } from 'oryn-ui'
+
+export default function App() {
+  return (
+    <Card className="p-6 max-w-sm space-y-4">
+      <Badge variant="primary">Active</Badge>
+      <h2 className="text-xl font-bold">Welcome</h2>
+      <Input placeholder="name@example.com" type="email" />
+      <Button variant="default" className="w-full">Continue</Button>
+    </Card>
+  )
+}
+```
+
+---
+
+### 🛠️ Optional: CLI Component Distribution (shadcn-style)
+
+Prefer full local ownership over your component code? Use our built-in CLI to copy raw `.tsx` files directly into your project:
+
+```bash
+# Initialize and choose palette (monochrome or normal):
+npx oryn-ui init --style monochrome
+
+# Copy components with all primitives and hooks auto-resolved:
+npx oryn-ui add button
+npx oryn-ui add dialog
+npx oryn-ui add data-table
+
+# Explore all 76 components:
+npx oryn-ui list
+```
+
+*(Note: If you already ran `npm install oryn-ui`, you do not need the CLI).*
+
+---
+
+### 🎨 Optional: Custom Tailwind Utility Overrides
+
+If you write custom Tailwind CSS utility classes in your own project:
+
+#### Tailwind CSS v4:
 ```css
+/* app/globals.css */
 @import "tailwindcss";
 @source "../node_modules/oryn-ui/dist";
 ```
 
-#### Option C: Tailwind v3 Monorepo & Hoisting-Safe Path
-Add the resolved directory to `content` in `tailwind.config.js` (guaranteed to work across pnpm, Yarn Berry, Turborepo, and npm workspaces):
+#### Tailwind CSS v3:
 ```javascript
+// tailwind.config.js
 const path = require("path")
 
-/** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
   content: [
     "./src/**/*.{js,ts,jsx,tsx}",
     "./app/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
     path.dirname(require.resolve("oryn-ui/package.json")) + "/dist/**/*.{mjs,js}"
   ],
-  theme: {
-    extend: {},
-  },
+  theme: { extend: {} },
   plugins: [],
 }
 ```
-
-### 3. Usage
-
-Import components in your React application:
-
-```tsx
-import { Button, Card, Input } from 'oryn-ui'
-
-export default function App() {
-  return (
-    <Card className="p-6 max-w-sm space-y-4">
-      <h2 className="text-xl font-bold">Sign In</h2>
-      <Input placeholder="name@example.com" type="email" />
       <Button className="w-full">Continue</Button>
     </Card>
   )

@@ -86,25 +86,48 @@ export default function GettingStartedPage() {
         </div>
       </section>
 
-      {/* Step 2: Configure Tailwind */}
+      {/* Step 2: Import Styles */}
       <section className="space-y-4">
         <div className="flex items-center gap-3">
           <div className="w-6 h-6 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
             2
           </div>
-          <h2 className="text-lg font-bold text-foreground">Configure Tailwind CSS</h2>
+          <h2 className="text-lg font-bold text-foreground">Import Styles (1 Line)</h2>
         </div>
 
         <p className="text-xs text-muted-foreground">
-          Add the ORYN UI build path to your <code className="text-foreground font-mono">tailwind.config.js</code> so Tailwind compiles component styles:
+          Import pre-compiled styles in your root layout (<code className="text-foreground font-mono">app/layout.tsx</code> in Next.js or <code className="text-foreground font-mono">src/main.tsx</code> in Vite). No Tailwind configuration is required:
         </p>
 
         <CodeBlock
-          code={snippets.tailwindConfig}
-          language="javascript"
-          filename="tailwind.config.js"
+          code={snippets.cssImport}
+          language="tsx"
+          filename="app/layout.tsx"
           showLineNumbers={true}
         />
+
+        {/* Style Selection Quick Guide */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+          <div className="p-3 rounded-lg border border-border/60 bg-card/40 space-y-1">
+            <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
+              <span className="w-2.5 h-2.5 rounded-full bg-zinc-900 dark:bg-zinc-100 border border-zinc-500" />
+              <span>B&amp;W / Monochrome (Default)</span>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Active automatically. All buttons, badges, and focus rings render with sleek black &amp; white monochrome contrast.
+            </p>
+          </div>
+
+          <div className="p-3 rounded-lg border border-border/60 bg-card/40 space-y-1">
+            <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-600 border border-blue-400" />
+              <span>Normal (Vibrant Blue)</span>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Just add <code className="text-foreground font-mono bg-muted/60 px-1 py-0.5 rounded text-[11px]">data-style=&quot;normal&quot;</code> to your <code className="text-foreground font-mono bg-muted/60 px-1 py-0.5 rounded text-[11px]">&lt;html&gt;</code> element.
+            </p>
+          </div>
+        </div>
       </section>
 
       {/* Step 3: Usage */}

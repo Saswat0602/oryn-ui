@@ -171,6 +171,75 @@ export default function InstallationPage() {
         </div>
       </div>
 
+      {/* 2-Step Quickstart Banner (Direct NPM Install) */}
+      <section className="p-6 rounded-2xl border border-primary/30 bg-primary/5 space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/15 text-primary border border-primary/25 flex items-center justify-center shrink-0">
+              <Zap className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-foreground flex items-center gap-2">
+                <span>Direct NPM Install (Fastest &amp; Recommended)</span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/30 font-bold uppercase tracking-wider">
+                  2 Steps
+                </span>
+              </h2>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                No copying required. Install the package, import the stylesheet, and start using any of the 76+ components right away.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <div className="text-xs font-semibold text-foreground flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[11px] font-bold">1</span>
+              <span>Install package</span>
+            </div>
+            <CodeBlock 
+              code={snippets.getInstallCommand(activePkgManager)} 
+              language="bash" 
+            />
+          </div>
+
+          <div className="space-y-2">
+            <div className="text-xs font-semibold text-foreground flex items-center gap-2">
+              <span className="w-5 h-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[11px] font-bold">2</span>
+              <span>Import stylesheet in root layout</span>
+            </div>
+            <CodeBlock 
+              code={`// In app/layout.tsx (Next.js) or src/main.tsx (Vite)\nimport "${siteConfig.packageName}/styles.css"`} 
+              language="tsx" 
+            />
+          </div>
+        </div>
+
+        {/* How B&W vs Normal works without trouble */}
+        <div className="pt-3 border-t border-border/40 grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div className="p-3.5 rounded-xl bg-background/80 border border-border/60 space-y-1.5">
+            <div className="flex items-center gap-2 font-semibold text-foreground">
+              <span className="w-2.5 h-2.5 rounded-full bg-zinc-900 dark:bg-zinc-100 border border-zinc-500" />
+              <span>B&amp;W / Monochrome (Default)</span>
+            </div>
+            <p className="text-muted-foreground text-[11px] leading-relaxed">
+              <strong className="text-foreground">Zero configuration needed.</strong> Works automatically when you import the stylesheet. All buttons, tabs, inputs, and dialogs render in sleek monochrome zinc.
+            </p>
+          </div>
+
+          <div className="p-3.5 rounded-xl bg-background/80 border border-border/60 space-y-1.5">
+            <div className="flex items-center gap-2 font-semibold text-foreground">
+              <span className="w-2.5 h-2.5 rounded-full bg-blue-600 border border-blue-400" />
+              <span>Normal (Vibrant Blue)</span>
+            </div>
+            <p className="text-muted-foreground text-[11px] leading-relaxed">
+              Simply add <code className="text-foreground font-mono bg-muted/80 px-1.5 py-0.5 rounded text-[11px] border border-border/40">data-style=&quot;normal&quot;</code> to your <code className="text-foreground font-mono bg-muted/80 px-1.5 py-0.5 rounded text-[11px] border border-border/40">&lt;html&gt;</code> element. All components instantly adapt to royal blue accents.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Framework Selection Cards */}
       <section className="space-y-4">
         <div>
@@ -329,54 +398,46 @@ export default function InstallationPage() {
             </p>
           </div>
 
-          {/* Step 1: Create Project */}
+          {/* Step 1: Install Package */}
           <div className="space-y-3">
             <div className="flex items-center gap-2.5">
               <span className="w-6 h-6 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-xs font-bold shrink-0">1</span>
-              <h3 className="text-sm font-semibold text-foreground">
-                Create a Next.js Project (if starting fresh)
-              </h3>
-            </div>
-            <p className="text-xs text-muted-foreground pl-8.5">
-              Initialize a Next.js App Router project with TypeScript and Tailwind CSS configured:
-            </p>
-            <div className="pl-8.5">
-              <CodeBlock 
-                code={snippets.getCreateAppCommand("nextjs", activePkgManager)} 
-                language="bash" 
-              />
-            </div>
-          </div>
-
-          {/* Step 2: Install Package */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2.5">
-              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-xs font-bold shrink-0">2</span>
               <h3 className="text-sm font-semibold text-foreground">
                 Install {siteConfig.fullName}
               </h3>
             </div>
             <p className="text-xs text-muted-foreground pl-8.5">
-              Install the component library. All primitives, hooks, and icons are bundled with zero external UI runtime dependencies:
+              Add the package to your Next.js project. All primitives, hooks, and icons are bundled with zero external UI runtime dependencies:
             </p>
-            <div className="pl-8.5">
+            <div className="pl-8.5 space-y-2">
               <CodeBlock 
                 code={snippets.getInstallCommand(activePkgManager)} 
                 language="bash" 
               />
+              <details className="text-xs text-muted-foreground pt-1">
+                <summary className="cursor-pointer hover:text-foreground font-medium transition-colors">
+                  Starting a brand new Next.js project from scratch? Click to view create-next-app command
+                </summary>
+                <div className="mt-2">
+                  <CodeBlock 
+                    code={snippets.getCreateAppCommand("nextjs", activePkgManager)} 
+                    language="bash" 
+                  />
+                </div>
+              </details>
             </div>
           </div>
 
-          {/* Step 3: Configure Tailwind CSS */}
+          {/* Step 2: Import Styles */}
           <div className="space-y-4">
             <div className="flex items-center gap-2.5">
-              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-xs font-bold shrink-0">3</span>
+              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-xs font-bold shrink-0">2</span>
               <h3 className="text-sm font-semibold text-foreground">
-                Configure Tailwind CSS Styles
+                Import Styles in app/layout.tsx
               </h3>
             </div>
             <p className="text-xs text-muted-foreground pl-8.5">
-              Choose the integration method that best matches your project architecture:
+              Import the pre-compiled stylesheet in your root layout. B&amp;W (Monochrome Zinc) is active automatically; for Vibrant Blue, just set <code className="text-foreground font-mono">data-style=&quot;normal&quot;</code>:
             </p>
 
             <div className="pl-8.5 space-y-3">
@@ -464,43 +525,43 @@ export default function InstallationPage() {
             </div>
           </div>
 
-          {/* Step 4: Theme Provider Setup (Optional) */}
+          {/* Step 3: Import and Use */}
           <div className="space-y-3">
             <div className="flex items-center gap-2.5">
-              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-xs font-bold shrink-0">4</span>
-              <h3 className="text-sm font-semibold text-foreground">
-                Set Up ThemeProvider (Optional)
-              </h3>
-            </div>
-            <p className="text-xs text-muted-foreground pl-8.5">
-              Wrap your root layout with ORYN UI&apos;s built-in <code className="text-foreground font-mono">ThemeProvider</code> for instant dark mode and color scheme persistence:
-            </p>
-            <div className="pl-8.5">
-              <CodeBlock 
-                filename="components/theme-provider.tsx" 
-                language="tsx" 
-                code={snippets.getNextThemeProviderSnippet(selectedStyle)} 
-                showLineNumbers 
-              />
-            </div>
-          </div>
-
-          {/* Step 5: Import and Use */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2.5">
-              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-xs font-bold shrink-0">5</span>
+              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-xs font-bold shrink-0">3</span>
               <h3 className="text-sm font-semibold text-foreground">
                 Import and Use Components in Page
               </h3>
             </div>
             <p className="text-xs text-muted-foreground pl-8.5">
-              Interactive components (Modals, Drawers, Dropdowns, Tabs) use React hooks and should be rendered in client components:
+              Import any component directly into your page:
             </p>
             <div className="pl-8.5">
               <CodeBlock 
                 filename="app/page.tsx" 
                 language="tsx" 
                 code={snippets.nextjs.pageUsage} 
+                showLineNumbers 
+              />
+            </div>
+          </div>
+
+          {/* Optional: Theme Provider Setup */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center gap-2.5">
+              <span className="w-6 h-6 rounded-full bg-muted text-muted-foreground border border-border/60 flex items-center justify-center text-xs font-bold shrink-0">+</span>
+              <h3 className="text-sm font-semibold text-foreground">
+                Optional: ThemeProvider for Dynamic Theme &amp; Style Switching
+              </h3>
+            </div>
+            <p className="text-xs text-muted-foreground pl-8.5">
+              Wrap your root layout with ORYN UI&apos;s built-in <code className="text-foreground font-mono">ThemeProvider</code> if your application allows users to toggle dark mode or switch between B&amp;W and Normal styles dynamically:
+            </p>
+            <div className="pl-8.5">
+              <CodeBlock 
+                filename="components/theme-provider.tsx" 
+                language="tsx" 
+                code={snippets.getNextThemeProviderSnippet(selectedStyle)} 
                 showLineNumbers 
               />
             </div>
@@ -517,94 +578,65 @@ export default function InstallationPage() {
               <span>Vite (React + TypeScript) Setup Guide</span>
             </h2>
             <p className="text-xs text-muted-foreground mt-1">
-              Ultra-fast build setup with React 19, TypeScript, and modern Tailwind CSS.
+              Ultra-fast build setup with React 19, TypeScript, and modern pre-compiled styles.
             </p>
           </div>
 
-          {/* Step 1: Create Project */}
+          {/* Step 1: Install Package */}
           <div className="space-y-3">
             <div className="flex items-center gap-2.5">
               <span className="w-6 h-6 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-xs font-bold shrink-0">1</span>
               <h3 className="text-sm font-semibold text-foreground">
-                Create a Vite Project
+                Install {siteConfig.fullName}
               </h3>
             </div>
             <p className="text-xs text-muted-foreground pl-8.5">
-              Scaffold a new Vite React application with TypeScript:
+              Add the component library to your Vite project:
             </p>
-            <div className="pl-8.5">
+            <div className="pl-8.5 space-y-2">
               <CodeBlock 
-                code={snippets.getCreateAppCommand("vite", activePkgManager)} 
+                code={snippets.getInstallCommand(activePkgManager)} 
                 language="bash" 
               />
+              <details className="text-xs text-muted-foreground pt-1">
+                <summary className="cursor-pointer hover:text-foreground font-medium transition-colors">
+                  Starting a new Vite project from scratch? Click to view create-vite command
+                </summary>
+                <div className="mt-2">
+                  <CodeBlock 
+                    code={snippets.getCreateAppCommand("vite", activePkgManager)} 
+                    language="bash" 
+                  />
+                </div>
+              </details>
             </div>
           </div>
 
-          {/* Step 2: Install Tailwind & ORYN UI */}
+          {/* Step 2: Import Styles */}
           <div className="space-y-3">
             <div className="flex items-center gap-2.5">
               <span className="w-6 h-6 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-xs font-bold shrink-0">2</span>
               <h3 className="text-sm font-semibold text-foreground">
-                Install Dependencies &amp; ORYN UI
+                Import Styles in src/main.tsx
               </h3>
             </div>
             <p className="text-xs text-muted-foreground pl-8.5">
-              Install Tailwind CSS tools along with the <code className="text-foreground font-mono">{siteConfig.packageName}</code> library:
+              Import the precompiled stylesheet in your main entry file:
             </p>
-            <div className="pl-8.5 space-y-2">
+            <div className="pl-8.5">
               <CodeBlock 
-                code={`${snippets.vite.installTailwind(activePkgManager)}\n${snippets.getInstallCommand(activePkgManager)}`} 
-                language="bash" 
+                filename="src/main.tsx" 
+                language="tsx" 
+                code={snippets.vite.mainTsx} 
+                showLineNumbers 
               />
             </div>
           </div>
 
-          {/* Step 3: Configure Tailwind Config */}
+          {/* Step 3: Test in App.tsx */}
           <div className="space-y-3">
             <div className="flex items-center gap-2.5">
               <span className="w-6 h-6 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-xs font-bold shrink-0">3</span>
-              <h3 className="text-sm font-semibold text-foreground">
-                Configure Tailwind Content Scanning
-              </h3>
-            </div>
-            <p className="text-xs text-muted-foreground pl-8.5">
-              Update <code className="text-foreground font-mono">tailwind.config.js</code> to scan your local source and the ORYN UI package:
-            </p>
-            <div className="pl-8.5">
-              <CodeBlock 
-                filename="tailwind.config.js" 
-                language="javascript" 
-                code={snippets.vite.tailwindConfig} 
-                showLineNumbers 
-              />
-            </div>
-          </div>
-
-          {/* Step 4: Import CSS */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2.5">
-              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-xs font-bold shrink-0">4</span>
-              <h3 className="text-sm font-semibold text-foreground">
-                Import CSS in index.css
-              </h3>
-            </div>
-            <p className="text-xs text-muted-foreground pl-8.5">
-              Import Tailwind directives and ORYN UI stylesheets into your main CSS entry point:
-            </p>
-            <div className="pl-8.5">
-              <CodeBlock 
-                filename="src/index.css" 
-                language="css" 
-                code={snippets.vite.indexCss} 
-                showLineNumbers 
-              />
-            </div>
-          </div>
-
-          {/* Step 5: Test in App.tsx */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2.5">
-              <span className="w-6 h-6 rounded-full bg-primary/10 text-primary border border-primary/20 flex items-center justify-center text-xs font-bold shrink-0">5</span>
               <h3 className="text-sm font-semibold text-foreground">
                 Build Components in App.tsx
               </h3>
@@ -617,6 +649,27 @@ export default function InstallationPage() {
                 filename="src/App.tsx" 
                 language="tsx" 
                 code={snippets.vite.appUsage} 
+                showLineNumbers 
+              />
+            </div>
+          </div>
+
+          {/* Optional: Custom Tailwind Scanning */}
+          <div className="space-y-3 pt-2">
+            <div className="flex items-center gap-2.5">
+              <span className="w-6 h-6 rounded-full bg-muted text-muted-foreground border border-border/60 flex items-center justify-center text-xs font-bold shrink-0">+</span>
+              <h3 className="text-sm font-semibold text-foreground">
+                Optional: Custom Tailwind CSS Content Scanning
+              </h3>
+            </div>
+            <p className="text-xs text-muted-foreground pl-8.5">
+              If your Vite app uses Tailwind CSS for custom utility classes on your own components, add the ORYN UI dist path to your <code className="text-foreground font-mono">tailwind.config.js</code>:
+            </p>
+            <div className="pl-8.5">
+              <CodeBlock 
+                filename="tailwind.config.js" 
+                language="javascript" 
+                code={snippets.vite.tailwindConfig} 
                 showLineNumbers 
               />
             </div>
@@ -872,12 +925,20 @@ export default function InstallationPage() {
           </div>
           <div>
             <h2 className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2">
-              Direct CLI Distribution (Optional)
+              Direct CLI Distribution (Optional Alternative)
             </h2>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Prefer full local ownership over your component code? Use our built-in CLI to copy source components with all required primitives and hooks automatically resolved.
+              Prefer full local ownership over your component code? Use our built-in CLI to copy raw source components into your project (shadcn-style).
             </p>
           </div>
+        </div>
+
+        {/* Note clarifying that CLI is optional */}
+        <div className="p-3 rounded-lg border border-border/60 bg-muted/30 text-xs text-muted-foreground flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+          <span>
+            <strong>Note:</strong> If you already installed via <code className="text-foreground font-mono">npm install {siteConfig.packageName}</code>, you do <strong>not</strong> need the CLI. The CLI is strictly for developers who want raw source code files in their repository.
+          </span>
         </div>
 
         <div className="space-y-4">
