@@ -20,7 +20,10 @@ export function MainNav() {
   return (
     <nav className="flex items-center space-x-1 lg:space-x-2">
       {navigation.map((item) => {
-        const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
+        const isActive =
+          item.href === "/docs/components"
+            ? pathname === "/docs/components" || (pathname.startsWith("/docs/components") && !pathname.startsWith("/docs/components/chart"))
+            : pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href))
         
         return (
           <Link

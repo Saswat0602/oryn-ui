@@ -151,6 +151,7 @@ export { Layout } from './components/layout/layout'
 export { Navbar } from './components/layout/navbar'
 export { 
   Sidebar, 
+  SidebarProvider,
   SidebarHeader, 
   SidebarContent, 
   SidebarFooter, 
@@ -158,7 +159,15 @@ export {
   SidebarGroupLabel, 
   SidebarMenu, 
   SidebarMenuItem, 
-  SidebarMenuButton 
+  SidebarMenuButton,
+  SidebarTrigger,
+  SidebarRail,
+  SidebarInset,
+  SidebarMenuBadge,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
+  useSidebar 
 } from './components/layout/sidebar'
 export { Modal } from './components/layout/modal'
 export { Popover, PopoverTrigger, PopoverAnchor, PopoverContent, PopoverClose, usePopover } from './components/layout/popover'
@@ -177,7 +186,7 @@ export {
   useSheet 
 } from './components/layout/sheet'
 export { Drawer } from './components/layout/drawer'
-export { Resizable, ResizableHandle, ResizablePanel } from './components/layout/resizable'
+export { Resizable, ResizableHandle, ResizablePanel, ResizablePanelGroup } from './components/layout/resizable'
 export { ScrollArea, ScrollBar } from './components/layout/scroll-area'
 
 // Data Components
@@ -421,7 +430,7 @@ export type { SeparatorProps } from './components/overlay/separator'
 
 export type { LayoutProps } from './components/layout/layout'
 export type { NavbarProps } from './components/layout/navbar'
-export type { SidebarProps } from './components/layout/sidebar'
+export type { SidebarProps, SidebarProviderProps, SidebarContextValue, SidebarItem, SidebarSection } from './components/layout/sidebar'
 export type { ModalProps } from './components/layout/modal'
 export type { 
   PopoverProps, 

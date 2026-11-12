@@ -30,6 +30,7 @@ export interface TableProps<T> extends React.HTMLAttributes<HTMLDivElement> {
   hoverable?: boolean
   striped?: boolean
   bordered?: boolean
+  compact?: boolean
   size?: "sm" | "md" | "lg"
   variant?: "default" | "outlined" | "elevated"
   color?: string
@@ -68,7 +69,8 @@ function Table<T extends Record<string, unknown>>({
   hoverable = true,
   striped = false,
   bordered = false,
-  size = "md",
+  compact = false,
+  size: sizeProp = "md",
   variant = "default",
   color,
   backgroundColor,
@@ -98,6 +100,7 @@ function Table<T extends Record<string, unknown>>({
   children,
   ...props
 }: TableProps<T>) {
+  const size = compact ? "sm" : sizeProp
   const [sortColumn, setSortColumn] = React.useState<keyof T | null>(null)
   const [sortDirection, setSortDirection] = React.useState<"asc" | "desc">("asc")
 

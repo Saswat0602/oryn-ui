@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useState, createContext, useContext, useEffect, useCallback } from "react"
 import {
   ChevronLeft,
   ChevronRight,
@@ -8,8 +8,109 @@ import {
   User,
   Settings,
   LogOut,
+  PanelLeft,
 } from "../../icons"
 import { cn } from "../../lib/utils"
+
+// Context for shadcn-style Sidebar orchestration
+export interface SidebarContextValue {
+  open: boolean
+  setOpen: (open: boolean) => void
+  toggleSidebar: () => void
+  state: "expanded" | "collapsed"
+  isMobile: boolean
+}
+
+const SidebarContext = createContext<SidebarContextValue | null>(null)
+
+export function useSidebar(): SidebarContextValue {
+  const context = useContext(SidebarContext)
+  if (!context) {
+    // Graceful fallback for standalone usage without Provider
+    return {
+      open: true,
+      setOpen: () => {},
+      toggleSidebar: () => {},
+      state: "expanded",
+      isMobile: false,
+    }
+  }
+  return context
+}
+
+export interface SidebarProviderProps {
+  defaultOpen?: boolean
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  className?: string
+  children: React.ReactNode
+}
+
+export const SidebarProvider = React.forwardRef<HTMLDivElement, SidebarProviderProps>(
+  ({ defaultOpen = true, open: controlledOpen, onOpenChange, className, children, ...props }, ref) => {
+    const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen)
+    const isControlled = controlledOpen !== undefined
+    const open = isControlled ? controlledOpen : uncontrolledOpen
+    const [isMobile, setIsMobile] = useState(false)
+
+    useEffect(() => {
+      const checkMobile = () => {
+        setIsMobile(window.innerWidth < 768)
+      }
+      checkMobile()
+      window.addEventListener("resize", checkMobile)
+      return () => window.removeEventListener("resize", checkMobile)
+    }, [])
+
+    const setOpen = useCallback(
+      (value: boolean) => {
+        if (!isControlled) {
+          setUncontrolledOpen(value)
+        }
+        onOpenChange?.(value)
+      },
+      [isControlled, onOpenChange]
+    )
+
+    const toggleSidebar = useCallback(() => {
+      setOpen(!open)
+    }, [open, setOpen])
+
+    // Keyboard shortcut (Cmd+B / Ctrl+B)
+    useEffect(() => {
+      const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === "b" && (event.metaKey || event.ctrlKey)) {
+          event.preventDefault()
+          toggleSidebar()
+        }
+      }
+      window.addEventListener("keydown", handleKeyDown)
+      return () => window.removeEventListener("keydown", handleKeyDown)
+    }, [toggleSidebar])
+
+    const contextValue: SidebarContextValue = {
+      open,
+      setOpen,
+      toggleSidebar,
+      state: open ? "expanded" : "collapsed",
+      isMobile,
+    }
+
+    return (
+      <SidebarContext.Provider value={contextValue}>
+        <div
+          ref={ref}
+          className={cn("flex min-h-screen w-full relative", className)}
+          data-state={contextValue.state}
+          {...props}
+        >
+          {children}
+        </div>
+      </SidebarContext.Provider>
+    )
+  }
+)
+SidebarProvider.displayName = "SidebarProvider"
 
 export interface SidebarItem {
   id?: string
@@ -46,6 +147,9 @@ export interface SidebarProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
   width?: string
   collapsedWidth?: string
   theme?: "default" | "card" | "transparent"
+  variant?: "sidebar" | "floating" | "inset"
+  collapsible?: "offcanvas" | "icon" | "none"
+  side?: "left" | "right"
 
   // Interactive
   defaultCollapsed?: boolean
@@ -83,6 +187,9 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       width = "w-64",
       collapsedWidth = "w-16",
       theme = "default",
+      variant = "sidebar",
+      collapsible = "icon",
+      side = "left",
 
       defaultCollapsed = false,
       collapsed: controlledCollapsed,
@@ -403,7 +510,7 @@ SidebarMenuItem.displayName = "SidebarMenuItem"
 
 export const SidebarMenuButton = React.forwardRef<
   HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement> & { isActive?: boolean }
+  React.ButtonHTMLAttributes<HTMLButtonElement> & { isActive?: boolean; asChild?: boolean }
 >(({ className, isActive, ...props }, ref) => (
   <button
     ref={ref}
@@ -420,7 +527,126 @@ export const SidebarMenuButton = React.forwardRef<
 ))
 SidebarMenuButton.displayName = "SidebarMenuButton"
 
+export const SidebarTrigger = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ className, onClick, children, ...props }, ref) => {
+  const { toggleSidebar } = useSidebar()
+  return (
+    <button
+      ref={ref}
+      type="button"
+      onClick={(e) => {
+        onClick?.(e)
+        toggleSidebar()
+      }}
+      className={cn(
+        "inline-flex h-8 w-8 items-center justify-center rounded-lg border border-border/60 bg-background text-muted-foreground hover:bg-accent hover:text-foreground transition-colors cursor-pointer shadow-2xs",
+        className
+      )}
+      aria-label="Toggle Sidebar"
+      {...props}
+    >
+      {children || <PanelLeft className="h-4 w-4" />}
+    </button>
+  )
+})
+SidebarTrigger.displayName = "SidebarTrigger"
+
+export const SidebarRail = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ className, ...props }, ref) => {
+  const { toggleSidebar } = useSidebar()
+  return (
+    <button
+      ref={ref}
+      type="button"
+      onClick={toggleSidebar}
+      aria-label="Toggle Sidebar Rail"
+      tabIndex={-1}
+      className={cn(
+        "absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] hover:after:bg-border group-data-[side=left]:-right-4 group-data-[side=right]:left-0 sm:flex cursor-w-resize",
+        className
+      )}
+      {...props}
+    />
+  )
+})
+SidebarRail.displayName = "SidebarRail"
+
+export const SidebarInset = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <main
+    ref={ref}
+    className={cn(
+      "relative flex min-h-screen flex-1 flex-col bg-background transition-all duration-200 ease-in-out",
+      className
+    )}
+    {...props}
+  />
+))
+SidebarInset.displayName = "SidebarInset"
+
+export const SidebarMenuBadge = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "ml-auto flex h-5 min-w-5 items-center justify-center rounded-md px-1.5 text-[10px] font-medium tabular-nums bg-muted text-muted-foreground",
+      className
+    )}
+    {...props}
+  />
+))
+SidebarMenuBadge.displayName = "SidebarMenuBadge"
+
+export const SidebarMenuSub = React.forwardRef<
+  HTMLUListElement,
+  React.HTMLAttributes<HTMLUListElement>
+>(({ className, ...props }, ref) => (
+  <ul
+    ref={ref}
+    className={cn(
+      "mx-3.5 flex min-w-0 translate-x-px flex-col gap-1 border-l border-border/60 px-2.5 py-0.5 list-none",
+      className
+    )}
+    {...props}
+  />
+))
+SidebarMenuSub.displayName = "SidebarMenuSub"
+
+export const SidebarMenuSubItem = React.forwardRef<
+  HTMLLIElement,
+  React.LiHTMLAttributes<HTMLLIElement>
+>(({ className, ...props }, ref) => (
+  <li ref={ref} className={cn("relative", className)} {...props} />
+))
+SidebarMenuSubItem.displayName = "SidebarMenuSubItem"
+
+export const SidebarMenuSubButton = React.forwardRef<
+  HTMLButtonElement,
+  React.ButtonHTMLAttributes<HTMLButtonElement> & { isActive?: boolean }
+>(({ className, isActive, ...props }, ref) => (
+  <button
+    ref={ref}
+    type="button"
+    className={cn(
+      "flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2 text-xs font-normal text-muted-foreground hover:bg-accent/50 hover:text-foreground transition-colors cursor-pointer text-left",
+      isActive && "bg-accent font-medium text-foreground",
+      className
+    )}
+    {...props}
+  />
+))
+SidebarMenuSubButton.displayName = "SidebarMenuSubButton"
+
 // Attach compound subcomponents to Sidebar
+;(Sidebar as any).Provider = SidebarProvider
 ;(Sidebar as any).Header = SidebarHeader
 ;(Sidebar as any).Content = SidebarContent
 ;(Sidebar as any).Footer = SidebarFooter
@@ -429,6 +655,13 @@ SidebarMenuButton.displayName = "SidebarMenuButton"
 ;(Sidebar as any).Menu = SidebarMenu
 ;(Sidebar as any).MenuItem = SidebarMenuItem
 ;(Sidebar as any).MenuButton = SidebarMenuButton
+;(Sidebar as any).Trigger = SidebarTrigger
+;(Sidebar as any).Rail = SidebarRail
+;(Sidebar as any).Inset = SidebarInset
+;(Sidebar as any).MenuBadge = SidebarMenuBadge
+;(Sidebar as any).MenuSub = SidebarMenuSub
+;(Sidebar as any).MenuSubItem = SidebarMenuSubItem
+;(Sidebar as any).MenuSubButton = SidebarMenuSubButton
 
 export default Sidebar
 export { Sidebar }

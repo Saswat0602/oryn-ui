@@ -662,3 +662,12 @@ export const Menu = createIcon(
   'Menu'
 )
 export const MenuIcon = Menu
+
+export const PanelLeft = createIcon(
+  <>
+    <rect width="18" height="18" x="3" y="3" rx="2" />
+    <path d="M9 3v18" />
+  </>,
+  'PanelLeft'
+)
+export const PanelLeftIcon = PanelLeft

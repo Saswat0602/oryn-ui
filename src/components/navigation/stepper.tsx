@@ -113,7 +113,11 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
                     <div className="flex flex-col items-center">
                       <button
                         type="button"
-                        onClick={() => goToStep(idx)}
+                        onClick={(e) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          goToStep(idx)
+                        }}
                         disabled={!clickable}
                         aria-current={status === "current" ? "step" : undefined}
                         aria-label={s.title ? `${s.title} (${status})` : `Step ${idx + 1} (${status})`}
@@ -142,7 +146,7 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
                       {!isLast && (
                         <div
                           className={cn(
-                            "w-[2px] flex-1 my-1.5 min-h-[28px] transition-colors duration-300",
+                            "w-[2px] flex-1 my-1.5 min-h-[32px] transition-colors duration-300",
                             idx < current ? "bg-primary" : "bg-border/80"
                           )}
                         />
@@ -151,9 +155,12 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
 
                     {/* Right Column: Title and Description */}
                     <div
-                      onClick={() => clickable && goToStep(idx)}
+                      onClick={(e) => {
+                        e.preventDefault()
+                        if (clickable) goToStep(idx)
+                      }}
                       className={cn(
-                        "flex flex-col pb-6 text-left",
+                        "flex flex-col pb-7 text-left",
                         clickable && "cursor-pointer select-none",
                         isLast && "pb-0"
                       )}
@@ -184,7 +191,10 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
               return (
                 <React.Fragment key={idx}>
                   <div
-                    onClick={() => goToStep(idx)}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      if (clickable) goToStep(idx)
+                    }}
                     className={cn(
                       "flex items-center gap-2.5",
                       clickable && "cursor-pointer select-none",
@@ -193,6 +203,12 @@ export const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
                   >
                     <button
                       type="button"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        goToStep(idx)
+                      }}
+                      disabled={!clickable}
                       aria-current={status === "current" ? "step" : undefined}
                       aria-label={s.title ? `${s.title} (${status})` : `Step ${idx + 1} (${status})`}
                       className={cn(

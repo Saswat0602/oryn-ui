@@ -100,6 +100,14 @@ export const dataPlaygrounds: Record<string, PlaygroundConfig> = {
         defaultValue: true,
         category: 'appearance',
         description: 'Renders subtle dashed background guide lines'
+      },
+      {
+        name: 'curved',
+        label: 'Smooth Spline Curves',
+        type: 'boolean',
+        defaultValue: true,
+        category: 'appearance',
+        description: 'Cubic monotonic spline vs straight linear segments'
       }
     ],
     render: (props) => {
@@ -366,7 +374,10 @@ export default function RadialChartDemo() {
     title: 'Table',
     componentName: 'Table',
     defaultProps: {
-      striped: true
+      striped: true,
+      hoverable: true,
+      bordered: true,
+      compact: false
     },
     controls: [
       {
@@ -376,12 +387,38 @@ export default function RadialChartDemo() {
         defaultValue: true,
         category: 'appearance',
         description: 'Zebra stripe background on even rows'
+      },
+      {
+        name: 'hoverable',
+        label: 'Hover Row Highlights',
+        type: 'boolean',
+        defaultValue: true,
+        category: 'appearance',
+        description: 'Highlights row background on hover'
+      },
+      {
+        name: 'bordered',
+        label: 'Border Outline',
+        type: 'boolean',
+        defaultValue: true,
+        category: 'appearance',
+        description: 'Wraps table with boundary borders'
+      },
+      {
+        name: 'compact',
+        label: 'Compact Density',
+        type: 'boolean',
+        defaultValue: false,
+        category: 'size',
+        description: 'Condenses cell vertical padding'
       }
     ],
     render: (props) => (
-      <div className="w-full max-w-md rounded-xl border border-border/60 overflow-hidden shadow-xs">
+      <div className={`w-full max-w-md rounded-xl overflow-hidden shadow-xs ${props.bordered ? 'border border-border/80' : ''}`}>
         <Table
           striped={props.striped}
+          hoverable={props.hoverable}
+          compact={props.compact}
           columns={[
             { key: 'region', header: 'Region' },
             { key: 'latency', header: 'Latency (p95)' },
@@ -413,6 +450,8 @@ export default function TableDemo() {
   return (
     <Table
       striped={${props.striped}}
+      hoverable={${props.hoverable}}
+      compact={${props.compact}}
       columns={columns}
       data={data}
     />
@@ -426,7 +465,9 @@ export default function TableDemo() {
     componentName: 'DataTable',
     defaultProps: {
       pagination: true,
-      searchable: true
+      searchable: true,
+      striped: false,
+      hoverable: true
     },
     controls: [
       {
@@ -444,6 +485,22 @@ export default function TableDemo() {
         defaultValue: true,
         category: 'options',
         description: 'Filter input above table'
+      },
+      {
+        name: 'striped',
+        label: 'Zebra Striping',
+        type: 'boolean',
+        defaultValue: false,
+        category: 'appearance',
+        description: 'Alternating row background colors'
+      },
+      {
+        name: 'hoverable',
+        label: 'Row Hover Highlight',
+        type: 'boolean',
+        defaultValue: true,
+        category: 'appearance',
+        description: 'Highlights hovered row'
       }
     ],
     render: (props) => (
@@ -451,6 +508,8 @@ export default function TableDemo() {
         <DataTable
           pagination={props.pagination}
           searchable={props.searchable}
+          striped={props.striped}
+          hoverable={props.hoverable}
           columns={[
             { key: 'deployment', header: 'Deployment' },
             { key: 'environment', header: 'Env' },
@@ -483,6 +542,8 @@ export default function DataTableDemo() {
     <DataTable
       pagination={${props.pagination}}
       searchable={${props.searchable}}
+      striped={${props.striped}}
+      hoverable={${props.hoverable}}
       columns={columns}
       data={data}
     />

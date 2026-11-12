@@ -11,6 +11,7 @@ export interface ResizableProps extends React.HTMLAttributes<HTMLDivElement> {
   maxSize?: number
   defaultSize?: number
   unit?: '%' | 'px'
+  withHandle?: boolean
   onResize?: (size: number) => void
 }
 
@@ -21,6 +22,7 @@ export interface ResizableHandleProps extends React.HTMLAttributes<HTMLDivElemen
   disabled?: boolean
   isDragging?: boolean
   onMouseDown?: (e: React.MouseEvent) => void
+  onTouchStart?: (e: React.TouchEvent) => void
 }
 
 export interface ResizablePanelProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -55,11 +57,12 @@ export const ResizableHandle = forwardRef<HTMLDivElement, ResizableHandleProps>(
   (
     {
       direction = 'horizontal',
-      withHandle = true,
+      withHandle = false,
       disabled = false,
       isDragging = false,
       className,
       onMouseDown,
+      onTouchStart,
       onKeyDown,
       ...props
     },
@@ -75,14 +78,15 @@ export const ResizableHandle = forwardRef<HTMLDivElement, ResizableHandleProps>(
         aria-valuemin={props['aria-valuemin'] !== undefined ? props['aria-valuemin'] : 0}
         aria-valuemax={props['aria-valuemax'] !== undefined ? props['aria-valuemax'] : 100}
         onMouseDown={disabled ? undefined : onMouseDown}
+        onTouchStart={disabled ? undefined : onTouchStart}
         onKeyDown={onKeyDown}
         className={cn(
-          'relative flex items-center justify-center bg-border/80 transition-all select-none shrink-0 group',
+          'relative flex items-center justify-center bg-border transition-colors select-none shrink-0 group',
           direction === 'horizontal'
-            ? 'w-2 hover:w-2.5 cursor-col-resize hover:bg-primary/60'
-            : 'h-2 hover:h-2.5 cursor-row-resize hover:bg-primary/60',
+            ? 'w-px hover:w-1.5 cursor-col-resize after:absolute after:inset-y-0 after:left-1/2 after:w-4 after:-translate-x-1/2 hover:bg-primary/70'
+            : 'h-px hover:h-1.5 cursor-row-resize after:absolute after:inset-x-0 after:top-1/2 after:h-4 after:-translate-y-1/2 hover:bg-primary/70',
           isDragging && 'bg-primary ring-2 ring-primary/30 z-20',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:bg-primary',
+          'focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:bg-primary',
           disabled && 'cursor-default opacity-40 pointer-events-none',
           className
         )}
@@ -91,11 +95,40 @@ export const ResizableHandle = forwardRef<HTMLDivElement, ResizableHandleProps>(
         {withHandle && (
           <div
             className={cn(
-              'z-10 flex items-center justify-center rounded-full bg-muted-foreground/40 group-hover:bg-primary-foreground group-hover:scale-110 transition-all shadow-xs',
-              direction === 'horizontal' ? 'h-7 w-1.5' : 'h-1.5 w-7',
-              isDragging && 'bg-primary-foreground scale-125'
+              'z-10 flex items-center justify-center rounded-xs border border-border bg-card shadow-xs group-hover:border-primary/50 group-hover:bg-accent transition-all',
+              direction === 'horizontal' ? 'h-4 w-3' : 'h-3 w-4',
+              isDragging && 'border-primary bg-primary text-primary-foreground'
             )}
-          />
+          >
+            <svg
+              className={cn(
+                'h-2.5 w-2.5 text-muted-foreground group-hover:text-foreground',
+                isDragging && 'text-primary-foreground'
+              )}
+              viewBox="0 0 16 16"
+              fill="currentColor"
+            >
+              {direction === 'horizontal' ? (
+                <>
+                  <circle cx="5" cy="4" r="1.2" />
+                  <circle cx="11" cy="4" r="1.2" />
+                  <circle cx="5" cy="8" r="1.2" />
+                  <circle cx="11" cy="8" r="1.2" />
+                  <circle cx="5" cy="12" r="1.2" />
+                  <circle cx="11" cy="12" r="1.2" />
+                </>
+              ) : (
+                <>
+                  <circle cx="4" cy="5" r="1.2" />
+                  <circle cx="8" cy="5" r="1.2" />
+                  <circle cx="12" cy="5" r="1.2" />
+                  <circle cx="4" cy="11" r="1.2" />
+                  <circle cx="8" cy="11" r="1.2" />
+                  <circle cx="12" cy="11" r="1.2" />
+                </>
+              )}
+            </svg>
+          </div>
         )}
       </div>
     )
@@ -113,6 +146,7 @@ const ResizableRoot = forwardRef<HTMLDivElement, ResizableProps>(
       maxSize: maxSizeProp,
       defaultSize = 50,
       unit: unitProp,
+      withHandle = true,
       onResize,
       ...props
     },
@@ -149,10 +183,45 @@ const ResizableRoot = forwardRef<HTMLDivElement, ResizableProps>(
       [direction, size]
     )
 
+    const handleTouchStart = useCallback(
+      (e: React.TouchEvent) => {
+        if (!e.touches[0]) return
+        setIsDragging(true)
+        startPos.current = direction === 'horizontal' ? e.touches[0].clientX : e.touches[0].clientY
+        startSize.current = size
+
+        if (containerRef.current) {
+          const rect = containerRef.current.getBoundingClientRect()
+          containerDim.current = direction === 'horizontal' ? rect.width : rect.height
+        }
+      },
+      [direction, size]
+    )
+
     const handleMouseMove = useCallback(
       (e: MouseEvent) => {
         if (!isDragging) return
         const currentPos = direction === 'horizontal' ? e.clientX : e.clientY
+        const deltaPx = currentPos - startPos.current
+
+        let nextSize = size
+        if (isPercentage) {
+          const deltaPct = containerDim.current > 0 ? (deltaPx / containerDim.current) * 100 : 0
+          nextSize = Math.max(minSize, Math.min(maxSize, startSize.current + deltaPct))
+        } else {
+          nextSize = Math.max(minSize, Math.min(maxSize, startSize.current + deltaPx))
+        }
+
+        setSize(Math.round(nextSize * 10) / 10)
+        onResize?.(nextSize)
+      },
+      [isDragging, direction, isPercentage, minSize, maxSize, size, onResize]
+    )
+
+    const handleTouchMove = useCallback(
+      (e: TouchEvent) => {
+        if (!isDragging || !e.touches[0]) return
+        const currentPos = direction === 'horizontal' ? e.touches[0].clientX : e.touches[0].clientY
         const deltaPx = currentPos - startPos.current
 
         let nextSize = size
@@ -177,16 +246,20 @@ const ResizableRoot = forwardRef<HTMLDivElement, ResizableProps>(
       if (isDragging) {
         document.addEventListener('mousemove', handleMouseMove)
         document.addEventListener('mouseup', handleMouseUp)
+        document.addEventListener('touchmove', handleTouchMove, { passive: false })
+        document.addEventListener('touchend', handleMouseUp)
         document.body.style.userSelect = 'none'
         document.body.style.cursor = direction === 'horizontal' ? 'col-resize' : 'row-resize'
         return () => {
           document.removeEventListener('mousemove', handleMouseMove)
           document.removeEventListener('mouseup', handleMouseUp)
+          document.removeEventListener('touchmove', handleTouchMove)
+          document.removeEventListener('touchend', handleMouseUp)
           document.body.style.userSelect = ''
           document.body.style.cursor = ''
         }
       }
-    }, [isDragging, handleMouseMove, handleMouseUp, direction])
+    }, [isDragging, handleMouseMove, handleTouchMove, handleMouseUp, direction])
 
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -261,6 +334,7 @@ const ResizableRoot = forwardRef<HTMLDivElement, ResizableProps>(
               'aria-valuemin': Math.round(minSize),
               'aria-valuemax': maxSize !== Infinity ? Math.round(maxSize) : 100,
               onMouseDown: handleMouseDown,
+              onTouchStart: handleTouchStart,
               onKeyDown: handleKeyDown,
             })
           }
@@ -293,10 +367,12 @@ const ResizableRoot = forwardRef<HTMLDivElement, ResizableProps>(
                   <ResizableHandle
                     direction={direction}
                     isDragging={isDragging}
+                    withHandle={withHandle}
                     aria-valuenow={Math.round(size)}
                     aria-valuemin={Math.round(minSize)}
                     aria-valuemax={maxSize !== Infinity ? Math.round(maxSize) : 100}
                     onMouseDown={handleMouseDown}
+                    onTouchStart={handleTouchStart}
                     onKeyDown={handleKeyDown}
                   />
                 )}
@@ -320,5 +396,7 @@ export type ResizableComponent = typeof ResizableRoot & {
 export const Resizable = ResizableRoot as ResizableComponent
 Resizable.Panel = ResizablePanel
 Resizable.Handle = ResizableHandle
+
+export const ResizablePanelGroup = ResizableRoot
 
 export default Resizable

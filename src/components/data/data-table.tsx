@@ -48,6 +48,8 @@ export interface DataTableProps<T> {
   pagination?: boolean
   pageSize?: number
   pageSizeOptions?: number[]
+  striped?: boolean
+  hoverable?: boolean
   virtualized?: boolean
   rowHeight?: number
   loading?: boolean
@@ -103,6 +105,8 @@ export function DataTable<T extends Record<string, any>>({
   pagination = true,
   pageSize: initialPageSize = 10,
   pageSizeOptions = [10, 20, 50, 100],
+  striped = false,
+  hoverable = true,
   virtualized = false,
   rowHeight = 48,
   loading = false,

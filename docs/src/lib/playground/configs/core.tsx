@@ -502,21 +502,31 @@ export const corePlaygrounds: Record<string, PlaygroundConfig> = {
     componentName: 'Progress',
     defaultProps: {
       value: 65,
+      indeterminate: false,
       size: 'md',
       variant: 'default',
-      showLabel: true
+      showLabel: true,
+      label: 'Deploying Edge Worker'
     },
     controls: [
       {
         name: 'value',
-        label: 'Progress Value',
+        label: 'Progress Value (%)',
         type: 'slider',
         defaultValue: 65,
         min: 0,
         max: 100,
         step: 5,
-        category: 'content',
+        category: 'size',
         description: 'Completion percentage between 0 and 100'
+      },
+      {
+        name: 'indeterminate',
+        label: 'Indeterminate Loading',
+        type: 'boolean',
+        defaultValue: false,
+        category: 'state',
+        description: 'Infinite animated shimmer pulse (for pending operations)'
       },
       {
         name: 'variant',
@@ -548,18 +558,41 @@ export const corePlaygrounds: Record<string, PlaygroundConfig> = {
         defaultValue: true,
         category: 'options',
         description: 'Displays numeric label'
+      },
+      {
+        name: 'label',
+        label: 'Progress Label',
+        type: 'text',
+        defaultValue: 'Deploying Edge Worker',
+        category: 'content',
+        description: 'Optional task description label above bar'
       }
     ],
     render: (props) => (
       <div className="w-full max-w-sm space-y-2">
         <Progress
-          value={props.value}
+          value={props.indeterminate ? undefined : props.value}
+          indeterminate={props.indeterminate}
           size={props.size}
           variant={props.variant}
           showLabel={props.showLabel}
+          label={props.label}
         />
       </div>
-    )
+    ),
+    generateCode: (props) => `import { Progress } from 'oryn-ui'
+
+export default function ProgressDemo() {
+  return (
+    <Progress
+      value={${props.indeterminate ? 'undefined' : props.value}}
+      ${props.indeterminate ? 'indeterminate={true}\n      ' : ''}variant="${props.variant}"
+      size="${props.size}"
+      showLabel={${props.showLabel}}
+      label="${props.label}"
+    />
+  )
+}`
   },
 
   radio: {

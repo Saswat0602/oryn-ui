@@ -113,7 +113,8 @@ export const overlayPlaygrounds: Record<string, PlaygroundConfig> = {
     componentName: 'Dialog',
     defaultProps: {
       title: 'Edit Profile Credentials',
-      description: 'Make changes to your authentication profile here.'
+      description: 'Make changes to your authentication profile here.',
+      showCloseButton: true
     },
     controls: [
       {
@@ -131,6 +132,14 @@ export const overlayPlaygrounds: Record<string, PlaygroundConfig> = {
         defaultValue: 'Make changes to your authentication profile here.',
         category: 'content',
         description: 'Header subtitle guidance'
+      },
+      {
+        name: 'showCloseButton',
+        label: 'Show Close Button',
+        type: 'boolean',
+        defaultValue: true,
+        category: 'appearance',
+        description: 'Displays top-right dismiss button'
       }
     ],
     render: (props) => (
@@ -138,7 +147,7 @@ export const overlayPlaygrounds: Record<string, PlaygroundConfig> = {
         <DialogTrigger asChild>
           <Button variant="outline">Open Dialog</Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent showCloseButton={props.showCloseButton}>
           <DialogHeader>
             <DialogTitle>{props.title}</DialogTitle>
             <DialogDescription>{props.description}</DialogDescription>

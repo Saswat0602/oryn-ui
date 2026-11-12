@@ -28,15 +28,22 @@ import { PlaygroundConfig } from '@/components/playground/types'
 import { BarChart, Shield, Zap, Sparkles, BookOpen, Layers } from 'lucide-react'
 
 function InteractiveStepperDemo(props: any) {
-  const [activeStep, setActiveStep] = useState(props.activeStep ?? 1)
+  const [internalStep, setInternalStep] = useState(props.activeStep ?? 1)
+  const [prevPropStep, setPrevPropStep] = useState(props.activeStep)
+
+  if (props.activeStep !== prevPropStep) {
+    setPrevPropStep(props.activeStep)
+    setInternalStep(props.activeStep ?? 1)
+  }
+
   return (
-    <div className="w-full max-w-md">
+    <div className={`w-full ${props.orientation === 'vertical' ? 'max-w-xs' : 'max-w-md'}`}>
       <Stepper
         orientation={props.orientation}
         clickable={props.clickable}
-        activeStep={activeStep}
+        activeStep={internalStep}
         onStepChange={(s) => {
-          setActiveStep(s)
+          setInternalStep(s)
           props.onStepChange?.(s)
         }}
         steps={[
@@ -480,25 +487,98 @@ export default function StepperDemo() {
     slug: 'timeline',
     title: 'Timeline',
     componentName: 'Timeline',
-    defaultProps: {},
-    controls: [],
-    render: () => (
-      <div className="w-full max-w-sm">
-        <Timeline
-          items={[
-            { id: '1', status: 'completed', title: 'Commit pushed to master', description: 'Triggered by @saswat0602' },
-            { id: '2', status: 'completed', title: 'CI pipeline passed', description: '76 smoke tests verified' },
-            { id: '3', status: 'current', title: 'Deploying to Edge clusters', description: 'Provisioning iad1 and sfo1' }
-          ]}
-        />
-      </div>
-    ),
-    generateCode: () => `import { Timeline } from 'oryn-ui'
+    defaultProps: {
+      completedCount: 2,
+      showTime: true,
+      hasError: false
+    },
+    controls: [
+      {
+        name: 'completedCount',
+        label: 'Completed Steps',
+        type: 'slider',
+        defaultValue: 2,
+        min: 0,
+        max: 3,
+        step: 1,
+        category: 'state',
+        description: 'Number of successfully finished timeline events'
+      },
+      {
+        name: 'showTime',
+        label: 'Show Timestamps',
+        type: 'boolean',
+        defaultValue: true,
+        category: 'appearance',
+        description: 'Displays relative time badges on event headers'
+      },
+      {
+        name: 'hasError',
+        label: 'Error State',
+        type: 'boolean',
+        defaultValue: false,
+        category: 'state',
+        description: 'Flags active event as failed/investigating'
+      }
+    ],
+    render: (props) => {
+      const getStatus = (idx: number) => {
+        if (idx < props.completedCount) return 'completed' as const
+        if (idx === props.completedCount) return props.hasError ? ('error' as const) : ('current' as const)
+        return 'upcoming' as const
+      }
+
+      const items = [
+        {
+          id: '1',
+          status: getStatus(0),
+          title: 'Commit pushed to master',
+          description: 'Triggered by @saswat0602 (merge pull request #42)',
+          time: props.showTime ? '2m ago' : undefined
+        },
+        {
+          id: '2',
+          status: getStatus(1),
+          title: 'CI pipeline verification',
+          description: '77 smoke and unit tests verified with 0 warnings',
+          time: props.showTime ? '1m ago' : undefined
+        },
+        {
+          id: '3',
+          status: getStatus(2),
+          title: props.hasError ? 'Deployment stalled (timeout)' : 'Deploying to Edge clusters',
+          description: props.hasError ? 'Health check failed on cluster iad1' : 'Provisioning global PoP endpoints across 32 regions',
+          time: props.showTime ? 'Just now' : undefined
+        }
+      ]
+
+      return (
+        <div className="w-full max-w-sm p-2">
+          <Timeline items={items} />
+        </div>
+      )
+    },
+    generateCode: (props) => `import { Timeline } from 'oryn-ui'
 
 const items = [
-  { id: '1', status: 'completed' as const, title: 'Commit pushed to master', description: 'Triggered by @saswat0602' },
-  { id: '2', status: 'completed' as const, title: 'CI pipeline passed', description: '76 smoke tests verified' },
-  { id: '3', status: 'current' as const, title: 'Deploying to Edge clusters', description: 'Provisioning iad1 and sfo1' }
+  { 
+    id: '1', 
+    status: 'completed', 
+    title: 'Commit pushed to master', 
+    description: 'Triggered by @saswat0602'${props.showTime ? ',\n    time: "2m ago"' : ''}
+  },
+  { 
+    id: '2', 
+    status: '${props.completedCount >= 2 ? 'completed' : 'current'}', 
+    title: 'CI pipeline passed', 
+    description: '77 smoke tests verified'${props.showTime ? ',\n    time: "1m ago"' : ''}
+  },
+  { 
+    id: '3', 
+    status: '${props.hasError ? 'error' : props.completedCount >= 3 ? 'completed' : 'current'}', 
+    title: '${props.hasError ? 'Deployment stalled' : 'Deploying to Edge clusters'}', 
+    description: 'Provisioning iad1 and sfo1'${props.showTime ? ',\n    time: "Just now"' : ''}
+  }
 ]
 
 export default function TimelineDemo() {
@@ -515,7 +595,8 @@ export default function TimelineDemo() {
     title: 'TreeView',
     componentName: 'TreeView',
     defaultProps: {
-      defaultExpanded: true
+      defaultExpanded: true,
+      showFileCount: true
     },
     controls: [
       {
@@ -525,10 +606,22 @@ export default function TimelineDemo() {
         defaultValue: true,
         category: 'options',
         description: 'Auto-expands root directories on load'
+      },
+      {
+        name: 'showFileCount',
+        label: 'Display Item Badges',
+        type: 'boolean',
+        defaultValue: true,
+        category: 'appearance',
+        description: 'Shows folder children counter chips'
       }
     ],
     render: (props, context) => (
-      <div className="w-full max-w-xs p-3 rounded-xl border border-border/60 bg-card text-xs">
+      <div className="w-full max-w-xs p-3.5 rounded-xl border border-border/80 bg-card text-xs shadow-xs">
+        <div className="flex items-center justify-between pb-2 mb-2 border-b border-border/50 text-[11px] font-semibold text-muted-foreground">
+          <span>Project Explorer</span>
+          {props.showFileCount && <span className="font-mono text-primary text-[10px]">5 folders</span>}
+        </div>
         <TreeView
           data={[
             {
