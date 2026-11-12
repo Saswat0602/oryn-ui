@@ -7,6 +7,13 @@ import { useControllableState } from '../../lib/use-controllable-state'
 
 export type CheckedState = boolean | 'indeterminate'
 
+export interface CheckboxChangeEvent {
+  target: { checked: boolean; value: string }
+  currentTarget: { checked: boolean }
+  preventDefault: () => void
+  stopPropagation: () => void
+}
+
 export interface CheckboxProps
   extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'checked' | 'defaultChecked' | 'onChange'> {
   label?: string
@@ -19,7 +26,7 @@ export interface CheckboxProps
   checked?: CheckedState
   defaultChecked?: CheckedState
   onCheckedChange?: (checked: CheckedState) => void
-  onChange?: (e: any) => void
+  onChange?: (e: CheckboxChangeEvent) => void
 }
 
 export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
@@ -161,12 +168,6 @@ export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
           {label && (
             <label
               htmlFor={checkboxId}
-              onClick={() => {
-                if (!disabled) {
-                  const nextState = isIndeterminate ? true : !isChecked
-                  setChecked(nextState)
-                }
-              }}
               className={cn(
                 'text-sm font-medium leading-none cursor-pointer text-foreground',
                 disabled && 'cursor-not-allowed opacity-70'
@@ -179,7 +180,7 @@ export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
             <p
               className={cn(
                 'text-xs text-muted-foreground',
-                error && 'text-red-500 dark:text-red-400'
+                error && 'text-destructive'
               )}
             >
               {description}

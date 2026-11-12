@@ -92,10 +92,10 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
 
   it('renders Checkbox, Radio, and Switch controls', async () => {
     let checked = false
-    const { container, getByRole, getByLabelText } = render(
+    const { container, getByRole, getByLabelText, getByText } = render(
       <StrictMode>
         <Checkbox 
-          aria-label="Agree to terms" 
+          label="Agree to terms"
           onChange={(e) => { checked = e.target.checked }} 
         />
         <Switch 
@@ -111,6 +111,10 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
     const checkbox = getByLabelText('Agree to terms')
     fireEvent.click(checkbox)
     expect(checked).toBe(true)
+
+    const labelEl = getByText('Agree to terms')
+    fireEvent.click(labelEl)
+    expect(checked).toBe(false)
 
     const switchEl = getByRole('switch')
     expect(switchEl).toBeDefined()

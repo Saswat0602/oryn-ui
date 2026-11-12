@@ -206,3 +206,9 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **DG-03 (Major)**: Implemented `useDialog()` and `useDialogContext()` to safely read active state and `onOpenChange` handler from `DialogContext`.
   - **DG-06 (Nit)**: Cleaned typed ref forwarding without unsafe `(ref as any)` casts.
   - Added unit, dialog `aria-labelledby` validation, and axe tests in `tests/smoke/overlay.test.tsx`.
+
+- **`Checkbox`** (`src/components/core/checkbox.tsx`):
+  - **CB-01 (Major)**: Replaced hardcoded `text-red-500 dark:text-red-400` with semantic token `text-destructive`.
+  - **CB-02 (Major)**: Removed redundant `onClick` handler on `<label htmlFor={checkboxId}>`, eliminating double-toggle regressions on label clicks.
+  - **CB-03 (Major)**: Added typed `CheckboxChangeEvent` interface for `onChange` callback.
+  - Added unit, label single-toggle regression, and axe tests in `tests/smoke/core.test.tsx`.
