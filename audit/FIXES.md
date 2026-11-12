@@ -373,3 +373,7 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **TLT-03 (Major)**: Connected `useTooltip()` hook to `TooltipContext` so it returns live `open` and `setOpen` values.
   - **TLT-05 (Nit)**: Strongly typed timer refs with `ReturnType<typeof setTimeout> | null`.
   - Added unit tests in `tests/smoke/layout.test.tsx` asserting Escape dismissal and hoverable content.
+
+- **`Chart`** (`src/components/data/chart.tsx`):
+  - **CHT-01 (Major)**: Added `role="img"` and descriptive `aria-label` across all vector chart SVG elements (`AreaChart`, `BarChart`, `LineChart`, `PieChart`, and `RadialBarChart`).
+  - Added unit test in `tests/smoke/data.test.tsx` asserting `role="img"` and `aria-label` on SVG chart graphics.

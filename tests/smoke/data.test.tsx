@@ -116,8 +116,8 @@ describe('Data Display Domain Smoke & Accessibility Suite', () => {
     expect(results.violations).toEqual([])
   })
 
-  it('renders Chart component', async () => {
-    const { container } = render(
+  it('renders Chart component with accessible svg role and label', async () => {
+    const { container, getByRole } = render(
       <StrictMode>
         <Chart
           data={[
@@ -128,6 +128,10 @@ describe('Data Display Domain Smoke & Accessibility Suite', () => {
       </StrictMode>
     )
     expect(container.firstChild).toBeDefined()
+
+    const svg = getByRole('img')
+    expect(svg).toBeDefined()
+    expect(svg.getAttribute('aria-label')).toContain('Area chart visualization')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

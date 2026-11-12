@@ -416,6 +416,8 @@ export const AreaChart = React.forwardRef<HTMLDivElement, AreaChartProps>(
     return (
       <div ref={ref} className={cn('relative w-full overflow-hidden select-none', className)} {...props}>
         <svg
+          role="img"
+          aria-label={props['aria-label'] || 'Area chart visualization'}
           viewBox={`0 0 ${width} ${height}`}
           className="w-full h-auto overflow-visible"
           onMouseMove={handleMouseMove}
@@ -640,6 +642,8 @@ export const BarChart = React.forwardRef<HTMLDivElement, BarChartProps>(
     return (
       <div ref={ref} className={cn('relative w-full overflow-hidden select-none', className)} {...props}>
         <svg
+          role="img"
+          aria-label={props['aria-label'] || 'Bar chart visualization'}
           viewBox={`0 0 ${width} ${height}`}
           className="w-full h-auto overflow-visible"
           onMouseLeave={() => {
@@ -863,6 +867,8 @@ export const LineChart = React.forwardRef<HTMLDivElement, LineChartProps>(
     return (
       <div ref={ref} className={cn('relative w-full overflow-hidden select-none', className)} {...props}>
         <svg
+          role="img"
+          aria-label={props['aria-label'] || 'Line chart visualization'}
           viewBox={`0 0 ${width} ${height}`}
           className="w-full h-auto overflow-visible"
           onMouseMove={(e) => {
@@ -1047,6 +1053,8 @@ export const PieChart = React.forwardRef<HTMLDivElement, PieChartProps>(
     return (
       <div ref={ref} className={cn('relative w-full flex flex-col items-center justify-center', className)} {...props}>
         <svg
+          role="img"
+          aria-label={props['aria-label'] || 'Pie chart visualization'}
           viewBox={`0 0 ${width} ${height}`}
           className="w-full max-w-sm h-auto overflow-visible"
           onMouseLeave={() => {
@@ -1176,7 +1184,12 @@ export const RadialBarChart = React.forwardRef<HTMLDivElement, RadialBarChartPro
 
     return (
       <div ref={ref} className={cn('relative flex flex-col items-center justify-center w-full', className)} {...props}>
-        <svg viewBox={`0 0 ${size} ${size}`} className="w-full max-w-xs h-auto overflow-visible">
+        <svg
+          role="img"
+          aria-label={props['aria-label'] || 'Radial bar chart visualization'}
+          viewBox={`0 0 ${size} ${size}`}
+          className="w-full max-w-xs h-auto overflow-visible"
+        >
           {data.map((item, index) => {
             const radius = baseRadius - index * ringSpacing
             const circumference = 2 * Math.PI * radius
