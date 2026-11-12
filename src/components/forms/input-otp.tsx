@@ -24,8 +24,9 @@ function useInputOTPContext() {
 }
 
 export interface InputOTPProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange"> {
-  value: string
-  onChange: (value: string) => void
+  value?: string
+  defaultValue?: string
+  onChange?: (value: string) => void
   length?: number
   maxLength?: number
   disabled?: boolean
@@ -33,6 +34,7 @@ export interface InputOTPProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   placeholder?: string
   type?: "number" | "text"
   autoFocus?: boolean
+  name?: string
   children?: React.ReactNode
 }
 
@@ -113,6 +115,7 @@ export const InputOTPSlot = React.forwardRef<HTMLDivElement, InputOTPSlotProps>(
     return (
       <div
         ref={ref}
+        aria-hidden="true"
         className={cn(
           "relative flex h-10 w-10 items-center justify-center border border-input bg-background text-sm font-medium transition-all first:rounded-l-md last:rounded-r-md",
           isActive && "z-10 ring-2 ring-ring ring-offset-background border-primary",
@@ -145,7 +148,8 @@ interface CompoundedInputOTP extends React.ForwardRefExoticComponent<InputOTPPro
 export const InputOTP = React.forwardRef<HTMLDivElement, InputOTPProps>(
   (
     {
-      value = "",
+      value: controlledValue,
+      defaultValue = "",
       onChange,
       length: lengthProp,
       maxLength: maxLengthProp,
@@ -154,12 +158,18 @@ export const InputOTP = React.forwardRef<HTMLDivElement, InputOTPProps>(
       placeholder,
       type = "text",
       autoFocus = false,
+      id,
+      name,
       className,
       children,
       ...props
     },
     ref
   ) => {
+    const [uncontrolledValue, setUncontrolledValue] = React.useState(defaultValue)
+    const isControlled = controlledValue !== undefined
+    const value = isControlled ? controlledValue : uncontrolledValue
+
     const totalLength = maxLengthProp ?? lengthProp ?? 6
     const inputRef = React.useRef<HTMLInputElement | null>(null)
     const [isFocused, setIsFocused] = React.useState(false)
@@ -172,7 +182,10 @@ export const InputOTP = React.forwardRef<HTMLDivElement, InputOTPProps>(
         nextValue = nextValue.replace(/\D/g, "")
       }
       nextValue = nextValue.slice(0, totalLength)
-      onChange(nextValue)
+      if (!isControlled) {
+        setUncontrolledValue(nextValue)
+      }
+      onChange?.(nextValue)
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -186,6 +199,13 @@ export const InputOTP = React.forwardRef<HTMLDivElement, InputOTPProps>(
       if (disabled) return
       inputRef.current?.focus()
     }
+
+    const {
+      "aria-label": ariaLabel,
+      "aria-describedby": ariaDescribedby,
+      "aria-invalid": ariaInvalid,
+      ...divProps
+    } = props
 
     return (
       <InputOTPContext.Provider
@@ -207,11 +227,13 @@ export const InputOTP = React.forwardRef<HTMLDivElement, InputOTPProps>(
             disabled && "cursor-not-allowed opacity-50",
             className
           )}
-          {...props}
+          {...divProps}
         >
           {/* Real accessible hidden input covering full area */}
           <input
             ref={inputRef}
+            id={id}
+            name={name}
             type={type === "number" ? "tel" : "text"}
             inputMode={type === "number" ? "numeric" : "text"}
             pattern={type === "number" ? "[0-9]*" : undefined}
@@ -225,7 +247,9 @@ export const InputOTP = React.forwardRef<HTMLDivElement, InputOTPProps>(
             disabled={disabled}
             autoFocus={autoFocus}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer pointer-events-auto"
-            aria-label="One-time password code"
+            aria-label={ariaLabel || "One-time password code"}
+            aria-describedby={ariaDescribedby}
+            aria-invalid={ariaInvalid}
           />
 
           {children ? (

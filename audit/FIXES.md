@@ -394,3 +394,9 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **IG-01 (Major)**: Wired `size` prop ("sm" | "default" | "lg") via `InputGroupContext` so padding and font size adjust automatically on `InputGroupAddon`.
   - **IG-02 (Major)**: Added semantic default `role="group"` on `InputGroup` container to establish accessible control grouping for screen readers.
   - Added unit test in `tests/smoke/core.test.tsx` verifying `role="group"` and `data-size` propagation.
+
+- **`InputOTP`** (`src/components/forms/input-otp.tsx`):
+  - **OTP-01 (Major)**: Added support for uncontrolled mode with `defaultValue` and optional `onChange` callback, preventing runtime exceptions when uncontrolled.
+  - **OTP-02 (Major)**: Forwarded `id`, `name`, `aria-describedby`, and `aria-invalid` props directly to the interactive hidden `<input>` element so Form validation and helper text link accurately.
+  - **OTP-04 (Minor)**: Added `aria-hidden="true"` to each `InputOTPSlot` container div to prevent screen readers from announcing duplicate visual slot elements.
+  - Added unit test in `tests/smoke/forms.test.tsx` asserting uncontrolled state, value change, and `id`/`aria-describedby` forwarding.

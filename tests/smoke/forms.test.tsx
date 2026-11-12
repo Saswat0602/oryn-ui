@@ -195,7 +195,13 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
     const handleValueChange = vi.fn()
     const { container, getByLabelText } = render(
       <StrictMode>
-        <InputOTP length={6} value="123456" onChange={() => {}} aria-label="Verification OTP" />
+        <InputOTP
+          id="verification-otp"
+          length={6}
+          defaultValue="1234"
+          aria-label="Verification OTP"
+          aria-describedby="otp-help"
+        />
 
         <RadioGroup defaultValue="team" aria-label="Account tier" onValueChange={handleValueChange}>
           <RadioGroupItem value="personal" id="radio-personal" aria-label="Personal" />
@@ -204,6 +210,15 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
         </RadioGroup>
       </StrictMode>
     )
+    const otpInput = getByLabelText('Verification OTP') as HTMLInputElement
+    expect(otpInput).toBeDefined()
+    expect(otpInput.id).toBe('verification-otp')
+    expect(otpInput.getAttribute('aria-describedby')).toBe('otp-help')
+    expect(otpInput.value).toBe('1234')
+
+    fireEvent.change(otpInput, { target: { value: '123456' } })
+    expect(otpInput.value).toBe('123456')
+
     const teamRadio = getByLabelText('Team')
     const enterpriseRadio = getByLabelText('Enterprise')
     expect(teamRadio).toBeDefined()
