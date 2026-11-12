@@ -1,14 +1,16 @@
 "use client"
 
 import * as React from "react"
-import { Calendar as CalendarIcon } from "../../icons"
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "../../icons"
 import { cn } from "../../lib/utils"
-import { componentColors } from "../../lib/colors"
 import { Portal } from "../../primitives/portal"
 
-export interface CalendarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
+export interface CalendarProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'defaultValue'> {
   value?: Date
+  defaultValue?: Date
+  selectedDate?: Date
   onChange?: (date: Date) => void
+  onDateSelect?: (date: Date) => void
   placeholder?: string
   disabled?: boolean
   variant?: "default" | "filled" | "outlined" | "minimal"
@@ -76,7 +78,10 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
   ({ 
     className, 
     value,
+    defaultValue,
+    selectedDate: selectedDateProp,
     onChange,
+    onDateSelect,
     placeholder = "Select date",
     disabled = false,
     variant = "default",
@@ -122,18 +127,30 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
     customDays: _customDays,
     onDateHover: _onDateHover,
     onDateFocus: _onDateFocus,
-    keyboardNavigation: _keyboardNavigation,
+    keyboardNavigation: _keyboardNavigation = true,
     autoFocus: _autoFocus,
     style,
     ...props 
   }, ref) => {
     
+    const isControlled = value !== undefined || selectedDateProp !== undefined
+    const activeControlledDate = value ?? selectedDateProp
+    const [uncontrolledDate, setUncontrolledDate] = React.useState<Date | null>(defaultValue ?? null)
+    const effectiveDate = isControlled ? (activeControlledDate ?? null) : uncontrolledDate
+
     const [isOpen, setIsOpen] = React.useState(false)
-    const [currentDate, setCurrentDate] = React.useState(value || new Date())
-    const [selectedDate, setSelectedDate] = React.useState<Date | null>(value || null)
+    const [currentDate, setCurrentDate] = React.useState<Date>(() => effectiveDate || new Date())
+    const [focusedDay, setFocusedDay] = React.useState<number>(() => (effectiveDate ? effectiveDate.getDate() : 1))
     const [triggerRect, setTriggerRect] = React.useState<DOMRect | null>(null)
+    
     const containerRef = React.useRef<HTMLDivElement>(null)
+    const inputRef = React.useRef<HTMLInputElement>(null)
     const popupRef = React.useRef<HTMLDivElement>(null)
+    const dayButtonsRef = React.useRef<Map<number, HTMLButtonElement>>(new Map())
+
+    const generatedId = React.useId()
+    const dialogId = `calendar-dialog-${generatedId}`
+    const titleId = `calendar-title-${generatedId}`
 
     React.useImperativeHandle(ref, () => containerRef.current!)
 
@@ -147,13 +164,61 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       if (!isOpen) return
       updateTriggerRect()
       const handleScrollOrResize = () => updateTriggerRect()
-      window.addEventListener("scroll", handleScrollOrResize, true)
+      window.addEventListener("scroll", handleScrollOrResize, { passive: true, capture: true })
       window.addEventListener("resize", handleScrollOrResize)
       return () => {
         window.removeEventListener("scroll", handleScrollOrResize, true)
         window.removeEventListener("resize", handleScrollOrResize)
       }
     }, [isOpen, updateTriggerRect])
+
+    // Sync viewed currentDate if effectiveDate changes
+    React.useEffect(() => {
+      if (effectiveDate) {
+        setCurrentDate(effectiveDate)
+        setFocusedDay(effectiveDate.getDate())
+      }
+    }, [effectiveDate])
+
+    // Focus day button on open or focusedDay change
+    React.useEffect(() => {
+      if (isOpen) {
+        const btn = dayButtonsRef.current.get(focusedDay)
+        btn?.focus()
+      }
+    }, [isOpen, focusedDay, currentDate])
+
+    // Handle escape key to close dialog
+    React.useEffect(() => {
+      if (!isOpen) return
+      const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === "Escape") {
+          e.preventDefault()
+          setIsOpen(false)
+          inputRef.current?.focus()
+        }
+      }
+      document.addEventListener("keydown", handleKeyDown)
+      return () => document.removeEventListener("keydown", handleKeyDown)
+    }, [isOpen])
+
+    // Handle click outside
+    React.useEffect(() => {
+      if (!isOpen) return
+      const handleClickOutside = (event: MouseEvent) => {
+        const target = event.target as Node
+        if (
+          containerRef.current?.contains(target) ||
+          popupRef.current?.contains(target)
+        ) {
+          return
+        }
+        setIsOpen(false)
+      }
+
+      document.addEventListener("mousedown", handleClickOutside)
+      return () => document.removeEventListener("mousedown", handleClickOutside)
+    }, [isOpen])
     
     // Size classes
     const sizeClasses = {
@@ -185,20 +250,20 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       switch (variant) {
         case "filled":
           return {
-            backgroundColor: backgroundColor || color || "var(--bg-tertiary)",
-            border: `1px solid ${borderColor || "var(--border-primary)"}`,
+            backgroundColor: backgroundColor || color || "var(--muted, #f4f4f5)",
+            border: `1px solid ${borderColor || "var(--border, #e4e4e7)"}`,
             borderRadius: borderRadius || "8px"
           }
         case "outlined":
           return {
-            backgroundColor: backgroundColor || color || "var(--bg-card)",
-            border: `2px solid ${borderColor || "var(--border-primary)"}`,
+            backgroundColor: backgroundColor || color || "var(--card, #ffffff)",
+            border: `2px solid ${borderColor || "var(--border, #e4e4e7)"}`,
             borderRadius: borderRadius || "8px"
           }
         default:
           return {
-            backgroundColor: backgroundColor || color || "var(--bg-card)",
-            border: `1px solid ${borderColor || "var(--border-primary)"}`,
+            backgroundColor: backgroundColor || color || "var(--card, #ffffff)",
+            border: `1px solid ${borderColor || "var(--border, #e4e4e7)"}`,
             borderRadius: borderRadius || "8px"
           }
       }
@@ -206,35 +271,10 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
     
     // Custom styles
     const customStyles: React.CSSProperties = {
-      color: textColor || "var(--text-primary)",
+      color: textColor || "var(--foreground, #09090b)",
       ...getVariantStyles(),
       ...style
     }
-    
-    // Handle click outside
-    React.useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        const target = event.target as Node
-        if (
-          containerRef.current?.contains(target) ||
-          popupRef.current?.contains(target)
-        ) {
-          return
-        }
-        setIsOpen(false)
-      }
-
-      document.addEventListener("mousedown", handleClickOutside)
-      return () => document.removeEventListener("mousedown", handleClickOutside)
-    }, [])
-    
-    // Update current date when value changes
-    React.useEffect(() => {
-      if (value) {
-        setSelectedDate(value)
-        setCurrentDate(value)
-      }
-    }, [value])
     
     // Format date
     const formatDate = (date: Date | null): string => {
@@ -283,12 +323,18 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       if (minDate && newDate < minDate) return
       if (maxDate && newDate > maxDate) return
       
-      setSelectedDate(newDate)
+      if (!isControlled) {
+        setUncontrolledDate(newDate)
+      }
       if (closeOnSelect) {
         setIsOpen(false)
+        inputRef.current?.focus()
       }
       if (onChange) {
         onChange(newDate)
+      }
+      if (onDateSelect) {
+        onDateSelect(newDate)
       }
     }
     
@@ -302,11 +348,11 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
     }
     
     const isSelected = (day: number): boolean => {
-      if (!selectedDate) return false
+      if (!effectiveDate) return false
       return (
-        day === selectedDate.getDate() &&
-        currentDate.getMonth() === selectedDate.getMonth() &&
-        currentDate.getFullYear() === selectedDate.getFullYear()
+        day === effectiveDate.getDate() &&
+        currentDate.getMonth() === effectiveDate.getMonth() &&
+        currentDate.getFullYear() === effectiveDate.getFullYear()
       )
     }
     
@@ -329,6 +375,73 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       const dayOfWeek = date.getDay()
       return dayOfWeek === 0 || dayOfWeek === 6
     }
+
+    const handleGridKeyDown = (e: React.KeyboardEvent, day: number) => {
+      const daysInMonth = getDaysInMonth(currentDate)
+      switch (e.key) {
+        case "ArrowLeft":
+          e.preventDefault()
+          if (day > 1) {
+            setFocusedDay(day - 1)
+          } else {
+            const prevMonthDays = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate()
+            navigateMonth("prev")
+            setFocusedDay(prevMonthDays)
+          }
+          break
+        case "ArrowRight":
+          e.preventDefault()
+          if (day < daysInMonth) {
+            setFocusedDay(day + 1)
+          } else {
+            navigateMonth("next")
+            setFocusedDay(1)
+          }
+          break
+        case "ArrowUp":
+          e.preventDefault()
+          if (day > 7) {
+            setFocusedDay(day - 7)
+          } else {
+            navigateMonth("prev")
+            const prevMonthDays = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate()
+            setFocusedDay(Math.max(1, prevMonthDays - (7 - day)))
+          }
+          break
+        case "ArrowDown":
+          e.preventDefault()
+          if (day + 7 <= daysInMonth) {
+            setFocusedDay(day + 7)
+          } else {
+            navigateMonth("next")
+            setFocusedDay(Math.min(daysInMonth, (day + 7) - daysInMonth))
+          }
+          break
+        case "Home":
+          e.preventDefault()
+          setFocusedDay(1)
+          break
+        case "End":
+          e.preventDefault()
+          setFocusedDay(daysInMonth)
+          break
+        case "PageUp":
+          e.preventDefault()
+          navigateMonth("prev")
+          break
+        case "PageDown":
+          e.preventDefault()
+          navigateMonth("next")
+          break
+        case "Enter":
+        case " ":
+          e.preventDefault()
+          if (!isDisabled(day)) {
+            handleDateSelect(day)
+          }
+          break
+      }
+    }
     
     // Render calendar days based on design
     const renderCalendarDays = () => {
@@ -338,15 +451,24 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       
       // Add empty cells for days before the first day of the month
       for (let i = 0; i < firstDay; i++) {
-        days.push(<div key={`empty-${i}`} className="h-8" />)
+        days.push(<div key={`empty-${i}`} role="gridcell" aria-hidden="true" className="h-8" />)
       }
       
       // Add days of the month
       for (let day = 1; day <= daysInMonth; day++) {
         const disabled = isDisabled(day)
         const weekend = highlightWeekends && isWeekend(day)
+        const selected = isSelected(day)
+        const today = isToday(day)
+        const dateObj = new Date(currentDate.getFullYear(), currentDate.getMonth(), day)
+        const fullAriaDate = dateObj.toLocaleDateString(locale, {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })
         
-        let dayClasses = "h-8 w-8 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2"
+        let dayClasses = "h-8 w-8 text-sm font-medium transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
         
         // Design-specific styling
         switch (design) {
@@ -367,9 +489,9 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
         }
         
         // State-based styling
-        if (isSelected(day)) {
-          dayClasses += " bg-primary text-primary-foreground focus:ring-ring shadow-xs"
-        } else if (isToday(day)) {
+        if (selected) {
+          dayClasses += " bg-primary text-primary-foreground focus-visible:ring-ring shadow-xs"
+        } else if (today) {
           dayClasses += " bg-accent text-accent-foreground font-semibold"
         } else if (weekend) {
           dayClasses += " text-muted-foreground font-medium"
@@ -384,14 +506,25 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
         }
         
         days.push(
-          <button
-            key={day}
-            onClick={() => !disabled && handleDateSelect(day)}
-            disabled={disabled}
-            className={dayClasses}
-          >
-            {day}
-          </button>
+          <div key={day} role="gridcell" className="flex items-center justify-center">
+            <button
+              ref={(el) => {
+                if (el) dayButtonsRef.current.set(day, el)
+                else dayButtonsRef.current.delete(day)
+              }}
+              type="button"
+              tabIndex={day === focusedDay ? 0 : -1}
+              onClick={() => !disabled && handleDateSelect(day)}
+              onKeyDown={(e) => handleGridKeyDown(e, day)}
+              disabled={disabled}
+              aria-label={fullAriaDate}
+              aria-selected={selected}
+              aria-current={today ? "date" : undefined}
+              className={dayClasses}
+            >
+              {day}
+            </button>
+          </div>
         )
       }
       
@@ -404,9 +537,25 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       "July", "August", "September", "October", "November", "December"
     ]
     
-    const dayNames = firstDayOfWeek === 1 
-      ? ["M", "T", "W", "T", "F", "S", "S"]
-      : ["S", "M", "T", "W", "T", "F", "S"]
+    const dayHeaders = firstDayOfWeek === 1 
+      ? [
+          { key: "mon", short: "Mo", full: "Monday" },
+          { key: "tue", short: "Tu", full: "Tuesday" },
+          { key: "wed", short: "We", full: "Wednesday" },
+          { key: "thu", short: "Th", full: "Thursday" },
+          { key: "fri", short: "Fr", full: "Friday" },
+          { key: "sat", short: "Sa", full: "Saturday" },
+          { key: "sun", short: "Su", full: "Sunday" },
+        ]
+      : [
+          { key: "sun", short: "Su", full: "Sunday" },
+          { key: "mon", short: "Mo", full: "Monday" },
+          { key: "tue", short: "Tu", full: "Tuesday" },
+          { key: "wed", short: "We", full: "Wednesday" },
+          { key: "thu", short: "Th", full: "Thursday" },
+          { key: "fri", short: "Fr", full: "Friday" },
+          { key: "sat", short: "Sa", full: "Saturday" },
+        ]
     
     const shouldFlip = triggerRect
       ? typeof window !== "undefined" && triggerRect.bottom + 360 > window.innerHeight && triggerRect.top > 360
@@ -419,29 +568,37 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
           transform: shouldFlip ? "translateY(-100%)" : undefined,
           left: `${Math.max(16, Math.min(triggerRect.left, typeof window !== "undefined" ? window.innerWidth - 320 : triggerRect.left))}px`,
           zIndex: 70,
-          backgroundColor: backgroundColor || color || "var(--bg-card)",
-          borderColor: borderColor || "var(--border-primary)",
-          color: textColor || "var(--text-primary)"
+          backgroundColor: backgroundColor || color || "var(--popover, var(--card, #ffffff))",
+          borderColor: borderColor || "var(--border, #e4e4e7)",
+          color: textColor || "var(--popover-foreground, var(--foreground, #09090b))"
         }
       : {
-          backgroundColor: backgroundColor || color || "var(--bg-card)",
-          borderColor: borderColor || "var(--border-primary)",
-          color: textColor || "var(--text-primary)"
+          backgroundColor: backgroundColor || color || "var(--popover, var(--card, #ffffff))",
+          borderColor: borderColor || "var(--border, #e4e4e7)",
+          color: textColor || "var(--popover-foreground, var(--foreground, #09090b))"
         }
 
     return (
       <div
         ref={containerRef}
         className={cn("relative", fullWidth && "w-full", className)}
-        role={role || 'region'}
+        role={role || 'group'}
         aria-label={ariaLabel || (props as any)['aria-label'] || 'Calendar'}
         aria-describedby={ariaDescribedBy}
         data-testid={dataTestId || (props as any)['data-testid']}
+        style={customStyles}
+        {...props}
       >
         <div className="relative">
           <input
+            ref={inputRef}
             type="text"
-            value={formatDate(selectedDate)}
+            role="combobox"
+            aria-haspopup="dialog"
+            aria-expanded={isOpen}
+            aria-controls={isOpen ? dialogId : undefined}
+            aria-label={ariaLabel || (props as any)['aria-label'] || 'Choose date'}
+            value={formatDate(effectiveDate)}
             placeholder={placeholder}
             readOnly
             disabled={disabled}
@@ -451,21 +608,33 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
                 setIsOpen(!isOpen)
               }
             }}
+            onKeyDown={(e) => {
+              if (disabled) return
+              if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
+                e.preventDefault()
+                updateTriggerRect()
+                setIsOpen(true)
+              } else if (e.key === "Escape" && isOpen) {
+                e.preventDefault()
+                setIsOpen(false)
+              }
+            }}
             className={cn(
-              "w-full border rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-0",
+              "w-full border rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-0 focus:ring-ring",
               sizeClasses[size],
               disabled && "opacity-50 cursor-not-allowed",
               !disabled && "cursor-pointer"
             )}
             style={{
-              backgroundColor: backgroundColor || color || "var(--bg-card)",
-              borderColor: borderColor || "var(--border-primary)",
-              color: textColor || "var(--text-primary)"
+              backgroundColor: backgroundColor || color || "var(--card, #ffffff)",
+              borderColor: borderColor || "var(--border, #e4e4e7)",
+              color: textColor || "var(--foreground, #09090b)"
             }}
           />
           {showIcon && (
             <span 
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none"
             >
               <CalendarIcon size={16} />
             </span>
@@ -476,6 +645,11 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
           <Portal>
             <div 
               ref={popupRef}
+              id={dialogId}
+              role="dialog"
+              aria-modal="true"
+              aria-label={ariaLabel || "Choose date"}
+              aria-labelledby={titleId}
               style={popupStyle}
               className={cn(
                 "fixed z-[70] rounded-xl shadow-2xl border transition-all duration-200 min-w-[280px] max-w-[calc(100vw-32px)] overflow-y-auto animate-in fade-in-0 zoom-in-95",
@@ -495,18 +669,20 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
               )}>
                 {showMonthNavigation && (
                   <button
+                    type="button"
                     onClick={() => navigateMonth("prev")}
+                    aria-label="Previous month"
                     className={cn(
-                      "p-1 rounded transition-all duration-200 hover:bg-accent hover:text-accent-foreground",
+                      "p-1.5 rounded-md transition-all duration-200 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                       design === "minimal" ? "text-muted-foreground" : "text-foreground"
                     )}
                   >
-                    ←
+                    <ChevronLeft size={16} aria-hidden="true" />
                   </button>
                 )}
                 
                 <div className="text-center">
-                  <h3 className={cn(
+                  <h3 id={titleId} className={cn(
                     "font-semibold text-foreground",
                     design === "modern" ? "text-lg" : "text-sm",
                     design === "card" ? "text-xl" : ""
@@ -517,27 +693,31 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
                   {showYearNavigation && (
                     <div className="flex items-center justify-center mt-1 space-x-2">
                       <button
+                        type="button"
                         onClick={() => {
                           const newDate = new Date(currentDate)
                           newDate.setFullYear(newDate.getFullYear() - 1)
                           setCurrentDate(newDate)
                         }}
-                        className="text-xs text-muted-foreground hover:text-foreground"
+                        aria-label="Previous year"
+                        className="p-1 text-xs text-muted-foreground hover:text-foreground rounded focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                       >
-                        ←
+                        <ChevronLeft size={12} aria-hidden="true" />
                       </button>
                       <span className="text-xs text-muted-foreground">
                         {currentDate.getFullYear()}
                       </span>
                       <button
+                        type="button"
                         onClick={() => {
                           const newDate = new Date(currentDate)
                           newDate.setFullYear(newDate.getFullYear() + 1)
                           setCurrentDate(newDate)
                         }}
-                        className="text-xs text-muted-foreground hover:text-foreground"
+                        aria-label="Next year"
+                        className="p-1 text-xs text-muted-foreground hover:text-foreground rounded focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                       >
-                        →
+                        <ChevronRight size={12} aria-hidden="true" />
                       </button>
                     </div>
                   )}
@@ -545,32 +725,36 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
                 
                 {showMonthNavigation && (
                   <button
+                    type="button"
                     onClick={() => navigateMonth("next")}
+                    aria-label="Next month"
                     className={cn(
-                      "p-1 rounded transition-all duration-200 hover:bg-accent hover:text-accent-foreground",
+                      "p-1.5 rounded-md transition-all duration-200 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                       design === "minimal" ? "text-muted-foreground" : "text-foreground"
                     )}
                   >
-                    →
+                    <ChevronRight size={16} aria-hidden="true" />
                   </button>
                 )}
               </div>
             )}
 
             {/* Day Names */}
-            <div className="grid grid-cols-7 gap-1 mb-2">
-              {dayNames.map((day) => (
+            <div role="row" className="grid grid-cols-7 gap-1 mb-2">
+              {dayHeaders.map((dh) => (
                 <div
-                  key={day}
+                  key={dh.key}
+                  role="columnheader"
+                  aria-label={dh.full}
                   className="h-8 flex items-center justify-center text-xs font-medium text-muted-foreground"
                 >
-                  {day}
+                  <abbr title={dh.full} className="no-underline">{dh.short}</abbr>
                 </div>
               ))}
             </div>
 
             {/* Calendar Grid */}
-            <div className="grid grid-cols-7 gap-1">
+            <div role="grid" aria-labelledby={titleId} className="grid grid-cols-7 gap-1">
               {renderCalendarDays()}
             </div>
             
@@ -579,17 +763,22 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
               <div className="mt-4 pt-3 border-t border-border">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground text-xs">
-                    {selectedDate ? formatDate(selectedDate) : "No date selected"}
+                    {effectiveDate ? formatDate(effectiveDate) : "No date selected"}
                   </span>
                   {showToday && (
                     <button
+                      type="button"
                       onClick={() => {
                         const today = new Date()
-                        setSelectedDate(today)
+                        if (!isControlled) {
+                          setUncontrolledDate(today)
+                        }
                         setCurrentDate(today)
-                        if (onChange) onChange(today)
+                        setFocusedDay(today.getDate())
+                        onChange?.(today)
+                        onDateSelect?.(today)
                       }}
-                      className="text-primary hover:underline font-medium text-xs cursor-pointer"
+                      className="text-primary hover:underline font-medium text-xs cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring rounded"
                     >
                       Today
                     </button>

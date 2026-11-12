@@ -1,7 +1,7 @@
 import React, { StrictMode } from 'react'
 import { render, fireEvent } from '@testing-library/react'
 import { renderToString } from 'react-dom/server'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { axe } from 'vitest-axe'
 
 import { Accordion } from '../../src/components/forms/accordion'
@@ -84,12 +84,13 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
     expect(results.violations).toEqual([])
   })
 
-  it('renders Calendar and DateTimePicker', async () => {
-    const { container } = render(
+  it('renders Calendar and DateTimePicker with full keyboard and dialog accessibility', async () => {
+    const handleSelect = vi.fn()
+    const { container, getByRole } = render(
       <StrictMode>
         <Calendar 
-          selectedDate={new Date(2026, 9, 31)} 
-          onDateSelect={() => {}} 
+          selectedDate={new Date(2026, 9, 15)} 
+          onDateSelect={handleSelect} 
         />
         <DateTimePicker 
           value={new Date(2026, 9, 31, 14, 30)} 
@@ -98,6 +99,34 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
       </StrictMode>
     )
     expect(container.firstChild).toBeDefined()
+
+    const trigger = getByRole('combobox')
+    expect(trigger.getAttribute('aria-haspopup')).toBe('dialog')
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+
+    // Open calendar dialog
+    fireEvent.click(trigger)
+    expect(trigger.getAttribute('aria-expanded')).toBe('true')
+
+    const dialog = document.querySelector('[role="dialog"]')
+    expect(dialog).toBeDefined()
+    expect(dialog?.getAttribute('aria-modal')).toBe('true')
+
+    // Day 15 should be selected with full accessible label
+    const day15Button = document.querySelector('button[aria-label="Thursday, October 15, 2026"]')
+    expect(day15Button).toBeDefined()
+    expect(day15Button?.getAttribute('aria-selected')).toBe('true')
+
+    // Test arrow key navigation from day 15 to day 16
+    if (day15Button) {
+      fireEvent.keyDown(day15Button, { key: 'ArrowRight' })
+      const day16Button = document.querySelector('button[aria-label="Friday, October 16, 2026"]')
+      expect(day16Button?.getAttribute('tabIndex')).toBe('0')
+    }
+
+    // Press Escape closes dialog
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
 
     const ssr = renderToString(<Calendar />)
     expect(ssr).toBeDefined()
