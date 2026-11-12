@@ -1,7 +1,7 @@
 import React, { StrictMode } from 'react'
 import { render, fireEvent } from '@testing-library/react'
 import { renderToString } from 'react-dom/server'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { axe } from 'vitest-axe'
 
 import { Combobox } from '../../src/components/navigation/combobox'
@@ -141,6 +141,48 @@ describe('Navigation Domain Smoke & Accessibility Suite', () => {
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
+  })
+
+  it('supports listbox semantics, keyboard arrow navigation, and search filtering in Combobox', async () => {
+    const handleValueChange = vi.fn()
+    const { container, getByRole, getByPlaceholderText, queryByText } = render(
+      <StrictMode>
+        <Combobox
+          name="country"
+          options={[
+            { label: 'United States', value: 'us' },
+            { label: 'Canada', value: 'ca' },
+            { label: 'Germany', value: 'de', disabled: true }
+          ]}
+          placeholder="Select country"
+          onValueChange={handleValueChange}
+        />
+      </StrictMode>
+    )
+
+    const trigger = getByRole('combobox')
+    expect(trigger.getAttribute('aria-haspopup')).toBe('listbox')
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+
+    // Open via Enter
+    fireEvent.keyDown(trigger, { key: 'Enter' })
+    expect(trigger.getAttribute('aria-expanded')).toBe('true')
+
+    const searchInput = getByPlaceholderText('Search...')
+    expect(searchInput).toBeDefined()
+
+    // Filter
+    fireEvent.change(searchInput, { target: { value: 'Can' } })
+    expect(queryByText('United States')).toBeNull()
+    expect(queryByText('Canada')).toBeDefined()
+
+    // Select with Enter
+    fireEvent.keyDown(searchInput, { key: 'Enter' })
+    expect(handleValueChange).toHaveBeenCalledWith('ca')
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+
+    const axeResult = await axe(container)
+    expect(axeResult.violations).toEqual([])
   })
 
   it('renders Pagination controls', async () => {

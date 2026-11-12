@@ -1,13 +1,17 @@
 # Combobox — Audit Report
 
-## Score: 6.5 / 10 — Functional UI, but major WAI-ARIA Combobox pattern deviations
+## Score: 9.5 / 10 — Status: Fixed (Full WAI-ARIA 1.2 Combobox & Listbox Pattern)
 
 ---
 
 ## What's Good
 - Clean visual integration wrapping Popover with search filtering and custom trigger.
 - Form compatibility: includes `VisuallyHiddenInput` when `name` prop is provided for native form submissions.
-- Auto-focuses search input 50ms after popover opens.
+- Search input keyboard navigation with `ArrowDown`/`ArrowUp`/`Home`/`End`/`Enter`/`Escape`.
+- Full WAI-ARIA 1.2 compliance: `role="combobox"`, `aria-haspopup="listbox"`, `aria-expanded`, `aria-controls`, `aria-activedescendant`, `role="listbox"`, and `role="option"` with `aria-selected`.
+- Controlled and uncontrolled state standardized via `useControllableState`.
+- Zero-race focus management with `requestAnimationFrame`.
+- Empty search state announced with `role="status"` and `aria-live="polite"`.
 - Truncation on selected label and options prevents overflow with long text strings.
 - Visual indicator: active selection shows `Check` icon with `text-primary`.
 - Proper disabled styling and cursor handling (`cursor-not-allowed opacity-50`).
@@ -15,16 +19,16 @@
 
 ---
 
-## Issues
+## Remediated Issues
 
-| ID | Severity | Category | File:Line | Problem | Why It Matters | Fix |
-|----|----------|----------|-----------|---------|----------------|-----|
-| CB-01 | Critical | A11y | combobox.tsx:108–116 | Search input has NO keyboard navigation (`onKeyDown` for ArrowDown/ArrowUp/Enter/Escape) | Keyboard users cannot navigate into the options list from the search input; pressing Enter does not select the first/highlighted option | Add `onKeyDown` to input: `ArrowDown` focuses or navigates options, `Enter` selects highlighted option, `Escape` closes popover |
-| CB-02 | Critical | A11y | combobox.tsx:82, 119–143 | Violates WAI-ARIA 1.2 Combobox pattern: options container lacks `role="listbox"`, items lack `role="option"` and `aria-selected` | Screen readers announce individual standalone buttons instead of a listbox; cannot announce total options count or selected status | Set `role="listbox"` on options wrapper, `role="option"` and `aria-selected={isSelected}` on option elements |
-| CB-03 | Major | A11y | combobox.tsx:80–84 | Missing `aria-controls`, `aria-autocomplete`, and `aria-activedescendant` on the combobox trigger/input | Screen readers cannot announce which listbox popup is controlled or which item is currently highlighted | Wire generated IDs for the listbox and options, attach `aria-controls` and `aria-activedescendant` |
-| CB-04 | Major | State | combobox.tsx:43–50 | Ad-hoc controlled/uncontrolled state implementation instead of `useControllableState` | Inconsistent with repository conventions; lacks edge-case handling for prop updates | Standardize with `useControllableState` hook |
-| CB-05 | Minor | Performance | combobox.tsx:68–72 | `setTimeout(() => inputRef.current?.focus(), 50)` is arbitrary and can cause race conditions or memory leaks if unmounted before 50ms | Focus may fail on slower devices or cause act() warnings in tests | Use `requestAnimationFrame` or focus immediately within `useEffect` when popover DOM is ready |
-| CB-06 | Minor | UX / A11y | combobox.tsx:144–146 | "No matching options." message lacks `role="status"` or `aria-live="polite"` | Screen readers are not notified when a filter query produces zero results | Add `role="status"` and `aria-live="polite"` to the empty state container |
+| ID | Severity | Category | File:Line | Problem | Status |
+|----|----------|----------|-----------|---------|--------|
+| CB-01 | Critical | A11y | combobox.tsx:108–116 | Search input had no keyboard navigation | Fixed |
+| CB-02 | Critical | A11y | combobox.tsx:82, 119–143 | Options lacked role="listbox", items lacked role="option" and aria-selected | Fixed |
+| CB-03 | Major | A11y | combobox.tsx:80–84 | Missing aria-controls, aria-autocomplete, and aria-activedescendant | Fixed |
+| CB-04 | Major | State | combobox.tsx:43–50 | Ad-hoc state implementation instead of useControllableState | Fixed |
+| CB-05 | Minor | Performance | combobox.tsx:68–72 | Arbitrary setTimeout for input focus | Fixed |
+| CB-06 | Minor | UX / A11y | combobox.tsx:144–146 | "No matching options." message lacked role="status" / aria-live="polite" | Fixed |
 
 ---
 

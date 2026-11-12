@@ -42,7 +42,7 @@ export interface PopoverTriggerProps extends React.ButtonHTMLAttributes<HTMLButt
 }
 
 export const PopoverTrigger = React.forwardRef<HTMLButtonElement, PopoverTriggerProps>(
-  ({ asChild = false, onClick, children, ...props }, forwardedRef) => {
+  ({ asChild = false, onClick, children, "aria-haspopup": ariaHasPopup = "dialog", ...props }, forwardedRef) => {
     const { open, setOpen, triggerRef, updateTriggerRect } = usePopoverContext()
     const Comp = asChild ? Slot : "button"
 
@@ -71,7 +71,7 @@ export const PopoverTrigger = React.forwardRef<HTMLButtonElement, PopoverTrigger
         ref={setMergedRef as any}
         type={asChild ? undefined : "button"}
         aria-expanded={open}
-        aria-haspopup="dialog"
+        aria-haspopup={ariaHasPopup}
         onClick={handleClick}
         {...props}
       >

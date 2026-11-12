@@ -93,3 +93,11 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **MB-04 (Critical)**: Implemented functional submenus via `MenubarSubContext` with nested open state, hover open/close, `ArrowRight` to open submenu, and `ArrowLeft`/`Escape` to return to parent.
   - **MB-05 (Major)**: Added viewport boundary clamping preventing menubar dropdowns from rendering off-screen.
   - Added unit, keyboard navigation, and axe tests in `tests/smoke/navigation.test.tsx`.
+
+- **`Combobox`** (`src/components/navigation/combobox.tsx`):
+  - **CB-01 (Critical)**: Implemented full search input keyboard navigation: `ArrowDown`/`ArrowUp`/`Home`/`End` to navigate non-disabled options with visible highlight, `Enter` to select highlighted option, and `Escape` to close dropdown and restore focus.
+  - **CB-02 & CB-03 (Critical & Major)**: Added WAI-ARIA 1.2 Combobox and Listbox compliance: `role="combobox"`, `aria-haspopup="listbox"`, `aria-expanded`, `aria-controls`, `aria-activedescendant`, `role="listbox"`, and `role="option"` with `aria-selected` and `aria-disabled`.
+  - **CB-04 (Major)**: Replaced ad-hoc state with `useControllableState` supporting both controlled and uncontrolled usage.
+  - **CB-05 (Minor)**: Replaced arbitrary `setTimeout` focus with `requestAnimationFrame`.
+  - **CB-06 (Minor)**: Wrapped empty search results message in `role="status"` with `aria-live="polite"`.
+  - Added unit, keyboard selection, search filtering, and axe tests in `tests/smoke/navigation.test.tsx`.
