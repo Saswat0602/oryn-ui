@@ -143,6 +143,38 @@ describe('Navigation Domain Smoke & Accessibility Suite', () => {
     expect(results.violations).toEqual([])
   })
 
+  it('supports roving keyboard arrow navigation and selection in Command', async () => {
+    const handleSelect = vi.fn()
+    const { container, getByPlaceholderText, getByText } = render(
+      <StrictMode>
+        <Command>
+          <CommandInput placeholder="Type a command..." />
+          <CommandList>
+            <CommandGroup heading="Actions">
+              <CommandItem onSelect={handleSelect}>Open Settings</CommandItem>
+              <CommandItem>View Profile</CommandItem>
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </StrictMode>
+    )
+
+    const input = getByPlaceholderText('Type a command...')
+    const item = getByText('Open Settings')
+
+    // Navigate with ArrowDown
+    fireEvent.keyDown(input, { key: 'ArrowDown' })
+    expect(item.getAttribute('aria-selected')).toBe('true')
+    expect(input.getAttribute('aria-activedescendant')).toBe(item.id)
+
+    // Execute with Enter
+    fireEvent.keyDown(input, { key: 'Enter' })
+    expect(handleSelect).toHaveBeenCalled()
+
+    const results = await axe(container)
+    expect(results.violations).toEqual([])
+  })
+
   it('supports listbox semantics, keyboard arrow navigation, and search filtering in Combobox', async () => {
     const handleValueChange = vi.fn()
     const { container, getByRole, getByPlaceholderText, queryByText } = render(

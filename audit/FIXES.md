@@ -101,3 +101,11 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **CB-05 (Minor)**: Replaced arbitrary `setTimeout` focus with `requestAnimationFrame`.
   - **CB-06 (Minor)**: Wrapped empty search results message in `role="status"` with `aria-live="polite"`.
   - Added unit, keyboard selection, search filtering, and axe tests in `tests/smoke/navigation.test.tsx`.
+
+- **`Command`** (`src/components/navigation/command.tsx`):
+  - **CMD-01 (Critical)**: Implemented full palette keyboard engine with roving keyboard navigation (`ArrowDown`/`ArrowUp`/`Home`/`End`) from `CommandInput` into items, auto-scrolling highlighted items into view.
+  - **CMD-02 (Critical)**: Added full WAI-ARIA combobox/listbox accessibility: `role="combobox"`, `role="listbox"`, `role="option"`, `role="group"`, `aria-activedescendant`, `aria-autocomplete="list"`, and `aria-selected`.
+  - **CMD-03 (Major)**: Changed `CommandItem` to `tabIndex={-1}` with virtual focus management via `aria-activedescendant`, eliminating keyboard tab-stop spam.
+  - **CMD-04 (Major)**: Bound `role="status"` and `aria-live="polite"` to `CommandEmpty`.
+  - **CMD-06 (Nit)**: Enforced strict TypeScript `CommandComponent` compound typing, eliminating unsafe monkey-patching.
+  - Added unit, arrow key navigation, enter execution, and axe tests in `tests/smoke/navigation.test.tsx`.
