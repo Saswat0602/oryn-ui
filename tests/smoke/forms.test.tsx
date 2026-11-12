@@ -241,6 +241,7 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
           onChange={(e) => { passwordVal = e.target.value }}
           strengthMeter
           strengthScore={3}
+          showRequirements
         />
       </StrictMode>
     )
@@ -249,6 +250,11 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
     const toggleBtn = getByRole('button', { name: /show password/i })
     fireEvent.click(toggleBtn)
     expect(input.type).toBe('text')
+
+    // Test meter role and attributes
+    const meter = getByRole('meter', { name: 'Password strength' })
+    expect(meter.getAttribute('aria-valuenow')).toBe('3')
+    expect(meter.getAttribute('aria-valuetext')).toBe('Good')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

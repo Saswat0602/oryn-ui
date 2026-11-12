@@ -250,3 +250,10 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **NAV-04 (Minor)**: Added accessible screen reader context to notification count badge.
   - **NAV-05 (Minor)**: Replaced hardcoded `text-red-500` with semantic token `text-destructive`.
   - Added unit, mobile menu toggle, notification dialog, and axe tests in `tests/smoke/layout.test.tsx`.
+
+- **`PasswordInput`** (`src/components/forms/password-input.tsx`):
+  - **PI-01 (Major)**: Derived `currentValue` reliably from `value`, `internalValue`, and `defaultValue`, ensuring controlled strength calculation stays synchronized.
+  - **PI-02 & PI-03 (Major)**: Replaced hardcoded `bg-red-500` with semantic design token `bg-destructive` and standardized emerald tokens across strength meter and requirement indicators.
+  - **PI-04 & PI-07 (Minor/Nit)**: Added `role="meter"`, `aria-label="Password strength"`, `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, and `aria-valuetext` to the strength meter container.
+  - **PI-05 & PI-06 (Minor)**: Added `aria-live="polite"` to the requirements checklist and `role="status"` with `aria-live="assertive"` to the CapsLock detection badge.
+  - Added unit, meter attributes validation, and axe tests in `tests/smoke/forms.test.tsx`.

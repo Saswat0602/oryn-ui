@@ -42,7 +42,7 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
       typeof value === "string" ? value : typeof defaultValue === "string" ? defaultValue : ""
     )
 
-    const currentValue = typeof value === "string" ? value : internalValue
+    const currentValue = String(value !== undefined ? value : (internalValue ?? defaultValue ?? ""))
 
     const toggleVisibility = React.useCallback(() => {
       setVisible((prev) => {
@@ -90,10 +90,10 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
 
     const getStrengthColor = (s: number, index: number) => {
       if (index >= s) return "bg-muted"
-      if (s <= 1) return "bg-red-500"
-      if (s === 2) return "bg-amber-500"
+      if (s <= 1) return "bg-destructive"
+      if (s === 2) return "bg-amber-500 dark:bg-amber-400"
       if (s === 3) return "bg-primary"
-      return "bg-emerald-500"
+      return "bg-emerald-600 dark:bg-emerald-500"
     }
 
     const getStrengthLabel = (s: number) => {
@@ -128,8 +128,10 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
           <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1.5 text-muted-foreground select-none">
             {capsLockActive && (
               <span
+                role="status"
+                aria-live="assertive"
                 title="Caps Lock is active"
-                className="flex items-center text-amber-500 p-1 rounded"
+                className="flex items-center text-amber-600 dark:text-amber-400 p-1 rounded"
               >
                 <ArrowUpFromLine className="h-4 w-4" />
                 <span className="sr-only">Caps Lock is active</span>
@@ -154,7 +156,15 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
         </div>
 
         {strengthMeter && (
-          <div className="space-y-1.5">
+          <div
+            role="meter"
+            aria-label="Password strength"
+            aria-valuenow={score}
+            aria-valuemin={0}
+            aria-valuemax={4}
+            aria-valuetext={score > 0 ? getStrengthLabel(score) : "No password entered"}
+            className="space-y-1.5"
+          >
             <div className="grid grid-cols-4 gap-1.5 h-1.5 w-full">
               {[0, 1, 2, 3].map((idx) => (
                 <div
@@ -175,13 +185,13 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
         )}
 
         {showRequirements && (
-          <div className="pt-1 space-y-1">
+          <div aria-live="polite" className="pt-1 space-y-1">
             {rules.map((rule, idx) => (
               <div
                 key={idx}
                 className={cn(
                   "flex items-center gap-2 text-xs transition-colors",
-                  rule.met ? "text-emerald-600 dark:text-emerald-400 font-medium" : "text-muted-foreground"
+                  rule.met ? "text-emerald-700 dark:text-emerald-400 font-medium" : "text-muted-foreground"
                 )}
               >
                 {rule.met ? (
