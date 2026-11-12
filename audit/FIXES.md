@@ -75,3 +75,14 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **DRP-07 & DRP-08 (Minor)**: Converted clear icon to accessible `<button type="button">` and added `<abbr>` with titles for day headers.
   - **DRP-09 (Nit)**: Added keyboard focus rings to preset buttons and chevron buttons.
   - Added unit, interactive dialog, and axe accessibility tests in `tests/smoke/forms.test.tsx`.
+
+- **`ContextMenu`** (`src/components/overlay/context-menu.tsx`):
+  - **CM-01 (Critical)**: Added auto-focus on the first active item on open, and full ArrowDown/ArrowUp/Home/End keyboard roving navigation loop in `ContextMenuContent`.
+  - **CM-02 (Critical)**: Added `tabIndex={disabled ? -1 : 0}`, `onKeyDown` handlers for `Enter` and `Space` on `ContextMenuItem`, `ContextMenuCheckboxItem`, and `ContextMenuRadioItem` to activate and close menu.
+  - **CM-03 (Critical)**: Implemented functional submenus via `ContextMenuSubContext` with nested open state, hover open/close, `ArrowRight` to open submenu, and `ArrowLeft`/`Escape` to return to parent.
+  - **CM-04 (Major)**: Added viewport boundary clamping preventing context menus from rendering off-screen.
+  - **CM-05 (Major)**: Added keyboard trigger activation on `ContextMenuTrigger` using `Shift+F10` and `ContextMenu` / Apps key.
+  - **CM-06 (Minor)**: Updated `ContextMenuPortal` to wrap `<Portal>` primitive.
+  - **CM-07 (Minor)**: Ensured `aria-disabled` is strictly set on disabled menu items.
+  - **CM-08 (Nit)**: Cleaned up ref forwarding in `ContextMenuTrigger`.
+  - Added unit, keyboard activation, and axe tests in `tests/smoke/overlay.test.tsx`.

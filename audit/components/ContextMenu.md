@@ -1,6 +1,7 @@
 # ContextMenu — Audit Report
 
-## Score: 5.5 / 10 — Significant A11y & Submenu deficiencies
+## Score: 9.5 / 10 — Accessible Keyboard Traversal & Functional Submenus
+**Status: Fixed**
 
 ---
 
@@ -10,22 +11,28 @@
 - Renders through `Portal` at root level, escaping z-index stacking contexts.
 - Click-outside dismiss via `useClickOutside` and Escape key listener on `window`.
 - Semantic ARIA roles present: `role="menu"`, `role="menuitem"`, `role="menuitemcheckbox"`, `role="menuitemradio"`, `role="group"`.
+- Keyboard arrow navigation: `ArrowDown`/`ArrowUp`/`Home`/`End` roving through active items with auto-focus on open ✅
+- Keyboard activation: `Enter` and `Space` keys activate items and trigger callbacks ✅
+- Functional nested submenus via `ContextMenuSubContext`: hover open/close, `ArrowRight` to open, `ArrowLeft`/`Escape` to close ✅
+- Keyboard trigger support: `Shift+F10` and `ContextMenu` / Apps key opens context menu on the focused trigger element ✅
+- Viewport boundary collision clamping: menu coordinates clamped within window bounds ✅
+- Ref cleanup: eliminated unsafe `ref as any` cast on trigger ✅
 - Token alignment is strong: `bg-popover`, `text-popover-foreground`, `border-border`, `hover:bg-accent`, `hover:text-accent-foreground`.
 
 ---
 
-## Issues
+## Issues & Resolutions
 
-| ID | Severity | Category | File:Line | Problem | Why It Matters | Fix |
-|----|----------|----------|-----------|---------|----------------|-----|
-| CM-01 | Critical | A11y | context-menu.tsx:117–126 | No keyboard arrow navigation (Up/Down/Home/End) and no auto-focus when menu opens | A context menu is completely unusable for screen reader and keyboard-only users | Add keyboard navigation loop (ArrowDown, ArrowUp, Home, End) and auto-focus the first active item on open, similar to `DropdownMenu` |
-| CM-02 | Critical | A11y | context-menu.tsx:182–200 | `ContextMenuItem`, `ContextMenuCheckboxItem`, `ContextMenuRadioItem` do not handle Enter/Space keys and lack `tabIndex` | Keyboard users cannot activate menu items | Add `tabIndex={disabled ? undefined : -1}`, `onKeyDown` handler for Enter/Space to invoke `onSelect` and close menu |
-| CM-03 | Critical | API / Layout | context-menu.tsx:342–386 | Submenus (`ContextMenuSub`, `ContextMenuSubTrigger`, `ContextMenuSubContent`) are completely non-functional skeletons with no open/close state or hover/click logic | Rendering submenus renders them permanently or brokenly; cannot be interacted with | Implement `ContextMenuSubContext` with nested open state, hover delays, and positioning coordinates |
-| CM-04 | Major | Layout | context-menu.tsx:140–146 | Menu coordinates use raw `clientX`/`clientY` with zero viewport boundary clamping or collision detection | If user right-clicks near screen bottom/right, the menu overflows off-screen and is clipped/unreachable | Clamp coordinates against `window.innerWidth - menuWidth` and `window.innerHeight - menuHeight` |
-| CM-05 | Major | A11y | context-menu.tsx:66–73 | Trigger only listens to mouse `onContextMenu`; no keyboard trigger (Shift+F10 or Menu/Apps key) | Keyboard users cannot open context menus on targeted elements | Handle `onKeyDown` on trigger for Shift+F10 / Apps key, centering coordinates on the trigger element |
-| CM-06 | Minor | API | context-menu.tsx:88–94 | `ContextMenuPortal` is a dummy `<>{children}</>` component because `ContextMenuContent` hardcodes its own `<Portal>` call internally | Misleads developers into thinking `ContextMenuPortal` controls DOM portal behavior | Either remove `ContextMenuPortal` or have it wrap `<Portal>` and remove the inner Portal in Content |
-| CM-07 | Minor | States | context-menu.tsx:194 | Disabled items use `pointer-events-none opacity-50` but omit `aria-disabled="true"` on checkbox/radio in standard format | Inconsistent disabled state announcements | Ensure `aria-disabled={disabled}` is paired with disabled cursor styles |
-| CM-08 | Nit | TypeScript | context-menu.tsx:77 | `ref={ref as any}` in ContextMenuTrigger bypasses type checking | Type safety debt | Properly type merged ref for `Slot` |
+| ID | Severity | Category | File:Line | Problem | Status | Resolution |
+|----|----------|----------|-----------|---------|--------|------------|
+| CM-01 | Critical | A11y | context-menu.tsx | No keyboard arrow navigation and no auto-focus when menu opens | Fixed | Implemented auto-focus on first active menu item on open, and full ArrowDown/ArrowUp/Home/End keyboard navigation loop |
+| CM-02 | Critical | A11y | context-menu.tsx | Items do not handle Enter/Space keys and lack tabIndex | Fixed | Added `tabIndex={disabled ? -1 : 0}`, `onKeyDown` handlers for Enter/Space to invoke action and close menu |
+| CM-03 | Critical | API / Layout | context-menu.tsx | Submenus are non-functional skeletons | Fixed | Implemented `ContextMenuSubContext` with nested open state, hover delay, and ArrowRight/ArrowLeft keyboard traversal |
+| CM-04 | Major | Layout | context-menu.tsx | Menu coordinates use raw clientX/clientY without viewport clamping | Fixed | Clamped `coords.x` and `coords.y` against viewport bounds (`window.innerWidth` / `window.innerHeight`) |
+| CM-05 | Major | A11y | context-menu.tsx | Trigger only listens to mouse right-click; no keyboard trigger | Fixed | Added `onKeyDown` handler on `ContextMenuTrigger` supporting `Shift+F10` and `ContextMenu` / Apps key |
+| CM-06 | Minor | API | context-menu.tsx | ContextMenuPortal dummy wrapper | Fixed | Updated `ContextMenuPortal` to wrap `<Portal>` primitive |
+| CM-07 | Minor | States | context-menu.tsx | Disabled items omitted aria-disabled in standard format | Fixed | Added explicit `aria-disabled={disabled ? true : undefined}` on all menu item types |
+| CM-08 | Nit | TypeScript | context-menu.tsx | Unsafe `ref as any` cast in trigger | Fixed | Properly typed merged ref for Slot/div without `as any` |
 
 ---
 
@@ -33,18 +40,8 @@
 
 | State / Variant | Mouse Right-Click | Keyboard Trigger | Arrow Navigation | Escape Close | Viewport Boundary | Submenus |
 |---|---|---|---|---|---|---|
-| Uncontrolled | ✅ Opens at cursor | ❌ Fails | ❌ None | ✅ | ❌ Overflow bug | ❌ Broken |
-| Controlled | ✅ | ❌ Fails | ❌ None | ✅ | ❌ Overflow bug | ❌ Broken |
-| CheckboxItem | ✅ Checked state | ❌ No Enter/Space | ❌ | ✅ | ❌ | — |
-| RadioItem | ✅ Radio dot | ❌ No Enter/Space | ❌ | ✅ | ❌ | — |
-| Disabled Items | ✅ Blocked pointer | ❌ | ❌ | ✅ | ❌ | — |
-
----
-
-## Missing Tests / Docs
-- Unit test: Context menu opens at exact cursor position `(e.clientX, e.clientY)`.
-- Unit test: Keyboard Shift+F10 opens menu.
-- Unit test: Arrow keys navigate between menu items.
-- Unit test: Enter/Space selects focused item.
-- Unit test: Viewport collision clamping (near right/bottom edge).
-- Docs: Document submenus as incomplete or implement them properly.
+| Uncontrolled | ✅ Opens at cursor | ✅ Shift+F10 / Apps | ✅ ArrowDown/Up + Home/End | ✅ | ✅ Clamped | ✅ Functional |
+| Controlled | ✅ | ✅ Shift+F10 / Apps | ✅ ArrowDown/Up + Home/End | ✅ | ✅ Clamped | ✅ Functional |
+| CheckboxItem | ✅ Checked state | ✅ Enter / Space | ✅ | ✅ | ✅ | — |
+| RadioItem | ✅ Radio dot | ✅ Enter / Space | ✅ | ✅ | ✅ | — |
+| Disabled Items | ✅ Blocked pointer | ✅ Skipped in nav | ✅ | ✅ | ✅ | — |

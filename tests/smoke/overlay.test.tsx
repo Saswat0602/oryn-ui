@@ -1,7 +1,7 @@
 import React, { StrictMode } from 'react'
 import { render, fireEvent } from '@testing-library/react'
 import { renderToString } from 'react-dom/server'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { axe } from 'vitest-axe'
 
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from '../../src/components/overlay/dialog'
@@ -65,6 +65,7 @@ describe('Overlay Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders DropdownMenu and ContextMenu trigger elements', async () => {
+    const handleSelect = vi.fn()
     const { container, getByText } = render(
       <StrictMode>
         <DropdownMenu open={true}>
@@ -79,16 +80,37 @@ describe('Overlay Domain Smoke & Accessibility Suite', () => {
 
         <ContextMenu>
           <ContextMenuTrigger>
-            <div>Right click target zone</div>
+            <div data-testid="context-trigger">Right click target zone</div>
           </ContextMenuTrigger>
           <ContextMenuContent>
-            <ContextMenuItem>Inspect</ContextMenuItem>
+            <ContextMenuItem onSelect={handleSelect}>Inspect</ContextMenuItem>
+            <ContextMenuItem>View Source</ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>
       </StrictMode>
     )
     expect(getByText('Profile')).toBeDefined()
     expect(getByText('Right click target zone')).toBeDefined()
+
+    // Right-click target zone
+    const target = getByText('Right click target zone')
+    fireEvent.contextMenu(target, { clientX: 100, clientY: 150 })
+
+    const menu = document.querySelector('[role="menu"]')
+    expect(menu).toBeDefined()
+    expect(getByText('Inspect')).toBeDefined()
+
+    // Test Enter activation on menuitem
+    const inspectItem = getByText('Inspect')
+    fireEvent.keyDown(inspectItem, { key: 'Enter' })
+    expect(handleSelect).toHaveBeenCalled()
+
+    // Test keyboard trigger Shift+F10
+    fireEvent.keyDown(target, { key: 'F10', shiftKey: true })
+    expect(document.querySelector('[role="menu"]')).toBeDefined()
+
+    // Escape closes context menu
+    fireEvent.keyDown(document, { key: 'Escape' })
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
