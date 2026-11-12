@@ -290,11 +290,12 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders DateRangePicker and TimePicker', async () => {
-    const { container, getByLabelText } = render(
+    const handleRangeChange = vi.fn()
+    const { container, getByLabelText, getByRole } = render(
       <StrictMode>
         <DateRangePicker
           value={{ from: new Date(2026, 9, 1), to: new Date(2026, 9, 31) }}
-          onChange={() => {}}
+          onChange={handleRangeChange}
         />
         <TimePicker
           value="10:45 AM"
@@ -305,6 +306,27 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
     )
     const hoursInput = getByLabelText('Hours') as HTMLInputElement
     expect(hoursInput.value).toBe('10')
+
+    const trigger = getByRole('button', { name: /date range picker/i })
+    expect(trigger.getAttribute('aria-haspopup')).toBe('dialog')
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+
+    // Open popup
+    fireEvent.click(trigger)
+    expect(trigger.getAttribute('aria-expanded')).toBe('true')
+
+    const dialog = document.querySelector('[role="dialog"]')
+    expect(dialog).toBeDefined()
+    expect(dialog?.getAttribute('aria-modal')).toBe('true')
+
+    // Verify day buttons have accessible labels
+    const day1Btn = document.querySelector('button[aria-label="Thursday, October 1, 2026"]')
+    expect(day1Btn).toBeDefined()
+    expect(day1Btn?.getAttribute('aria-selected')).toBe('true')
+
+    // Escape closes popup
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

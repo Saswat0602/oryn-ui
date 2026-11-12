@@ -65,3 +65,13 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **DTP-09 (Minor)**: Added accessible `aria-label`s to month navigation buttons.
   - **DTP-11 (Nit)**: Guarded click-outside handler with `if (!isOpen) return` and added `{ passive: true, capture: true }` to window scroll listener.
   - Added unit, dialog semantics, and axe accessibility smoke tests in `tests/smoke/forms.test.tsx`.
+
+- **`DateRangePicker`** (`src/components/forms/date-range-picker.tsx`):
+  - **DRP-01 & DRP-02 (Critical)**: Added full locale date `aria-label`, `aria-selected`, roving `tabIndex`, and full 2D keyboard navigation (`ArrowLeft`/`ArrowRight`/`ArrowUp`/`ArrowDown`, `Home`/`End`, `PageUp`/`PageDown`, `Enter`/`Space`).
+  - **DRP-03 (Critical)**: Added `role="dialog"`, `aria-modal="true"`, `aria-labelledby={titleId}` to floating popover, with Escape key listener restoring focus to trigger button.
+  - **DRP-04 (Major)**: Added `role="grid"`, `role="row"`, `role="gridcell"`, and `role="columnheader"` with `<abbr>`.
+  - **DRP-05 (Major)**: Cleaned up ref forwarding with `useImperativeHandle(ref, ...)` and a dedicated typed `triggerRef`.
+  - **DRP-06 (Major)**: Eliminated invalid nested `<button>` inside `<button>` violation by refactoring the trigger container into an accessible non-nested flex wrapper with sibling buttons.
+  - **DRP-07 & DRP-08 (Minor)**: Converted clear icon to accessible `<button type="button">` and added `<abbr>` with titles for day headers.
+  - **DRP-09 (Nit)**: Added keyboard focus rings to preset buttons and chevron buttons.
+  - Added unit, interactive dialog, and axe accessibility tests in `tests/smoke/forms.test.tsx`.
