@@ -275,6 +275,12 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **B-02 (Minor)**: Added `focus-visible:ring-2 focus-visible:ring-ring` and `disabled:pointer-events-none` to action button breadcrumb items.
   - Added unit, aria-current="page" validation, role=link exclusion, and axe tests in `tests/smoke/forms.test.tsx`.
 
+- **`Toggle`** (`src/components/overlay/toggle.tsx`):
+  - **TG-01 (Major)**: Replaced `any` types on `ToggleGroupProps`, `value`, `defaultValue`, and `onValueChange` with strict `string | string[]` union typing.
+  - **TG-02 (Minor)**: Implemented 2D arrow key roving navigation (`ArrowLeft`/`ArrowRight`/`ArrowUp`/`ArrowDown`, `Home`/`End`) across group items.
+  - **TG-03 (Minor)**: Added square `icon` size preset (`h-9 w-9 p-0`).
+  - Added unit, arrow key roving navigation, and axe tests in `tests/smoke/overlay.test.tsx`.
+
 - **`TreeView`** (`src/components/data/tree-view.tsx`):
   - **TRV-01 & TRV-02 (Major/Minor)**: Implemented full roving tabindex with dynamic visible node tracking, ArrowUp/ArrowDown vertical navigation, and Home/End jumping across visible tree nodes.
   - **TRV-03 (Minor)**: Marked chevron toggle wrapper with `aria-hidden="true"` and added `focus-visible:ring-2` to tree items.

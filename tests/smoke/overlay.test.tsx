@@ -230,7 +230,12 @@ describe('Overlay Domain Smoke & Accessibility Suite', () => {
       </StrictMode>
     )
     expect(getByRole('button', { name: /toggle bold/i })).toBeDefined()
-    expect(getByText('Center')).toBeDefined()
+    const centerBtn = getByText('Center')
+    expect(centerBtn).toBeDefined()
+
+    // Test arrow key roving navigation in ToggleGroup
+    centerBtn.focus()
+    fireEvent.keyDown(centerBtn.closest('[role="group"]')!, { key: 'ArrowRight' })
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

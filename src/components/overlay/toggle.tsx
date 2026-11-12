@@ -5,7 +5,7 @@ import { cn } from '../../lib/utils'
 import { useControllableState } from '../../lib/use-controllable-state'
 
 export interface ToggleProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'onChange'> {
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg' | 'icon'
   variant?: 'default' | 'outline'
   pressed?: boolean
   defaultPressed?: boolean
@@ -37,6 +37,7 @@ export const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(
       sm: 'h-8 px-2.5 text-xs',
       md: 'h-9 px-3 text-xs',
       lg: 'h-10 px-4 text-sm',
+      icon: 'h-9 w-9 p-0 text-xs',
     }
 
     const variantClasses = {
@@ -76,9 +77,9 @@ Toggle.displayName = 'Toggle'
 
 interface ToggleGroupContextValue {
   type: 'single' | 'multiple'
-  value: any
+  value: string | string[]
   onItemToggle: (val: string) => void
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg' | 'icon'
   variant?: 'default' | 'outline'
   disabled?: boolean
 }
@@ -87,10 +88,10 @@ const ToggleGroupContext = createContext<ToggleGroupContextValue | null>(null)
 
 export interface ToggleGroupProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'defaultValue' | 'onChange'> {
   type?: 'single' | 'multiple'
-  value?: any
-  defaultValue?: any
-  onValueChange?: (val: any) => void
-  size?: 'sm' | 'md' | 'lg'
+  value?: string | string[]
+  defaultValue?: string | string[]
+  onValueChange?: (val: string | string[]) => void
+  size?: 'sm' | 'md' | 'lg' | 'icon'
   variant?: 'default' | 'outline'
   disabled?: boolean
 }
@@ -107,16 +108,17 @@ export const ToggleGroup = forwardRef<HTMLDivElement, ToggleGroupProps>(
       variant = 'default',
       disabled = false,
       children,
+      onKeyDown,
       ...props
     },
     ref
   ) => {
     const initialDefault = defaultValue !== undefined ? defaultValue : type === 'multiple' ? [] : ''
 
-    const [value, setValue] = useControllableState<any>({
+    const [value, setValue] = useControllableState<string | string[]>({
       prop: controlledValue,
       defaultProp: initialDefault,
-      onChange: onValueChange,
+      onChange: onValueChange as any,
     })
 
     const onItemToggle = (itemVal: string) => {
@@ -131,11 +133,39 @@ export const ToggleGroup = forwardRef<HTMLDivElement, ToggleGroupProps>(
       }
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      onKeyDown?.(e)
+      if (e.defaultPrevented) return
+
+      const container = e.currentTarget
+      const items = Array.from(container.querySelectorAll<HTMLButtonElement>('button:not([disabled])'))
+      if (items.length === 0) return
+
+      const currentIdx = items.indexOf(document.activeElement as HTMLButtonElement)
+      if (currentIdx === -1) return
+
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault()
+        const nextIdx = (currentIdx + 1) % items.length
+        items[nextIdx]?.focus()
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault()
+        const prevIdx = (currentIdx - 1 + items.length) % items.length
+        items[prevIdx]?.focus()
+      } else if (e.key === 'Home') {
+        e.preventDefault()
+        items[0]?.focus()
+      } else if (e.key === 'End') {
+        e.preventDefault()
+        items[items.length - 1]?.focus()
+      }
+    }
+
     return (
       <ToggleGroupContext.Provider
         value={{
           type,
-          value,
+          value: value ?? (type === 'multiple' ? [] : ''),
           onItemToggle,
           size,
           variant,
@@ -145,6 +175,7 @@ export const ToggleGroup = forwardRef<HTMLDivElement, ToggleGroupProps>(
         <div
           ref={ref}
           role="group"
+          onKeyDown={handleKeyDown}
           className={cn(
             'inline-flex items-center justify-center gap-1 rounded-lg border border-border p-1',
             className
@@ -161,7 +192,7 @@ ToggleGroup.displayName = 'ToggleGroup'
 
 export interface ToggleGroupItemProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, 'value'> {
   value: string
-  size?: 'sm' | 'md' | 'lg'
+  size?: 'sm' | 'md' | 'lg' | 'icon'
   variant?: 'default' | 'outline'
 }
 
@@ -181,6 +212,7 @@ export const ToggleGroupItem = forwardRef<HTMLButtonElement, ToggleGroupItemProp
       sm: 'h-8 px-2.5 text-xs',
       md: 'h-9 px-3 text-xs',
       lg: 'h-10 px-4 text-sm',
+      icon: 'h-9 w-9 p-0 text-xs',
     }
 
     const variantClasses = {
