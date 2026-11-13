@@ -194,6 +194,17 @@ describe('Media Domain Smoke & Accessibility Suite', () => {
     const ssr = renderToString(<TypographyH1>SSR Heading</TypographyH1>)
     expect(ssr).toContain('SSR Heading')
 
+    const h1Ref = React.createRef<HTMLHeadingElement>()
+    render(
+      <StrictMode>
+        <TypographyH1 ref={h1Ref} id="intro-heading" data-testid="intro">
+          Ref Heading
+        </TypographyH1>
+      </StrictMode>
+    )
+    expect(h1Ref.current).toBeInstanceOf(HTMLHeadingElement)
+    expect(h1Ref.current?.id).toBe('intro-heading')
+
     const results = await axe(container)
     expect(results.violations).toEqual([])
   })

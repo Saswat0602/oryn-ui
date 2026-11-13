@@ -527,3 +527,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **TCC-02 (Minor)**: Added `aria-hidden="true"` and `motion-safe:animate-spin motion-reduce:animate-none` on `Loader2` and other decorative status icons.
   - **TCC-03 (Nit)**: Mapped status badges to semantic design token color classes (`bg-emerald-500/10`, `bg-destructive/10`, `bg-primary/10`).
   - Added unit test assertions in `tests/smoke/feedback.test.tsx` verifying focus rings and disclosure states.
+
+- **`Typography`** (`src/components/media/typography.tsx`):
+  - **TYP-01 (Minor)**: Refactored all 13 typography components (`TypographyH1` through `TypographyH6`, `TypographyP`, `TypographyBlockquote`, `TypographyCode`, `TypographyLead`, `TypographyLarge`, `TypographySmall`, `TypographyMuted`) to `React.forwardRef` to allow DOM measurement, scroll anchoring, and animation library attachment.
+  - **TYP-02 (Nit)**: Extended native HTML element attribute interfaces (`React.HTMLAttributes<HTMLHeadingElement>`, etc.) enabling `id`, `tabIndex`, `aria-*`, and `data-*` props across all typography components.
+  - Added unit test assertions in `tests/smoke/media.test.tsx` verifying ref forwarding and HTML attributes.
