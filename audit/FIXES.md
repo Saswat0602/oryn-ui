@@ -442,3 +442,9 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
 - **`Alert`** (`src/components/feedback/alert.tsx`):
   - **ALT-04 (Minor)**: Activated previously unused `priority`, `category`, `tags`, `loading`, `dismissible`, and `onDismiss` props. Added `data-priority` and `data-category` attributes, rendered tag/category badges when provided, integrated spinning `Loader2` indicator when `loading=true`, and hooked up dismissible event callbacks.
   - Added unit test assertion in `tests/smoke/feedback.test.tsx` verifying metadata attributes, tags, loading state, and dismiss handling.
+
+- **`Avatar`** (`src/components/media/avatar.tsx`):
+  - **AVA-01 (Minor)**: Removed generic default `alt="Avatar"` string in `AvatarImage`, defaulting to `alt=""` or user-supplied name to avoid confusing screen reader announcements.
+  - **AVA-02 (Minor)**: Added `role="status"` and accessible `aria-label={`${hiddenCount} more members`}` with visually hidden text on `AvatarGroup` overflow badge indicator.
+  - **AVA-03 (Nit)**: Added `rtl:space-x-reverse` on `AvatarGroup` for right-to-left layout compatibility.
+  - Added unit test assertion in `tests/smoke/media.test.tsx` validating accessible label on group overflow badge.

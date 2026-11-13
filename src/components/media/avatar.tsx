@@ -23,7 +23,7 @@ export interface AvatarProps extends React.HTMLAttributes<HTMLDivElement> {
 export interface AvatarImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {}
 
 export const AvatarImage = forwardRef<HTMLImageElement, AvatarImageProps>(
-  ({ className, onLoad, onError, alt = 'Avatar', ...props }, ref) => {
+  ({ className, onLoad, onError, alt = '', ...props }, ref) => {
     const ctx = useContext(AvatarContext)
 
     const handleLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
@@ -145,7 +145,7 @@ export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
           )}
           {...props}
         >
-          {src && <AvatarImage src={src} alt={alt || 'Avatar'} />}
+          {src && <AvatarImage src={src} alt={alt || ''} />}
           <AvatarFallback>
             {fallback || (alt ? alt.slice(0, 2).toUpperCase() : 'U')}
           </AvatarFallback>
@@ -172,15 +172,20 @@ export const AvatarGroup: React.FC<AvatarGroupProps> = ({
   const hiddenCount = max ? Math.max(0, childrenArray.length - max) : 0
 
   return (
-    <div className={cn('flex -space-x-2.5 items-center', className)} {...props}>
+    <div className={cn('flex -space-x-2.5 rtl:space-x-reverse items-center', className)} {...props}>
       {childrenArray.slice(0, displayCount).map((child, index) => (
         <div key={index} className="ring-2 ring-background rounded-full shrink-0">
           {child}
         </div>
       ))}
       {hiddenCount > 0 && (
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground ring-2 ring-background shrink-0">
-          +{hiddenCount}
+        <div
+          role="status"
+          aria-label={`${hiddenCount} more members`}
+          className="flex h-8 w-8 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground ring-2 ring-background shrink-0"
+        >
+          <span aria-hidden="true">+{hiddenCount}</span>
+          <span className="sr-only">{hiddenCount} more members</span>
         </div>
       )}
     </div>

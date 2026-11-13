@@ -1,6 +1,7 @@
 # Avatar — Audit Report
 
-## Score: 8.5 / 10 — Resilient image avatar with compound fallback state machine
+**Status:** Fixed  
+## Score: 9.5 / 10 — Resilient image avatar with compound fallback state machine and accessible overflow count
 
 ---
 
@@ -17,9 +18,9 @@
 
 | ID | Severity | Category | File:Line | Problem | Why It Matters | Fix |
 |----|----------|----------|-----------|---------|----------------|-----|
-| AVA-01 | Minor | A11y | avatar.tsx:26, 148 | `AvatarImage` defaults `alt` to generic `'Avatar'` string when omitted | Screen readers announce "Avatar, image" rather than the person's name, providing zero identification for blind users | Strongly type `alt` as required or warn when falling back to generic placeholder |
-| AVA-02 | Minor | A11y | avatar.tsx:182–185 | `AvatarGroup` overflow count indicator (`+{hiddenCount}`) lacks an accessible label | Screen reader announces only "+3" without context | Add `aria-label={`${hiddenCount} more members`}` or a visually hidden description |
-| AVA-03 | Nit | Layout | avatar.tsx:175 | `AvatarGroup` uses negative margin `-space-x-2.5` without RTL support | On right-to-left languages (Arabic, Hebrew), avatar overlaps in reverse visual order | Add `rtl:space-x-reverse` |
+| AVA-01 | Minor | A11y | avatar.tsx:26, 148 | `AvatarImage` defaults `alt` to generic `'Avatar'` string when omitted | Screen readers announce "Avatar, image" rather than the person's name, providing zero identification for blind users | Fixed | Removed hardcoded generic default "Avatar" and defaulted to `alt=""` for clean decorative or user-provided description |
+| AVA-02 | Minor | A11y | avatar.tsx:182–185 | `AvatarGroup` overflow count indicator (`+{hiddenCount}`) lacks an accessible label | Screen reader announces only "+3" without context | Fixed | Added `role="status"`, `aria-label={`${hiddenCount} more members`}`, and visually hidden text description |
+| AVA-03 | Nit | Layout | avatar.tsx:175 | `AvatarGroup` uses negative margin `-space-x-2.5` without RTL support | On right-to-left languages (Arabic, Hebrew), avatar overlaps in reverse visual order | Fixed | Added `rtl:space-x-reverse` |
 
 ---
 

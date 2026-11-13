@@ -42,9 +42,9 @@ describe('Media Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders Avatar with fallback and AvatarGroup and passes a11y', async () => {
-    const { container, getByText } = render(
+    const { container, getByText, getByRole } = render(
       <StrictMode>
-        <AvatarGroup max={3}>
+        <AvatarGroup max={2}>
           <Avatar>
             <AvatarImage src="/avatar1.png" alt="Alice Smith" />
             <AvatarFallback>AS</AvatarFallback>
@@ -57,7 +57,9 @@ describe('Media Domain Smoke & Accessibility Suite', () => {
 
     expect(getByText('AS')).toBeDefined()
     expect(getByText('BJ')).toBeDefined()
-    expect(getByText('CD')).toBeDefined()
+    const overflow = getByRole('status')
+    expect(overflow.getAttribute('aria-label')).toBe('1 more members')
+    expect(overflow.textContent).toContain('+1')
 
     const ssr = renderToString(<Avatar fallback="SR" />)
     expect(ssr).toContain('SR')
