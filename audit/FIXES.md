@@ -454,3 +454,7 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **BAN-02 (Minor)**: Applied semantic design tokens `text-destructive`, `border-destructive/20`, and semantic variable tints to support custom themes.
   - **BAN-03 (Nit)**: Strongly typed `icon?: React.ReactNode` in `BannerProps`.
   - Added unit test assertion in `tests/smoke/feedback.test.tsx` verifying focus-visible rings and destructive token classes.
+
+- **`Checkbox`** (`src/components/core/checkbox.tsx`):
+  - **CB-04 (Minor)**: Standardized conditional cursor class resolution (`disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'`) on both checkbox control and associated label for visual state consistency.
+  - **CB-05 (Minor)**: Clarified tri-state indeterminate transition cycle adhering to W3C specification.

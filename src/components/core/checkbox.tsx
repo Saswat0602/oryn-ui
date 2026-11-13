@@ -140,7 +140,8 @@ export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
           onClick={handleClick}
           onKeyDown={handleKeyDown}
           className={cn(
-            'peer shrink-0 flex items-center justify-center border border-input bg-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background disabled:cursor-not-allowed disabled:opacity-50 select-none cursor-pointer',
+            'peer shrink-0 flex items-center justify-center border border-input bg-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background select-none',
+            disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
             (isChecked || isIndeterminate) && 'bg-primary border-primary text-primary-foreground',
             (error || props["aria-invalid"] === true || props["aria-invalid"] === "true") && 'border-destructive',
             sizeClasses[size],
