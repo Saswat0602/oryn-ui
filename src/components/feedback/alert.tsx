@@ -1,6 +1,8 @@
+"use client"
+
 import * as React from "react"
 import { cn } from "../../lib/utils"
-import { CheckCircle2, AlertCircle, AlertTriangle, Info, Bell, X } from "../../icons"
+import { CheckCircle2, AlertCircle, AlertTriangle, Info, Bell, X, Loader2 } from "../../icons"
 
 export type AlertType = "default" | "success" | "error" | "warning" | "info" | "primary" | "neutral" | "destructive"
 export type AlertVariant = "default" | "destructive" | "success" | "warning" | "info" | "filled" | "outlined"
@@ -57,8 +59,29 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
     children,
     style,
     role,
+    loading = false,
+    dismissible = false,
+    autoDismiss = false,
+    dismissTimeout = 5000,
+    onDismiss,
+    onShow,
+    priority,
+    category,
+    tags,
     ...props 
   }, ref) => {
+    React.useEffect(() => {
+      onShow?.()
+    }, [onShow])
+
+    React.useEffect(() => {
+      if (!autoDismiss) return
+      const timer = setTimeout(() => {
+        onClose?.()
+        onDismiss?.()
+      }, dismissTimeout)
+      return () => clearTimeout(timer)
+    }, [autoDismiss, dismissTimeout, onClose, onDismiss])
     // Resolve effective semantic variant from type or variant
     const resolvedVariant: AlertType = (
       type === "error" ? "destructive" :
@@ -151,14 +174,28 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
       }
     }
 
-    const effectiveIcon = icon !== undefined ? icon : getDefaultIcon()
+    const effectiveIcon = loading ? (
+      <Loader2 className="h-4 w-4 shrink-0 animate-spin text-current" aria-hidden="true" />
+    ) : icon !== undefined ? (
+      icon
+    ) : (
+      getDefaultIcon()
+    )
 
     const effectiveRole = role || (resolvedVariant === "destructive" || resolvedVariant === "error" ? "alert" : "status")
+    const isDismissible = closable || dismissible || !!onClose || !!onDismiss
+
+    const handleDismiss = () => {
+      onClose?.()
+      onDismiss?.()
+    }
 
     return (
       <div
         ref={ref}
         role={effectiveRole}
+        data-priority={priority}
+        data-category={category}
         className={cn(
           "relative w-full rounded-xl border transition-all duration-200",
           sizeClasses[size],
@@ -184,6 +221,20 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
           )}
 
           <div className="flex-1 min-w-0">
+            {(category || (tags && tags.length > 0)) && (
+              <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+                {category && (
+                  <span className="text-[10px] font-semibold uppercase tracking-wider opacity-75">
+                    {category}
+                  </span>
+                )}
+                {tags?.map((tag) => (
+                  <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-foreground/10 font-medium">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
             {title && (
               <h5 className="font-semibold text-sm leading-tight tracking-tight mb-1">
                 {title}
@@ -202,10 +253,10 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
             )}
           </div>
 
-          {(closable || onClose) && (
+          {isDismissible && (
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleDismiss}
               aria-label="Close alert"
               className="shrink-0 -mr-1 -mt-1 p-1 rounded-md text-current opacity-70 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition-all cursor-pointer focus:outline-none focus:ring-1 focus:ring-current"
             >

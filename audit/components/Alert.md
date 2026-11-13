@@ -1,7 +1,7 @@
 # Alert — Audit Report
 
 ## Status: Fixed (2026-11-12)
-## Score: 9.5 / 10 — WCAG AA contrast compliant and accessible default roles configured
+## Score: 10 / 10 — WCAG AA contrast compliant, accessible roles configured, and active metadata handling
 
 ---
 
@@ -21,7 +21,7 @@
 | ALT-01 | Critical | Color | alert.tsx:106 | Filled `success` variant uses hardcoded `bg-emerald-600 text-white` (or `#10b981`), yielding **2.54:1** contrast ratio | Fixed | Updated to `bg-emerald-700 text-white` (5.48:1, passing WCAG AA) |
 | ALT-02 | Critical | Color | alert.tsx:111 | Filled `warning` variant uses hardcoded `bg-amber-600 text-white` (or `#f59e0b`), yielding **2.15:1** contrast ratio | Fixed | Updated to `bg-amber-700 text-white` (5.02:1, passing WCAG AA) |
 | ALT-03 | Major | A11y | alert.tsx:59, 159 | Alert does not have a default `role` (`role={role}`); defaults to `undefined` | Fixed | Automatically configure default `role`: `role="alert"` for `destructive`/`error` and `role="status"` for `success`/`info`/`warning` |
-| ALT-04 | Minor | API | alert.tsx:33–34 | `priority`, `category`, and `tags` are declared on `AlertProps` but never rendered or utilized in code | Dead prop declarations clutter IntelliSense and confuse consumers | Either implement metadata badges for tags/category or remove the unused prop definitions |
+| ALT-04 | Minor | API | alert.tsx:33–34 | `priority`, `category`, and `tags` are declared on `AlertProps` but never rendered or utilized in code | Dead prop declarations clutter IntelliSense and confuse consumers | Fixed | Activated `priority`, `category`, `tags`, `loading` (spinner), `dismissible`, and `onDismiss` with data attributes and metadata badges |
 | ALT-05 | Nit | Tokens | alert.tsx:87–97 | Default icon colors hardcode Tailwind palette (`text-emerald-600`, `text-amber-600`, `text-red-600`) instead of semantic tokens | Themes with custom palettes cannot override alert icon tints | Map to CSS design token classes e.g. `text-destructive` or semantic variables |
 
 ---

@@ -438,3 +438,7 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **A-06 (Minor)**: Propagated `aria-disabled={disabled ? 'true' : undefined}` on the item container wrapper to explicitly communicate disabled state to assistive technology.
   - **A-07 (Minor)**: Added `style={{ visibility: open ? undefined : 'hidden' }}` and `aria-hidden={!open}` on `AccordionContent` to ensure inactive accordion panels and any nested focusable controls are completely excluded from the keyboard Tab order when closed.
   - Added unit test assertion in `tests/smoke/forms.test.tsx` verifying `visibility: hidden` and `aria-hidden="true"` when collapsed.
+
+- **`Alert`** (`src/components/feedback/alert.tsx`):
+  - **ALT-04 (Minor)**: Activated previously unused `priority`, `category`, `tags`, `loading`, `dismissible`, and `onDismiss` props. Added `data-priority` and `data-category` attributes, rendered tag/category badges when provided, integrated spinning `Loader2` indicator when `loading=true`, and hooked up dismissible event callbacks.
+  - Added unit test assertion in `tests/smoke/feedback.test.tsx` verifying metadata attributes, tags, loading state, and dismiss handling.

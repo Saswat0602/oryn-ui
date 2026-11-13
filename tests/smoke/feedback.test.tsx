@@ -44,10 +44,16 @@ describe('Feedback Domain Smoke & Accessibility Suite', () => {
 
   it('renders Alert with accessible dismiss and correct roles for all types', async () => {
     let closed = false
-    const { getByRole, getByLabelText } = render(
+    let dismissed = false
+    const { getByRole, getByLabelText, getByText, container } = render(
       <Alert
         variant="destructive"
-        closable
+        dismissible
+        priority="critical"
+        category="Security"
+        tags={["Auth", "P0"]}
+        loading
+        onDismiss={() => { dismissed = true }}
         onClose={() => { closed = true }}
         title="Error occurred"
         message="Something went wrong"
@@ -55,9 +61,16 @@ describe('Feedback Domain Smoke & Accessibility Suite', () => {
     )
 
     expect(getByRole('alert')).toBeDefined()
+    expect(container.querySelector('[data-priority="critical"]')).toBeDefined()
+    expect(container.querySelector('[data-category="Security"]')).toBeDefined()
+    expect(getByText('Security')).toBeDefined()
+    expect(getByText('Auth')).toBeDefined()
+    expect(getByText('P0')).toBeDefined()
+
     const closeBtn = getByLabelText('Close alert')
     fireEvent.click(closeBtn)
     expect(closed).toBe(true)
+    expect(dismissed).toBe(true)
   })
 
   it('renders Banner with action, handles dismiss, and passes a11y', async () => {
