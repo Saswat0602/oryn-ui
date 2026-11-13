@@ -186,6 +186,18 @@ describe('Layout Domain Smoke & Accessibility Suite', () => {
     expect(getByText('Panel Left')).toBeDefined()
     expect(getByText('Panel Right')).toBeDefined()
 
+    const handle = container.querySelector('[role="separator"]')!
+    expect(handle).toBeDefined()
+    expect(handle.getAttribute('aria-valuenow')).toBe('50')
+    fireEvent.keyDown(handle, { key: 'ArrowRight' })
+    expect(handle.getAttribute('aria-valuenow')).toBe('55')
+    fireEvent.keyDown(handle, { key: 'PageUp' })
+    expect(handle.getAttribute('aria-valuenow')).toBe('65')
+    fireEvent.keyDown(handle, { key: 'PageDown' })
+    expect(handle.getAttribute('aria-valuenow')).toBe('55')
+    fireEvent.keyDown(handle, { key: 'Home' })
+    expect(handle.getAttribute('aria-valuenow')).toBe('10')
+
     const results = await axe(container)
     expect(results.violations).toEqual([])
   })

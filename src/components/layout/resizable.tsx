@@ -163,10 +163,12 @@ const ResizableRoot = forwardRef<HTMLDivElement, ResizableProps>(
     const startSize = useRef(0)
     const containerDim = useRef(1)
 
-    // Sync size if defaultSize changes externally
+    // Sync size if defaultSize changes externally (guarded against active user dragging)
     useEffect(() => {
-      setSize(defaultSize)
-    }, [defaultSize])
+      if (!isDragging) {
+        setSize(defaultSize)
+      }
+    }, [defaultSize, isDragging])
 
     const handleMouseDown = useCallback(
       (e: React.MouseEvent) => {
@@ -264,6 +266,7 @@ const ResizableRoot = forwardRef<HTMLDivElement, ResizableProps>(
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLDivElement>) => {
         const step = isPercentage ? 5 : 15
+        const largeStep = step * 2
         let nextSize = size
         if (
           (direction === 'horizontal' && e.key === 'ArrowRight') ||
@@ -277,6 +280,12 @@ const ResizableRoot = forwardRef<HTMLDivElement, ResizableProps>(
         ) {
           e.preventDefault()
           nextSize = Math.max(minSize, size - step)
+        } else if (e.key === 'PageUp') {
+          e.preventDefault()
+          nextSize = Math.min(maxSize, size + largeStep)
+        } else if (e.key === 'PageDown') {
+          e.preventDefault()
+          nextSize = Math.max(minSize, size - largeStep)
         } else if (e.key === 'Home') {
           e.preventDefault()
           nextSize = minSize

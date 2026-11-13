@@ -490,3 +490,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **REA-01 (Minor)**: Wrapped streaming "Thinking..." indicator in `role="status"` and `aria-live="polite"` so screen reader users are proactively alerted when reasoning generation is active.
   - **REA-02 (Minor)**: Added explicit `focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 rounded-xl` to the trigger button.
   - Added unit test assertions in `tests/smoke/feedback.test.tsx` verifying focus rings and live region.
+
+- **`Resizable`** (`src/components/layout/resizable.tsx`):
+  - **RES-02 (Minor)**: Added `PageUp` and `PageDown` keyboard navigation handlers with 2x step delta (10% or 30px) for rapid keyboard adjustment.
+  - **RES-03 (Minor)**: Guarded `defaultSize` synchronization effect with `!isDragging` check to prevent active drag sessions from resetting on external parent re-renders.
+  - Added unit test assertions in `tests/smoke/layout.test.tsx` verifying keyboard resizing via arrows, PageUp/PageDown, and Home/End.
