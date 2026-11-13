@@ -521,3 +521,9 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **TST-01 (Minor)**: Configured destructive toasts to dynamically render `role="alert"` and `aria-live="assertive"` so critical failure notifications immediately alert assistive technology.
   - **TST-02 (Minor)**: Fixed subscription lifecycle in `useToast` with `[]` dependency array to eliminate redundant re-subscriptions on toast state updates.
   - Added unit test assertions in `tests/smoke/feedback.test.tsx` verifying assertive live regions for destructive toasts.
+
+- **`ToolCallCard`** (`src/components/feedback/tool-call-card.tsx`):
+  - **TCC-01 (Minor)**: Added `focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 rounded-xl` to the header disclosure button.
+  - **TCC-02 (Minor)**: Added `aria-hidden="true"` and `motion-safe:animate-spin motion-reduce:animate-none` on `Loader2` and other decorative status icons.
+  - **TCC-03 (Nit)**: Mapped status badges to semantic design token color classes (`bg-emerald-500/10`, `bg-destructive/10`, `bg-primary/10`).
+  - Added unit test assertions in `tests/smoke/feedback.test.tsx` verifying focus rings and disclosure states.

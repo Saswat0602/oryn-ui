@@ -51,25 +51,25 @@ export const ToolCallCard = React.forwardRef<HTMLDivElement, ToolCallCardProps>(
 
     const statusBadges = {
       pending: (
-        <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+        <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground border border-border/50">
           Pending
         </span>
       ),
       running: (
-        <span className="inline-flex items-center gap-1 rounded-md bg-accent px-2 py-0.5 text-[11px] font-medium text-accent-foreground">
-          <Loader2 className="h-3 w-3 animate-spin" />
+        <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary border border-primary/20">
+          <Loader2 className="h-3 w-3 motion-safe:animate-spin motion-reduce:animate-none" aria-hidden="true" />
           Running
         </span>
       ),
       success: (
-        <span className="inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
-          <CheckCircle2 className="h-3 w-3" />
+        <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+          <CheckCircle2 className="h-3 w-3" aria-hidden="true" />
           Completed
         </span>
       ),
       error: (
-        <span className="inline-flex items-center gap-1 rounded-md bg-rose-50 px-2 py-0.5 text-[11px] font-medium text-rose-700 dark:bg-rose-950/40 dark:text-rose-300">
-          <AlertCircle className="h-3 w-3" />
+        <span className="inline-flex items-center gap-1 rounded-md bg-destructive/10 px-2 py-0.5 text-[11px] font-medium text-destructive border border-destructive/20">
+          <AlertCircle className="h-3 w-3" aria-hidden="true" />
           Failed
         </span>
       ),
@@ -98,17 +98,18 @@ export const ToolCallCard = React.forwardRef<HTMLDivElement, ToolCallCardProps>(
           onClick={() => setOpen((prev) => !prev)}
           aria-expanded={open}
           aria-controls={contentId}
-          className="flex w-full items-center justify-between gap-3 px-3.5 py-2.5 text-xs text-left cursor-pointer select-none"
+          className="flex w-full items-center justify-between gap-3 px-3.5 py-2.5 text-xs text-left cursor-pointer select-none rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
         >
           <div className="flex items-center gap-2 min-w-0">
             <ChevronRight
+              aria-hidden="true"
               className={cn(
                 "h-3.5 w-3.5 text-muted-foreground transition-transform duration-150 shrink-0",
                 open && "rotate-90"
               )}
             />
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-muted text-muted-foreground shrink-0">
-              <Wrench className="h-3.5 w-3.5" />
+              <Wrench aria-hidden="true" className="h-3.5 w-3.5" />
             </div>
             <span className="font-mono font-semibold text-card-foreground truncate">
               {displayName}

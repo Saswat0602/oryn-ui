@@ -311,6 +311,7 @@ describe('Feedback Domain Smoke & Accessibility Suite', () => {
 
     const triggerBtn = getByRole('button')
     expect(triggerBtn.getAttribute('aria-expanded')).toBe('false')
+    expect(triggerBtn.className).toContain('focus-visible:ring-2')
     fireEvent.click(triggerBtn)
     expect(triggerBtn.getAttribute('aria-expanded')).toBe('true')
 
