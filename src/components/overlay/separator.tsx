@@ -20,23 +20,27 @@ export const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(
     },
     ref
   ) => {
-    const thicknessClasses = {
+    const isSolid = lineStyle === 'solid'
+
+    const solidThickness = {
       thin: orientation === 'horizontal' ? 'h-px' : 'w-px',
       medium: orientation === 'horizontal' ? 'h-0.5' : 'w-0.5',
       thick: orientation === 'horizontal' ? 'h-1' : 'w-1',
     }
 
-    const styleClasses = {
-      solid: 'bg-border',
-      dashed:
-        orientation === 'horizontal'
-          ? 'border-b border-dashed border-border bg-transparent'
-          : 'border-r border-dashed border-border bg-transparent',
-      dotted:
-        orientation === 'horizontal'
-          ? 'border-b border-dotted border-border bg-transparent'
-          : 'border-r border-dotted border-border bg-transparent',
+    const borderWidthClasses = {
+      thin: orientation === 'horizontal' ? 'border-b' : 'border-r',
+      medium: orientation === 'horizontal' ? 'border-b-2' : 'border-r-2',
+      thick: orientation === 'horizontal' ? 'border-b-4' : 'border-r-4',
     }
+
+    const styleClass = isSolid
+      ? cn('bg-border', solidThickness[thickness])
+      : cn(
+          'border-border bg-transparent',
+          lineStyle === 'dashed' ? 'border-dashed' : 'border-dotted',
+          borderWidthClasses[thickness]
+        )
 
     return (
       <div
@@ -45,9 +49,8 @@ export const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(
         aria-orientation={decorative ? undefined : orientation}
         className={cn(
           'shrink-0',
-          orientation === 'horizontal' ? 'w-full' : 'h-full',
-          thicknessClasses[thickness],
-          styleClasses[lineStyle],
+          orientation === 'horizontal' ? 'w-full' : 'h-full self-stretch',
+          styleClass,
           className
         )}
         {...props}

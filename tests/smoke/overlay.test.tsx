@@ -202,6 +202,13 @@ describe('Overlay Domain Smoke & Accessibility Suite', () => {
         </HoverCard>
 
         <Separator />
+        <Separator
+          decorative={false}
+          orientation="vertical"
+          thickness="thick"
+          lineStyle="dashed"
+          data-testid="semantic-separator"
+        />
 
         <Collapsible defaultOpen={true}>
           <CollapsibleTrigger asChild>
@@ -227,6 +234,13 @@ describe('Overlay Domain Smoke & Accessibility Suite', () => {
     fireEvent.click(collapsibleTrigger)
     expect(collapsibleTrigger.getAttribute('aria-expanded')).toBe('false')
     expect(collapsibleBody?.getAttribute('aria-hidden')).toBe('true')
+
+    const semanticSep = container.querySelector('[role="separator"]')!
+    expect(semanticSep).toBeDefined()
+    expect(semanticSep.getAttribute('aria-orientation')).toBe('vertical')
+    expect(semanticSep.className).toContain('self-stretch')
+    expect(semanticSep.className).toContain('border-dashed')
+    expect(semanticSep.className).toContain('border-r-4')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

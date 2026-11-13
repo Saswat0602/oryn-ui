@@ -500,3 +500,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **SCR-01 (Minor)**: Provided `tabIndex={0}` and focus ring (`focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1`) on scrollable viewport to enable full WCAG 2.1.1 keyboard navigation when scrolling plain text.
   - **SCR-02 (Minor)**: Added standard Firefox cross-browser CSS `[scrollbar-width:thin]` and `[scrollbar-width:auto]` to ensure consistent slim scrollbars across all rendering engines.
   - Added unit test assertion in `tests/smoke/layout.test.tsx` verifying viewport `tabIndex`.
+
+- **`Separator`** (`src/components/overlay/separator.tsx`):
+  - **SP-01 (Minor)**: Applied border width classes (`border-b-2`, `border-b-4`, `border-r-2`, `border-r-4`) when `lineStyle` is `dashed` or `dotted` so thicker dashed/dotted lines render accurately without height conflicts.
+  - **SP-02 (Minor)**: Added `self-stretch` to vertical separators to ensure they correctly expand across flex layout containers.
+  - Added unit test assertions in `tests/smoke/overlay.test.tsx` verifying semantic separator attributes and styles.
