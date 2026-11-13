@@ -301,7 +301,7 @@ export function MessageBubbleExample() {
       
       <MessageBubble
         role="assistant"
-        content="You can import directly from individual subpaths like \`oryn-ui/button\` or \`oryn-ui/dialog\`. Each component bundle includes its required primitives and hooks automatically with zero overhead."
+        content="You can import directly from individual subpaths like 'oryn-ui/button' or 'oryn-ui/dialog'. Each component bundle includes its required primitives and hooks automatically with zero overhead."
         timestamp="1s ago"
         copyable
       />

@@ -681,11 +681,11 @@ export function DateTimePickerDemo() {
           <button
             key={mode}
             onClick={() => setSelectedMode(mode)}
-            className={\`px-4 py-2 text-sm rounded-md transition-colors \${
+            className={
               selectedMode === mode 
-                ? 'bg-primary text-primary-foreground' 
-                : 'bg-muted text-muted-foreground hover:bg-muted/80'
-            }\`}
+                ? 'px-4 py-2 text-sm rounded-md transition-colors bg-primary text-primary-foreground' 
+                : 'px-4 py-2 text-sm rounded-md transition-colors bg-muted text-muted-foreground hover:bg-muted/80'
+            }
           >
             {mode.charAt(0).toUpperCase() + mode.slice(1)}
           </button>
@@ -698,7 +698,7 @@ export function DateTimePickerDemo() {
           mode={selectedMode}
           value={selectedDate}
           onChange={setSelectedDate}
-          placeholder={\`Select \${selectedMode}\`}
+          placeholder={'Select ' + selectedMode}
         />
       </div>
 

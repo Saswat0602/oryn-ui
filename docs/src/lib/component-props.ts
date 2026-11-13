@@ -339,30 +339,30 @@ export const COMPONENT_PROPS: Record<string, ComponentProp[]> = {
     },
     {
       name: 'variant',
-      type: "'default' | 'success' | 'warning' | 'error' | 'gradient'",
+      type: "'default' | 'success' | 'warning' | 'destructive'",
       required: false,
       default: 'default',
       description: 'Semantic color variant of the completed fill indicator'
     },
     {
-      name: 'animated',
+      name: 'indeterminate',
       type: 'boolean',
       required: false,
-      default: true,
-      description: 'Enables smooth CSS transitions on value updates'
+      default: false,
+      description: 'Renders continuous looping animation for indeterminate loading states'
     }
   ],
 
   slider: [
     {
       name: 'value',
-      type: 'number | [number, number]',
+      type: 'number | number[] | [number, number]',
       required: false,
       description: 'Controlled slider value or tuple for dual-thumb range mode'
     },
     {
       name: 'defaultValue',
-      type: 'number | [number, number]',
+      type: 'number | number[] | [number, number]',
       required: false,
       default: 0,
       description: 'Initial value for uncontrolled mode'
@@ -396,10 +396,10 @@ export const COMPONENT_PROPS: Record<string, ComponentProp[]> = {
       description: 'Disables slider drag and keyboard interactions'
     },
     {
-      name: 'onChange',
-      type: '(value: number | [number, number]) => void',
+      name: 'onValueChange',
+      type: '(value: number | number[] | [number, number]) => void',
       required: false,
-      description: 'Callback fired on slider thumb displacement'
+      description: 'Callback fired whenever slider value changes through drag or keyboard navigation'
     }
   ],
 
@@ -425,11 +425,11 @@ export const COMPONENT_PROPS: Record<string, ComponentProp[]> = {
       description: 'Total number of rating stars to render'
     },
     {
-      name: 'allowHalf',
-      type: 'boolean',
+      name: 'precision',
+      type: '0.5 | 1',
       required: false,
-      default: false,
-      description: 'Enables half-star precision rating selection'
+      default: 1,
+      description: 'Granular rating step precision (0.5 for half-star, 1 for full star)'
     },
     {
       name: 'readOnly',
@@ -449,36 +449,31 @@ export const COMPONENT_PROPS: Record<string, ComponentProp[]> = {
   skeleton: [
     {
       name: 'variant',
-      type: "'text' | 'circular' | 'rectangular'",
+      type: "'text' | 'circular' | 'rectangular' | 'rounded'",
       required: false,
       default: 'text',
       description: 'Geometric shape archetype for placeholder shimmer rendering'
     },
     {
-      name: 'width',
-      type: 'string | number',
+      name: 'animation',
+      type: "'pulse' | 'wave' | 'none'",
       required: false,
-      description: 'Explicit width override (e.g. 100% or numeric pixel value)'
+      default: 'pulse',
+      description: 'Shimmer animation style across the skeleton placeholder'
     },
     {
-      name: 'height',
-      type: 'string | number',
+      name: 'lines',
+      type: 'number',
       required: false,
-      description: 'Explicit height override (e.g. 2rem or numeric pixel value)'
-    },
-    {
-      name: 'animate',
-      type: 'boolean',
-      required: false,
-      default: true,
-      description: 'Toggles pulse animation on the skeleton background'
+      default: 1,
+      description: 'Number of repeated skeleton lines to render for multi-line text placeholders'
     }
   ],
 
   textarea: [
     {
       name: 'error',
-      type: 'boolean | string',
+      type: 'boolean',
       required: false,
       default: false,
       description: 'Applies red validation error border and ring styles'

@@ -697,7 +697,7 @@ export function ResizableDemo() {
       code: `import { ScrollArea } from 'oryn-ui'
 
 export function ScrollAreaDemo() {
-  const tags = Array.from({ length: 30 }).map((_, i) => \`v3.2.\${i + 1}-rc\`)
+  const tags = Array.from({ length: 30 }).map((_, i) => 'v3.2.' + (i + 1) + '-rc')
 
   return (
     <ScrollArea className="h-52 w-56 rounded-xl border border-border p-2">
@@ -723,7 +723,7 @@ export function ScrollAreaDemo() {
       code: `import { ScrollArea } from 'oryn-ui'
 
 export function ScrollAreaDemo() {
-  const tags = Array.from({ length: 30 }).map((_, i) => \`v3.2.\${i + 1}-rc\`)
+  const tags = Array.from({ length: 30 }).map((_, i) => 'v3.2.' + (i + 1) + '-rc')
 
   return (
     <ScrollArea className="h-52 w-56 rounded-xl border border-border p-2">

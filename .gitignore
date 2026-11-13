@@ -5,3 +5,8 @@
 .npmrc
 /ui copy
 
+# Audit & report artifacts
+audit/
+audit-*/
+reports/
+
