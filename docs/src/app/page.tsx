@@ -561,16 +561,19 @@ export default function HomePage() {
               {/* Component Tag Pills using authentic ORYN UI Badges */}
               <div className="space-y-3 pt-1">
                 <div className="flex flex-wrap gap-1.5">
-                  {cat.tags.map((tag) => (
-                    <Link key={tag} href={`/docs/components/${tag.toLowerCase()}`}>
-                      <Badge 
-                        variant="outline" 
-                        className="text-[11px] px-2 py-0.5 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer border-border/50"
-                      >
-                        {tag}
-                      </Badge>
-                    </Link>
-                  ))}
+                  {cat.tags.map((tag) => {
+                    const tagSlug = tag.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+                    return (
+                      <Link key={tag} href={`/docs/components/${tagSlug}`}>
+                        <Badge 
+                          variant="outline" 
+                          className="text-[11px] px-2 py-0.5 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer border-border/50"
+                        >
+                          {tag}
+                        </Badge>
+                      </Link>
+                    )
+                  })}
                 </div>
 
                 <Link 

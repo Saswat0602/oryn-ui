@@ -31,9 +31,12 @@ export default async function ComponentPage({ params }: ComponentPageProps) {
 export async function generateStaticParams() {
   const components = getAllComponents()
   
-  return components.map((component) => ({
-    slug: [component.slug],
-  }))
+  return [
+    { slug: [] },
+    ...components.map((component) => ({
+      slug: [component.slug],
+    })),
+  ]
 }
 
 export async function generateMetadata({ 

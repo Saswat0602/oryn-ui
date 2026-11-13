@@ -656,7 +656,12 @@ const REGISTRY_ALIASES: Record<string, ComponentSlug> = {
 
 export function getComponentBySlug(slug: string) {
   const canonical = REGISTRY_ALIASES[slug] || (slug as ComponentSlug)
-  return COMPONENT_REGISTRY[canonical] || null
+  const meta = COMPONENT_REGISTRY[canonical]
+  if (!meta) return null
+  return {
+    slug: canonical,
+    ...meta
+  }
 }
 
 export function getAllComponents() {
