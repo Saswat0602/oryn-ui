@@ -475,3 +475,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
 - **`Kbd`** (`src/components/media/kbd.tsx`):
   - **KBD-01 (Minor)**: Added `aria-label` and visually hidden fallback text mapping shortcut symbols (e.g. ⌘ to "Command", ⌥ to "Option", ↵ to "Enter") so assistive technologies clearly announce shortcut keys.
   - Added unit test assertion in `tests/smoke/media.test.tsx` verifying accessible labels on formatted key symbols.
+
+- **`Label`** (`src/components/core/label.tsx`):
+  - **L-01 (Minor)**: Added `aria-hidden="true"` on the required asterisk `*` and visually-hidden `<span className="sr-only"> (required)</span>` text for clear assistive technology announcements.
+  - **L-02 (Minor)**: Added `dark:text-red-400` on the required indicator for WCAG AA compliance (>5:1) in dark mode.
+  - Added unit test assertion in `tests/smoke/core.test.tsx` verifying required label sr-only text and aria-hidden indicator.

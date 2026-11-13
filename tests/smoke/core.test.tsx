@@ -207,7 +207,7 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
     const handleSelectChange = vi.fn()
     const { container, getByText, getByRole } = render(
       <StrictMode>
-        <Label htmlFor="framework-select">Preferred Framework</Label>
+        <Label htmlFor="framework-select" required>Preferred Framework</Label>
         <Select 
           id="framework-select"
           options={[
@@ -221,6 +221,8 @@ describe('Core Domain Smoke & Accessibility Suite', () => {
       </StrictMode>
     )
     expect(getByText('Preferred Framework')).toBeDefined()
+    expect(getByText('(required)')).toBeDefined()
+    expect(container.querySelector('[aria-hidden="true"]')?.textContent?.trim()).toBe('*')
     const trigger = getByRole('combobox')
     expect(trigger.getAttribute('aria-expanded')).toBe('false')
     fireEvent.click(trigger)
