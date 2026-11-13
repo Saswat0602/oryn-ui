@@ -429,3 +429,7 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **NM-01 (Major)**: Implemented keyboard tab delegation from `NavigationMenuTrigger` into `NavigationMenuContent` and Shift+Tab return flow to ensure accessible tab order regardless of whether content is rendered inline or portaled.
   - **NM-05 (Nit)**: Replaced untyped monkey-patched compound exports with typed `CompoundedNavigationMenu` interface for complete TypeScript safety.
   - Added unit test in `tests/smoke/navigation.test.tsx` asserting trigger click, `aria-expanded` toggling, and Escape key dismissal.
+
+- **`Form`** (`src/components/forms/form.tsx`):
+  - **FM-04 (Major)**: Enhanced `FormField` controller adapter to support checkboxes (`checked`), custom objects, validation triggers, and dirty state updates during render-prop execution.
+  - Added unit test in `tests/smoke/forms.test.tsx` asserting both standalone error propagation and RHF render-prop/control callback handling.

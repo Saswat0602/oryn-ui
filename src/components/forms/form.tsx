@@ -168,9 +168,15 @@ export const FormField: React.FC<FormFieldProps> = ({
       name,
       value: control?._formValues?.[name] ?? "",
       onChange: (e: any) => {
-        control?.setValue?.(name, e?.target ? e.target.value : e)
+        const val =
+          e && typeof e === "object" && "target" in e
+            ? (e.target.type === "checkbox" ? e.target.checked : e.target.value)
+            : e
+        control?.setValue?.(name, val, { shouldValidate: true, shouldDirty: true })
       },
-      onBlur: () => {},
+      onBlur: () => {
+        control?.trigger?.(name)
+      },
     }
 
     return (

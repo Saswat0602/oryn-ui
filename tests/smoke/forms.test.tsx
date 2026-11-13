@@ -234,6 +234,8 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders Composable Form with FormField and validation message', async () => {
+    const handleSetValue = vi.fn()
+    const handleTrigger = vi.fn()
     const { container, getByText, getByLabelText } = render(
       <StrictMode>
         <Form>
@@ -247,6 +249,29 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
               <FormMessage />
             </FormItem>
           </FormField>
+
+          <FormField
+            name="agree"
+            control={{
+              _formValues: { agree: false },
+              setValue: handleSetValue,
+              trigger: handleTrigger,
+            }}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Agree to terms</FormLabel>
+                <FormControl>
+                  <input
+                    type="checkbox"
+                    checked={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    aria-label="Agree to terms"
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
         </Form>
       </StrictMode>
     )
@@ -256,6 +281,12 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
     expect(getByText('*')).toBeDefined()
     expect(getByText('Choose a unique organization handle.')).toBeDefined()
     expect(getByText('Handle is required')).toBeDefined()
+
+    const checkbox = getByLabelText('Agree to terms') as HTMLInputElement
+    fireEvent.click(checkbox)
+    expect(handleSetValue).toHaveBeenCalledWith('agree', true, { shouldValidate: true, shouldDirty: true })
+    fireEvent.blur(checkbox)
+    expect(handleTrigger).toHaveBeenCalledWith('agree')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
