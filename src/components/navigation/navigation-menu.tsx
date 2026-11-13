@@ -33,6 +33,7 @@ interface NavigationMenuItemContextValue {
   triggerId: string
   contentId: string
   triggerRef: React.MutableRefObject<HTMLButtonElement | null>
+  contentRef: React.MutableRefObject<HTMLDivElement | null>
   triggerRect: DOMRect | null
   updateTriggerRect: () => void
   toggle: () => void
@@ -186,6 +187,7 @@ export const NavigationMenuItem = React.forwardRef<HTMLLIElement, NavigationMenu
     const triggerId = `${value}-trigger`
     const contentId = `${value}-content`
     const triggerRef = React.useRef<HTMLButtonElement | null>(null)
+    const contentRef = React.useRef<HTMLDivElement | null>(null)
     const [triggerRect, setTriggerRect] = React.useState<DOMRect | null>(null)
 
     const updateTriggerRect = React.useCallback(() => {
@@ -219,6 +221,7 @@ export const NavigationMenuItem = React.forwardRef<HTMLLIElement, NavigationMenu
           triggerId,
           contentId,
           triggerRef,
+          contentRef,
           triggerRect,
           updateTriggerRect,
           toggle,
@@ -247,8 +250,8 @@ export interface NavigationMenuTriggerProps extends React.ButtonHTMLAttributes<H
 }
 
 export const NavigationMenuTrigger = React.forwardRef<HTMLButtonElement, NavigationMenuTriggerProps>(
-  ({ asChild = false, showChevron = true, className, children, onClick, ...props }, forwardedRef) => {
-    const { isOpen, triggerId, contentId, toggle, triggerRef, updateTriggerRect } = useNavigationMenuItemContext()
+  ({ asChild = false, showChevron = true, className, children, onClick, onKeyDown, ...props }, forwardedRef) => {
+    const { isOpen, triggerId, contentId, toggle, triggerRef, contentRef, updateTriggerRect } = useNavigationMenuItemContext()
     const Comp = asChild ? Slot : "button"
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -256,6 +259,20 @@ export const NavigationMenuTrigger = React.forwardRef<HTMLButtonElement, Navigat
       if (!e.defaultPrevented) {
         updateTriggerRect()
         toggle()
+      }
+    }
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+      onKeyDown?.(e)
+      if (e.defaultPrevented) return
+      if (e.key === "Tab" && !e.shiftKey && isOpen && contentRef.current) {
+        const focusable = contentRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+        if (focusable.length > 0) {
+          e.preventDefault()
+          focusable[0].focus()
+        }
       }
     }
 
@@ -272,6 +289,7 @@ export const NavigationMenuTrigger = React.forwardRef<HTMLButtonElement, Navigat
         aria-controls={contentId}
         data-state={isOpen ? "open" : "closed"}
         onClick={handleClick}
+        onKeyDown={handleKeyDown}
         className={cn(
           navigationMenuTriggerStyle(),
           isOpen && "bg-accent text-accent-foreground",
@@ -310,11 +328,12 @@ export const NavigationMenuContent = React.forwardRef<HTMLDivElement, Navigation
       sideOffset = 6,
       children,
       style,
+      onKeyDown,
       ...props
     },
     ref
   ) => {
-    const { isOpen, contentId, triggerId, triggerRef, triggerRect, onMouseEnter, onMouseLeave } =
+    const { isOpen, contentId, triggerId, triggerRef, contentRef, triggerRect, toggle, onMouseEnter, onMouseLeave } =
       useNavigationMenuItemContext()
 
     if (!isOpen) return null
@@ -328,15 +347,38 @@ export const NavigationMenuContent = React.forwardRef<HTMLDivElement, Navigation
         ? "left-1/2 -translate-x-1/2"
         : "left-0"
 
+    const handleContentKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+      onKeyDown?.(e)
+      if (e.defaultPrevented) return
+      if (e.key === "Tab" && e.shiftKey && contentRef.current) {
+        const focusable = contentRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        )
+        if (focusable.length > 0 && document.activeElement === focusable[0]) {
+          e.preventDefault()
+          triggerRef.current?.focus()
+        }
+      } else if (e.key === "Escape") {
+        e.preventDefault()
+        toggle()
+        triggerRef.current?.focus()
+      }
+    }
+
     const contentElement = (
       <div
-        ref={ref}
+        ref={(node) => {
+          contentRef.current = node
+          if (typeof ref === "function") ref(node)
+          else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node
+        }}
         id={contentId}
         role="region"
         aria-labelledby={triggerId}
         data-state={isOpen ? "open" : "closed"}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
+        onKeyDown={handleContentKeyDown}
         style={
           usePortal && rect
             ? {
@@ -450,12 +492,24 @@ export const NavigationMenuIndicator = React.forwardRef<HTMLDivElement, Navigati
 NavigationMenuIndicator.displayName = "NavigationMenuIndicator"
 
 // Attach compound subcomponents to NavigationMenu
-;(NavigationMenu as any).List = NavigationMenuList
-;(NavigationMenu as any).Item = NavigationMenuItem
-;(NavigationMenu as any).Trigger = NavigationMenuTrigger
-;(NavigationMenu as any).Content = NavigationMenuContent
-;(NavigationMenu as any).Link = NavigationMenuLink
-;(NavigationMenu as any).Viewport = NavigationMenuViewport
-;(NavigationMenu as any).Indicator = NavigationMenuIndicator
+export interface CompoundedNavigationMenu
+  extends React.ForwardRefExoticComponent<NavigationMenuProps & React.RefAttributes<HTMLElement>> {
+  List: typeof NavigationMenuList
+  Item: typeof NavigationMenuItem
+  Trigger: typeof NavigationMenuTrigger
+  Content: typeof NavigationMenuContent
+  Link: typeof NavigationMenuLink
+  Viewport: typeof NavigationMenuViewport
+  Indicator: typeof NavigationMenuIndicator
+}
 
-export default NavigationMenu
+const CompoundedNavMenu = NavigationMenu as CompoundedNavigationMenu
+CompoundedNavMenu.List = NavigationMenuList
+CompoundedNavMenu.Item = NavigationMenuItem
+CompoundedNavMenu.Trigger = NavigationMenuTrigger
+CompoundedNavMenu.Content = NavigationMenuContent
+CompoundedNavMenu.Link = NavigationMenuLink
+CompoundedNavMenu.Viewport = NavigationMenuViewport
+CompoundedNavMenu.Indicator = NavigationMenuIndicator
+
+export default CompoundedNavMenu

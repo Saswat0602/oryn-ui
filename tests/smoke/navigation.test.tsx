@@ -42,14 +42,14 @@ import { Stepper } from '../../src/components/navigation/stepper'
 
 describe('Navigation Domain Smoke & Accessibility Suite', () => {
   it('renders NavigationMenu and Menubar', async () => {
-    const { container, getByText } = render(
+    const { container, getByText, getByRole, queryByText } = render(
       <StrictMode>
         <NavigationMenu>
           <NavigationMenuList>
-            <NavigationMenuItem>
+            <NavigationMenuItem value="products">
               <NavigationMenuTrigger>Products</NavigationMenuTrigger>
               <NavigationMenuContent>
-                <div>Product catalog links</div>
+                <a href="#link1">Product catalog links</a>
               </NavigationMenuContent>
             </NavigationMenuItem>
           </NavigationMenuList>
@@ -65,7 +65,19 @@ describe('Navigation Domain Smoke & Accessibility Suite', () => {
         </Menubar>
       </StrictMode>
     )
-    expect(getByText('Products')).toBeDefined()
+    const trigger = getByRole('button', { name: /products/i })
+    expect(trigger).toBeDefined()
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+
+    // Open by click
+    fireEvent.click(trigger)
+    expect(trigger.getAttribute('aria-expanded')).toBe('true')
+    expect(getByText('Product catalog links')).toBeDefined()
+
+    // Escape closes panel
+    fireEvent.keyDown(trigger, { key: 'Escape' })
+    expect(trigger.getAttribute('aria-expanded')).toBe('false')
+
     expect(getByText('File')).toBeDefined()
 
     const results = await axe(container)

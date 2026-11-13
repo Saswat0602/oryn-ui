@@ -424,3 +424,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **LAY-03 (Minor)**: Replaced unthrottled window resize event with `window.matchMedia` change listener to eliminate re-render churn during window resizing.
   - **LAY-04 (Minor)**: Configured default `id="main-content"` on the primary `<main>` landmark element.
   - Added unit test in `tests/smoke/layout.test.tsx` verifying the Skip to Content link and `<main id="main-content">` element.
+
+- **`NavigationMenu`** (`src/components/navigation/navigation-menu.tsx`):
+  - **NM-01 (Major)**: Implemented keyboard tab delegation from `NavigationMenuTrigger` into `NavigationMenuContent` and Shift+Tab return flow to ensure accessible tab order regardless of whether content is rendered inline or portaled.
+  - **NM-05 (Nit)**: Replaced untyped monkey-patched compound exports with typed `CompoundedNavigationMenu` interface for complete TypeScript safety.
+  - Added unit test in `tests/smoke/navigation.test.tsx` asserting trigger click, `aria-expanded` toggling, and Escape key dismissal.
