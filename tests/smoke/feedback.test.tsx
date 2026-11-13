@@ -95,13 +95,15 @@ describe('Feedback Domain Smoke & Accessibility Suite', () => {
     expect(getByText('Details')).toBeDefined()
 
     const dismissBtn = getByLabelText('Dismiss banner')
+    expect(dismissBtn.className).toContain('focus-visible:ring-2')
     fireEvent.click(dismissBtn)
     expect(dismissed).toBe(true)
 
     const ssr = renderToString(
-      <Banner title="SSR Banner Alert">System notice</Banner>
+      <Banner variant="destructive" title="SSR Banner Alert">System notice</Banner>
     )
     expect(ssr).toContain('SSR Banner Alert')
+    expect(ssr).toContain('text-destructive')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

@@ -448,3 +448,9 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **AVA-02 (Minor)**: Added `role="status"` and accessible `aria-label={`${hiddenCount} more members`}` with visually hidden text on `AvatarGroup` overflow badge indicator.
   - **AVA-03 (Nit)**: Added `rtl:space-x-reverse` on `AvatarGroup` for right-to-left layout compatibility.
   - Added unit test assertion in `tests/smoke/media.test.tsx` validating accessible label on group overflow badge.
+
+- **`Banner`** (`src/components/feedback/banner.tsx`):
+  - **BAN-01 (Minor)**: Added `focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1` on dismiss button for clear keyboard focus indication.
+  - **BAN-02 (Minor)**: Applied semantic design tokens `text-destructive`, `border-destructive/20`, and semantic variable tints to support custom themes.
+  - **BAN-03 (Nit)**: Strongly typed `icon?: React.ReactNode` in `BannerProps`.
+  - Added unit test assertion in `tests/smoke/feedback.test.tsx` verifying focus-visible rings and destructive token classes.

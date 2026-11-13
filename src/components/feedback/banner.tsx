@@ -8,7 +8,7 @@ export type BannerVariant = "default" | "info" | "success" | "warning" | "destru
 
 export interface BannerProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   variant?: BannerVariant
-  icon?: any
+  icon?: React.ReactNode
   title?: React.ReactNode
   action?: React.ReactNode
   dismissible?: boolean
@@ -63,11 +63,11 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
       info:
         "bg-muted text-foreground border-border",
       success:
-        "bg-emerald-50 text-emerald-900 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-100 dark:border-emerald-900/50",
+        "bg-emerald-500/10 text-emerald-950 border-emerald-500/20 dark:bg-emerald-950/40 dark:text-emerald-100 dark:border-emerald-900/50",
       warning:
-        "bg-amber-50 text-amber-900 border-amber-200 dark:bg-amber-950/40 dark:text-amber-100 dark:border-amber-900/50",
+        "bg-amber-500/10 text-amber-950 border-amber-500/20 dark:bg-amber-950/40 dark:text-amber-100 dark:border-amber-900/50",
       destructive:
-        "bg-rose-50 text-rose-900 border-rose-200 dark:bg-rose-950/40 dark:text-rose-100 dark:border-rose-900/50",
+        "bg-destructive/10 text-destructive border-destructive/20 dark:bg-destructive/20 dark:text-destructive dark:border-destructive/30",
     }[variant]
 
     const defaultIcons = {
@@ -75,7 +75,7 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
       info: <Info className="h-4 w-4 text-foreground shrink-0" />,
       success: <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />,
       warning: <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0" />,
-      destructive: <AlertCircle className="h-4 w-4 text-rose-600 dark:text-rose-400 shrink-0" />,
+      destructive: <AlertCircle className="h-4 w-4 text-destructive shrink-0" />,
     }
 
     const renderedIcon = icon !== undefined ? icon : defaultIcons[variant]
@@ -106,7 +106,7 @@ export const Banner = React.forwardRef<HTMLDivElement, BannerProps>(
               type="button"
               onClick={handleDismiss}
               aria-label="Dismiss banner"
-              className="rounded p-1 text-current opacity-70 hover:opacity-100 transition-opacity cursor-pointer"
+              className="rounded-sm p-1 text-current opacity-70 hover:opacity-100 transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
             >
               <X className="h-4 w-4" />
             </button>
