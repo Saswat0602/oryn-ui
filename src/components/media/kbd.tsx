@@ -60,6 +60,41 @@ const KEY_SYMBOLS: Record<string, string> = {
   space: "␣",
 }
 
+const KEY_NAMES: Record<string, string> = {
+  command: "Command",
+  cmd: "Command",
+  meta: "Command",
+  shift: "Shift",
+  ctrl: "Control",
+  control: "Control",
+  alt: "Option",
+  option: "Option",
+  opt: "Option",
+  enter: "Enter",
+  return: "Return",
+  backspace: "Backspace",
+  delete: "Delete",
+  del: "Delete",
+  escape: "Escape",
+  esc: "Escape",
+  tab: "Tab",
+  capslock: "Caps Lock",
+  up: "Up arrow",
+  down: "Down arrow",
+  left: "Left arrow",
+  right: "Right arrow",
+  pageup: "Page up",
+  pagedown: "Page down",
+  home: "Home",
+  end: "End",
+  space: "Space",
+}
+
+export function getKeyAccessibleName(key: string): string | undefined {
+  const normalized = key.toLowerCase().trim()
+  return KEY_NAMES[normalized]
+}
+
 export function formatKeySymbol(key: string): string {
   const normalized = key.toLowerCase().trim()
   return KEY_SYMBOLS[normalized] ?? key
@@ -70,27 +105,46 @@ export const Kbd = React.forwardRef<HTMLElement, KbdProps>(
     if (keys && keys.length > 0) {
       return (
         <span className="inline-flex items-center gap-1">
-          {keys.map((k, index) => (
-            <kbd
-              key={`${k}-${index}`}
-              ref={index === 0 ? ref : undefined}
-              className={cn(kbdVariants({ variant, size }), className)}
-              {...props}
-            >
-              {formatKeySymbol(k)}
-            </kbd>
-          ))}
+          {keys.map((k, index) => {
+            const accessibleLabel = getKeyAccessibleName(k)
+            return (
+              <kbd
+                key={`${k}-${index}`}
+                ref={index === 0 ? ref : undefined}
+                aria-label={accessibleLabel}
+                className={cn(kbdVariants({ variant, size }), className)}
+                {...props}
+              >
+                <span aria-hidden={accessibleLabel ? "true" : undefined}>
+                  {formatKeySymbol(k)}
+                </span>
+                {accessibleLabel && <span className="sr-only">{accessibleLabel}</span>}
+              </kbd>
+            )
+          })}
         </span>
       )
     }
 
+    const accessibleLabel = props["aria-label"] || (typeof children === "string" ? getKeyAccessibleName(children) : undefined)
+
     return (
       <kbd
         ref={ref}
+        aria-label={accessibleLabel}
         className={cn(kbdVariants({ variant, size }), className)}
         {...props}
       >
-        {typeof children === "string" ? formatKeySymbol(children) : children}
+        {typeof children === "string" ? (
+          <>
+            <span aria-hidden={accessibleLabel ? "true" : undefined}>
+              {formatKeySymbol(children)}
+            </span>
+            {accessibleLabel && <span className="sr-only">{accessibleLabel}</span>}
+          </>
+        ) : (
+          children
+        )}
       </kbd>
     )
   }

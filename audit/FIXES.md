@@ -471,3 +471,7 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
 - **`FileUpload`** (`src/components/forms/file-upload.tsx`):
   - **FU-06 (Minor)**: Implemented file type and extension validation against the `accept` prop (supporting extensions, MIME types, and wildcards) with descriptive error announcements.
   - Added unit test assertion in `tests/smoke/forms.test.tsx` verifying file type filtering.
+
+- **`Kbd`** (`src/components/media/kbd.tsx`):
+  - **KBD-01 (Minor)**: Added `aria-label` and visually hidden fallback text mapping shortcut symbols (e.g. ⌘ to "Command", ⌥ to "Option", ↵ to "Enter") so assistive technologies clearly announce shortcut keys.
+  - Added unit test assertion in `tests/smoke/media.test.tsx` verifying accessible labels on formatted key symbols.

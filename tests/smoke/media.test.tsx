@@ -159,6 +159,9 @@ describe('Media Domain Smoke & Accessibility Suite', () => {
     expect(getByText('⌘')).toBeDefined()
     expect(getByText('⇧')).toBeDefined()
     expect(getByText('↵')).toBeDefined()
+    expect(container.querySelector('[aria-label="Command"]')).toBeDefined()
+    expect(container.querySelector('[aria-label="Shift"]')).toBeDefined()
+    expect(container.querySelector('[aria-label="Enter"]')).toBeDefined()
 
     const ssr = renderToString(<Kbd keys={['cmd', 's']} />)
     expect(ssr).toContain('⌘')

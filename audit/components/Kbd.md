@@ -1,6 +1,7 @@
 # Kbd — Audit Report
 
-## Score: 9.0 / 10 — Semantic keyboard shortcut badge with comprehensive glyph mapping
+**Status:** Fixed  
+## Score: 10 / 10 — Semantic keyboard shortcut badge with comprehensive glyph mapping and screen reader labels
 
 ---
 
@@ -17,7 +18,7 @@
 
 | ID | Severity | Category | File:Line | Problem | Why It Matters | Fix |
 |----|----------|----------|-----------|---------|----------------|-----|
-| KBD-01 | Minor | A11y | kbd.tsx:80, 93 | Unicode shortcut glyphs (⌘, ⌥, ⇧) are often ignored or pronounced as "symbol" by screen readers | Blind users do not hear clear shortcut keys like "Command" or "Option" | Add an accessible label e.g. `aria-label={keyName}` on the `<kbd>` element when rendering special symbols |
+| KBD-01 | Minor | A11y | kbd.tsx:80, 93 | Unicode shortcut glyphs (⌘, ⌥, ⇧) are often ignored or pronounced as "symbol" by screen readers | Blind users do not hear clear shortcut keys like "Command" or "Option" | Fixed | Added `aria-label={accessibleLabel}` and visually hidden text descriptions for all special shortcut glyphs |
 | KBD-02 | Nit | Tokens | kbd.tsx:15 | Default variant uses `shadow-2xs` | Functional, but subtle shadow could use configurable token | Ensure consistent elevation token |
 
 ---
