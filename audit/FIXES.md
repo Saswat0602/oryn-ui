@@ -532,3 +532,7 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **TYP-01 (Minor)**: Refactored all 13 typography components (`TypographyH1` through `TypographyH6`, `TypographyP`, `TypographyBlockquote`, `TypographyCode`, `TypographyLead`, `TypographyLarge`, `TypographySmall`, `TypographyMuted`) to `React.forwardRef` to allow DOM measurement, scroll anchoring, and animation library attachment.
   - **TYP-02 (Nit)**: Extended native HTML element attribute interfaces (`React.HTMLAttributes<HTMLHeadingElement>`, etc.) enabling `id`, `tabIndex`, `aria-*`, and `data-*` props across all typography components.
   - Added unit test assertions in `tests/smoke/media.test.tsx` verifying ref forwarding and HTML attributes.
+
+- **`AspectRatio`** (`src/components/media/aspect-ratio.tsx`):
+  - **ASP-01 (Nit)**: Added support for string ratio expressions (`"16/9"`, `"4/3"`, `"1/1"`) in addition to numeric values via `ratio?: number | string`.
+  - Added unit test assertion in `tests/smoke/media.test.tsx` verifying string ratio prop rendering.

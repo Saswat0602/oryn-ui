@@ -30,6 +30,15 @@ describe('Media Domain Smoke & Accessibility Suite', () => {
 
     expect(getByText('16:9 Aspect Ratio Content')).toBeDefined()
 
+    const { getByText: getByTextString } = render(
+      <StrictMode>
+        <AspectRatio ratio="16/9">
+          <div>String Ratio Content</div>
+        </AspectRatio>
+      </StrictMode>
+    )
+    expect(getByTextString('String Ratio Content')).toBeDefined()
+
     const ssr = renderToString(
       <AspectRatio ratio={4 / 3}>
         <div>SSR Aspect Ratio</div>
