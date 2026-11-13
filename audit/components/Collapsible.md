@@ -26,7 +26,7 @@
 | CO-03 | Major | A11y | collapsible.tsx:85 | Type-unsafe ref casting on `CollapsibleTrigger` | Fixed |
 | CO-04 | Minor | Performance | collapsible.tsx:135 | `pointer-events-none` applied to outer grid wrapper | Fixed |
 | CO-05 | Minor | A11y | collapsible.tsx:130 | Collapsed content visible to AT without `aria-hidden` | Fixed |
-| CO-06 | Minor | Tokens | collapsible.tsx:70 | Non-tokenized layout wrapper | Cleaned |
+| CO-06 | Minor | Tokens | collapsible.tsx:70 | Non-tokenized layout wrapper | Fixed | Cleaned token usage across wrapper components |
 | CO-07 | Nit | API | collapsible.tsx:28 | Event prop redundancy | Kept for backwards compatibility |
 
 ---

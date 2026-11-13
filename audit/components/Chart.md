@@ -19,8 +19,8 @@
 |----|----------|----------|-----------|---------|----------------|--------|-----|
 | CHT-01 | Major | A11y | chart.tsx:419, 642 | Root `<svg>` elements lacked `role="img"` and accessible label | Screen readers announce unlabelled graphic | Fixed | Added `role="img"` and descriptive `aria-label` across all chart variants |
 | CHT-02 | Major | A11y | chart.tsx:401–412, 694–703 | Tooltip and data point inspections are mouse-only (`onMouseMove` / `onMouseEnter`) | Keyboard-only users have no way to navigate data points | Deferred | Documented recommended practice of pairing complex charts with `<Table>` accessible companion |
-| CHT-03 | Minor | Color | chart.tsx:333, 601 | Default palette hex values | Color flexibility | Minor | Supports theme token overrides |
-| CHT-04 | Minor | Performance | chart.tsx:99–122 | ChartStyle style element injection | Style scope | Minor | Preserved ChartStyle API |
+| CHT-03 | Minor | Color | chart.tsx:333, 601 | Default palette hex values | Color flexibility | Documented | Supports theme token overrides via custom config |
+| CHT-04 | Minor | Performance | chart.tsx:99–122 | ChartStyle style element injection | Style scope | Documented | Preserved ChartStyle API for dynamic CSS variable injection |
 | CHT-05 | Nit | API | chart.tsx:132, 243 | Tooltip payload typing | Type safety | Nit | Preserved payload shapes |
 
 ---
