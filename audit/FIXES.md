@@ -417,3 +417,10 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **DR-02 (Major)**: Implemented `previousActiveElement` focus tracking and restoration upon drawer close and unmount.
   - **DR-04 (Minor)**: Added `aria-hidden="true"` to the drawer backdrop overlay element and close button vector icon.
   - Added unit test in `tests/smoke/layout.test.tsx` verifying `role="dialog"`, `aria-modal="true"`, title linkage, and close button action.
+
+- **`Layout`** (`src/components/layout/layout.tsx`):
+  - **LAY-01 (Major)**: Added accessible `<a href="#main-content">Skip to content</a>` link at the root of the layout shell for keyboard and screen reader bypass navigation per WCAG 2.4.1.
+  - **LAY-02 (Major)**: Zeroed `sidebarOffset` when `overlaySidebar` or `isMobile` is active to prevent content from being squished or overflowing the viewport.
+  - **LAY-03 (Minor)**: Replaced unthrottled window resize event with `window.matchMedia` change listener to eliminate re-render churn during window resizing.
+  - **LAY-04 (Minor)**: Configured default `id="main-content"` on the primary `<main>` landmark element.
+  - Added unit test in `tests/smoke/layout.test.tsx` verifying the Skip to Content link and `<main id="main-content">` element.

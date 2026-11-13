@@ -23,6 +23,7 @@ export interface LayoutProps extends React.HTMLAttributes<HTMLDivElement> {
   fixedSidebar?: boolean
   overlaySidebar?: boolean
   mobileBreakpoint?: number
+  mainId?: string
 }
 
 const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
@@ -45,6 +46,7 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
     fixedSidebar = true,
     overlaySidebar = false,
     mobileBreakpoint = 768,
+    mainId = "main-content",
     style,
     ...props 
   }, ref) => {
@@ -54,13 +56,19 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
     
     // Handle responsive behavior
     React.useEffect(() => {
-      const handleResize = () => {
-        setIsMobile(window.innerWidth < mobileBreakpoint)
+      if (typeof window === "undefined" || !window.matchMedia) return
+      const mql = window.matchMedia(`(max-width: ${mobileBreakpoint}px)`)
+      const onChange = (e: MediaQueryListEvent | MediaQueryList) => {
+        setIsMobile(e.matches)
       }
-      
-      handleResize()
-      window.addEventListener('resize', handleResize)
-      return () => window.removeEventListener('resize', handleResize)
+      setIsMobile(mql.matches)
+      if (mql.addEventListener) {
+        mql.addEventListener('change', onChange)
+        return () => mql.removeEventListener('change', onChange)
+      } else {
+        mql.addListener(onChange)
+        return () => mql.removeListener(onChange)
+      }
     }, [mobileBreakpoint])
     
     // Handle sidebar collapse
@@ -72,7 +80,7 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
     // Calculate layout dimensions
     const currentSidebarWidth = isSidebarCollapsed ? sidebarCollapsedWidth : sidebarWidth
     const navbarOffset = showNavbar && fixedNavbar ? navbarHeight : 0
-    const sidebarOffset = showSidebar && fixedSidebar ? currentSidebarWidth : 0
+    const sidebarOffset = showSidebar && fixedSidebar && !overlaySidebar && !isMobile ? currentSidebarWidth : 0
     
     return (
       <div
@@ -85,6 +93,13 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
         style={style}
         {...props}
       >
+        <a
+          href={`#${mainId}`}
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-ring"
+        >
+          Skip to content
+        </a>
+
         {/* Navbar */}
         {showNavbar && (
           <Navbar
@@ -116,6 +131,7 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
         
         {/* Main Content */}
         <main
+          id={mainId}
           className={cn(
             "transition-all duration-300 ease-in-out",
             contentPadding,
@@ -125,7 +141,7 @@ const Layout = React.forwardRef<HTMLDivElement, LayoutProps>(
             marginTop: navbarOffset,
             marginLeft: sidebarOffset,
             minHeight: `calc(100vh - ${navbarOffset}px)`,
-            width: `calc(100% - ${sidebarOffset}px)`
+            width: sidebarOffset > 0 ? `calc(100% - ${sidebarOffset}px)` : "100%"
           }}
         >
           {children}

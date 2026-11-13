@@ -17,7 +17,7 @@ import { Button } from '../../src/components/core/button'
 
 describe('Layout Domain Smoke & Accessibility Suite', () => {
   it('renders Layout with header, sidebar, and content', async () => {
-    const { container, getByText } = render(
+    const { container, getByText, getByRole } = render(
       <StrictMode>
         <Layout
           navbar={{ brand: 'Mad UI' }}
@@ -32,6 +32,13 @@ describe('Layout Domain Smoke & Accessibility Suite', () => {
     expect(getByText('Mad UI')).toBeDefined()
     expect(getByText('Overview')).toBeDefined()
     expect(getByText('Main Application Canvas')).toBeDefined()
+
+    const skipLink = getByRole('link', { name: 'Skip to content' })
+    expect(skipLink).toBeDefined()
+    expect(skipLink.getAttribute('href')).toBe('#main-content')
+
+    const mainElement = container.querySelector('#main-content')
+    expect(mainElement).not.toBeNull()
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
