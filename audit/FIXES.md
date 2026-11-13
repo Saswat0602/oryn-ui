@@ -467,3 +467,7 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **EMP-01 (Minor)**: Added default `role="status"` and `aria-live="polite"` to proactively announce empty search/filter result states to assistive technology.
   - **EMP-02 (Nit)**: Strongly typed `icon?: React.ReactNode | React.ComponentType<{ className?: string }>` in `EmptyStateProps` and `EmptyStateIconProps`.
   - Added unit test assertion in `tests/smoke/feedback.test.tsx` verifying status role and live region.
+
+- **`FileUpload`** (`src/components/forms/file-upload.tsx`):
+  - **FU-06 (Minor)**: Implemented file type and extension validation against the `accept` prop (supporting extensions, MIME types, and wildcards) with descriptive error announcements.
+  - Added unit test assertion in `tests/smoke/forms.test.tsx` verifying file type filtering.

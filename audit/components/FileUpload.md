@@ -25,7 +25,7 @@
 | FU-03 | Major | A11y | file-upload.tsx:179-184 | Error message `div` has no `role="alert"` | Fixed | Added `role="alert"` on error message container |
 | FU-04 | Minor | A11y | file-upload.tsx:130-151 | `aria-disabled` not set on drop zone when `disabled=true` | Fixed | Added `aria-disabled={disabled}` to drop zone button |
 | FU-05 | Minor | A11y | file-upload.tsx:152-161 | Hidden input does not have `aria-hidden="true"` | Fixed | Made input a sibling with `aria-hidden="true"` and `tabIndex={-1}` |
-| FU-06 | Minor | States | file-upload.tsx:61-80 | `accept` prop is not validated against MIME types — only size/count checks | User could drop invalid file type with no feedback | Validate `file.type` against `accept` prop and display error |
+| FU-06 | Minor | States | file-upload.tsx:61-80 | `accept` prop is not validated against MIME types — only size/count checks | User could drop invalid file type with no feedback | Fixed | Validated file name extension and MIME type against `accept` patterns with user error feedback |
 | FU-07 | Nit | A11y | file-upload.tsx:135 | Drop zone click handler uses `onClick` on a non-button div | Fixed | Consolidated `onClick` directly on the `role="button"` container |
 
 ## State/Variant Matrix

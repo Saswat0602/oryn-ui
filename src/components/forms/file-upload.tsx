@@ -63,6 +63,25 @@ export const FileUpload = React.forwardRef<HTMLDivElement, FileUploadProps>(
       const valid: File[] = []
 
       for (const file of newFiles) {
+        if (accept) {
+          const acceptedTypes = accept.split(',').map((t) => t.trim().toLowerCase())
+          const fileType = (file.type || '').toLowerCase()
+          const fileName = (file.name || '').toLowerCase()
+          const isAccepted = acceptedTypes.some((pattern) => {
+            if (pattern.startsWith('.')) {
+              return fileName.endsWith(pattern)
+            }
+            if (pattern.endsWith('/*')) {
+              const prefix = pattern.replace('/*', '')
+              return fileType.startsWith(prefix)
+            }
+            return fileType === pattern
+          })
+          if (!isAccepted) {
+            setErrorMessage(`File "${file.name}" is not an accepted format (${accept}).`)
+            continue
+          }
+        }
         if (maxSize && file.size > maxSize) {
           setErrorMessage(`File "${file.name}" exceeds ${formatBytes(maxSize)}.`)
           continue

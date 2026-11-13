@@ -465,6 +465,10 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
     expect(dropzone).toBeDefined()
     expect(dropzone.getAttribute('tabIndex')).toBe('0')
 
+    const fileInput = container.querySelector('input[type="file"]') as HTMLInputElement
+    const invalidFile = new File(['dummy content'], 'report.pdf', { type: 'application/pdf' })
+    fireEvent.change(fileInput, { target: { files: [invalidFile] } })
+
     const results = await axe(container)
     expect(results.violations).toEqual([])
   })
