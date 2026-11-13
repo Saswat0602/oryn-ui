@@ -22,8 +22,8 @@
 | A-03 | Major | A11y | accordion.tsx:58 | `customIcon?: any` — no ARIA hide on decorative icon | Fixed | Added `aria-hidden="true"` to the chevron icon element |
 | A-04 | Major | A11y | accordion.tsx:154 | `[key: string]: any` on `AccordionProps` bypasses TypeScript safety | Fixed | Removed catch-all index signature; enumerated accepted props explicitly |
 | A-05 | Major | A11y | accordion.tsx:152 | `onValueChange?: (value: any) => void` — `any` type | Fixed | Updated to typed signature `onValueChange?: (value: string | string[]) => void` |
-| A-06 | Minor | A11y | accordion.tsx:38-53 | `AccordionItem` wrapper div has `data-state="disabled"` but no `aria-disabled` | AT may not interpret `data-state` for disabled semantics | Propagate `aria-disabled` on the wrapper, or rely on button `disabled` attribute |
-| A-07 | Minor | Performance | accordion.tsx:123 | `pointer-events-none` on closed content still keeps hidden DOM in tab order if content has focusable children | Closed accordion items could be reachable via Tab | Add `hidden` or `inert` attribute to closed content, or use `visibility:hidden` |
+| A-06 | Minor | A11y | accordion.tsx:38-53 | `AccordionItem` wrapper div has `data-state="disabled"` but no `aria-disabled` | AT may not interpret `data-state` for disabled semantics | Fixed | Propagated `aria-disabled={disabled ? 'true' : undefined}` on the item container wrapper |
+| A-07 | Minor | Performance | accordion.tsx:123 | `pointer-events-none` on closed content still keeps hidden DOM in tab order if content has focusable children | Closed accordion items could be reachable via Tab | Fixed | Added `style={{ visibility: open ? undefined : 'hidden' }}` and `aria-hidden={!open}` on closed content |
 | A-08 | Nit | A11y | accordion.tsx:88 | `hover:underline` on trigger is non-standard for accordion triggers | Inconsistent with ARIA Authoring Practices Guide patterns | Use `hover:text-foreground` or similar; remove underline decoration |
 
 ## State/Variant Matrix

@@ -126,7 +126,7 @@ AccordionTrigger.displayName = 'AccordionTrigger'
 export interface AccordionContentProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export const AccordionContent = forwardRef<HTMLDivElement, AccordionContentProps>(
-  ({ className, children, id, role = 'region', ...props }, ref) => {
+  ({ className, children, id, role = 'region', style, ...props }, ref) => {
     const { isOpen } = useAccordionContext()
     const itemCtx = useContext(AccordionItemContext)
     const val = itemCtx?.value || ''
@@ -142,6 +142,10 @@ export const AccordionContent = forwardRef<HTMLDivElement, AccordionContentProps
         aria-labelledby={triggerId}
         aria-hidden={!open}
         data-state={open ? 'open' : 'closed'}
+        style={{
+          ...style,
+          visibility: open ? undefined : 'hidden',
+        }}
         className={cn(
           'grid transition-all duration-200 ease-in-out',
           open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0 pointer-events-none'

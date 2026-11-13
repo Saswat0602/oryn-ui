@@ -433,3 +433,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
 - **`Form`** (`src/components/forms/form.tsx`):
   - **FM-04 (Major)**: Enhanced `FormField` controller adapter to support checkboxes (`checked`), custom objects, validation triggers, and dirty state updates during render-prop execution.
   - Added unit test in `tests/smoke/forms.test.tsx` asserting both standalone error propagation and RHF render-prop/control callback handling.
+
+- **`Accordion`** (`src/components/forms/accordion.tsx`):
+  - **A-06 (Minor)**: Propagated `aria-disabled={disabled ? 'true' : undefined}` on the item container wrapper to explicitly communicate disabled state to assistive technology.
+  - **A-07 (Minor)**: Added `style={{ visibility: open ? undefined : 'hidden' }}` and `aria-hidden={!open}` on `AccordionContent` to ensure inactive accordion panels and any nested focusable controls are completely excluded from the keyboard Tab order when closed.
+  - Added unit test assertion in `tests/smoke/forms.test.tsx` verifying `visibility: hidden` and `aria-hidden="true"` when collapsed.

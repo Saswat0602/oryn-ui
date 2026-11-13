@@ -45,13 +45,17 @@ describe('Forms Domain Smoke & Accessibility Suite', () => {
     const trigger = getByText('What is Mad UI?').closest('button')!
     expect(trigger.getAttribute('aria-controls')).toBe('accordion-content-item-1')
     expect(trigger.getAttribute('aria-expanded')).toBe('false')
+    const regionBefore = container.querySelector('#accordion-content-item-1') as HTMLElement
+    expect(regionBefore?.getAttribute('aria-hidden')).toBe('true')
+    expect(regionBefore?.style.visibility).toBe('hidden')
 
     fireEvent.click(trigger)
     expect(trigger.getAttribute('aria-expanded')).toBe('true')
     expect(getByText('An enterprise React component library.')).toBeDefined()
-    const region = container.querySelector('#accordion-content-item-1')
+    const region = container.querySelector('#accordion-content-item-1') as HTMLElement
     expect(region).toBeDefined()
     expect(region?.getAttribute('role')).toBe('region')
+    expect(region?.style.visibility).toBe('')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
