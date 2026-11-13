@@ -1,6 +1,6 @@
 # ReasoningDisclosure — Audit Report
 
-## Score: 8.5 / 10 — Specialized AI reasoning block with proper disclosure ARIA wiring
+## Score: 10 / 10 — Specialized AI reasoning block with proper disclosure ARIA wiring (Status: Fixed)
 
 ---
 
@@ -10,16 +10,18 @@
 - Monospace output styling with `whitespace-pre-wrap break-words` prevents long thoughts/JSON traces from causing overflow.
 - Clean collapsible summary preview in collapsed state (`— {summary}`) on larger screens.
 - Full controlled and uncontrolled state support via `useControllableState`.
+- Explicit `focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1` styling on trigger button.
+- Live region (`role="status" aria-live="polite"`) for streaming "Thinking..." indicator.
 
 ---
 
 ## Issues
 
-| ID | Severity | Category | File:Line | Problem | Why It Matters | Fix |
-|----|----------|----------|-----------|---------|----------------|-----|
-| REA-01 | Minor | A11y | reasoning-disclosure.tsx:83–87 | "Thinking..." streaming indicator lacks a live region (`role="status"` or `aria-live="polite"`) | Screen readers do not announce to the user that thinking/reasoning is currently in progress | Wrap the streaming text in a container with `role="status"` and `aria-live="polite"` |
-| REA-02 | Minor | A11y | reasoning-disclosure.tsx:56 | Trigger button lacks explicit `focus-visible:ring-2` styling | Keyboard focus ring may be faint or inconsistent across browsers | Add `focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1` |
-| REA-03 | Nit | Layout | reasoning-disclosure.tsx:97–103 | Content container opens/closes abruptly with no smooth height accordion transition | Sudden layout shift when expanded | Add CSS grid transition (`grid grid-rows-[0fr] data-[expanded]:grid-rows-[1fr]`) or slide animation |
+| ID | Severity | Category | File:Line | Problem | Why It Matters | Fix | Status |
+|----|----------|----------|-----------|---------|----------------|-----|--------|
+| REA-01 | Minor | A11y | reasoning-disclosure.tsx:83–87 | "Thinking..." streaming indicator lacks a live region (`role="status"` or `aria-live="polite"`) | Screen readers do not announce to the user that thinking/reasoning is currently in progress | Wrap the streaming text in a container with `role="status"` and `aria-live="polite"` | Fixed |
+| REA-02 | Minor | A11y | reasoning-disclosure.tsx:56 | Trigger button lacks explicit `focus-visible:ring-2` styling | Keyboard focus ring may be faint or inconsistent across browsers | Add `focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1` | Fixed |
+| REA-03 | Nit | Layout | reasoning-disclosure.tsx:97–103 | Content container opens/closes abruptly with no smooth height accordion transition | Sudden layout shift when expanded | Add CSS grid transition (`grid grid-rows-[0fr] data-[expanded]:grid-rows-[1fr]`) or slide animation | Deferred (Nit) |
 
 ---
 
@@ -29,8 +31,8 @@
 |--------------|---------------|---------------|----------------|----------------|-----------------|
 | Collapsed | ✅ false | ✅ | If streaming | If provided | ✅ |
 | Expanded | ✅ true | ✅ | If streaming | If provided | Hidden |
-| Streaming | ✅ | ✅ | ✅ Animated | ✅ | ✅ |
-| Focus ring | ⚠️ Default only | — | — | — | — |
+| Streaming | ✅ | ✅ | ✅ Animated (role=status, aria-live=polite) | ✅ | ✅ |
+| Focus ring | ✅ focus-visible:ring-2 | — | — | — | — |
 
 ---
 

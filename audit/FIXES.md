@@ -485,3 +485,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **MSG-01 (Minor)**: Added `group-focus-within:opacity-100 focus-within:opacity-100` and `focus-visible:ring-2` to message actions so keyboard-only users can see and operate copy buttons.
   - **MSG-02 (Minor)**: Added `aria-busy={isStreaming ? "true" : undefined}` on container and `aria-hidden="true"` on decorative streaming cursor.
   - Added unit test assertion in `tests/smoke/feedback.test.tsx` verifying `aria-busy` and copy button focus styles.
+
+- **`ReasoningDisclosure`** (`src/components/feedback/reasoning-disclosure.tsx`):
+  - **REA-01 (Minor)**: Wrapped streaming "Thinking..." indicator in `role="status"` and `aria-live="polite"` so screen reader users are proactively alerted when reasoning generation is active.
+  - **REA-02 (Minor)**: Added explicit `focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 rounded-xl` to the trigger button.
+  - Added unit test assertions in `tests/smoke/feedback.test.tsx` verifying focus rings and live region.

@@ -249,7 +249,7 @@ describe('Feedback Domain Smoke & Accessibility Suite', () => {
   it('renders ReasoningDisclosure correctly with collapse/expand and passes a11y', async () => {
     const { container, getByText, getByRole } = render(
       <StrictMode>
-        <ReasoningDisclosure duration={3.8} defaultOpen={false}>
+        <ReasoningDisclosure duration={3.8} defaultOpen={false} isStreaming>
           <span>Evaluating telemetry logs</span>
         </ReasoningDisclosure>
       </StrictMode>
@@ -259,8 +259,14 @@ describe('Feedback Domain Smoke & Accessibility Suite', () => {
     expect(getByText('3.8s')).toBeDefined()
     const toggleBtn = getByRole('button')
     expect(toggleBtn.getAttribute('aria-expanded')).toBe('false')
+    expect(toggleBtn.className).toContain('focus-visible:ring-2')
     fireEvent.click(toggleBtn)
     expect(toggleBtn.getAttribute('aria-expanded')).toBe('true')
+
+    const statusLive = container.querySelector('[role="status"]')
+    expect(statusLive).toBeDefined()
+    expect(statusLive?.getAttribute('aria-live')).toBe('polite')
+    expect(statusLive?.textContent).toContain('Thinking...')
 
     const ssr = renderToString(
       <ReasoningDisclosure duration={1.2} defaultOpen={true}>
