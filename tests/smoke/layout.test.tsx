@@ -117,13 +117,14 @@ describe('Layout Domain Smoke & Accessibility Suite', () => {
 
   it('renders Modal and Drawer overlays', async () => {
     let modalClosed = false
+    let drawerClosed = false
     const { container, getByText, getByRole } = render(
       <StrictMode>
         <Modal isOpen={true} onClose={() => { modalClosed = true }} title="Cluster Details">
           <div>Modal body content</div>
         </Modal>
 
-        <Drawer isOpen={true} onClose={() => {}} position="right">
+        <Drawer isOpen={true} onClose={() => { drawerClosed = true }} position="right" title="Quick Settings">
           <div>Quick Drawer Content</div>
         </Drawer>
       </StrictMode>
@@ -135,9 +136,17 @@ describe('Layout Domain Smoke & Accessibility Suite', () => {
     expect(modalDialog).toBeDefined()
     expect(modalDialog.getAttribute('aria-modal')).toBe('true')
 
-    const closeBtn = getByRole('button', { name: 'Close modal' })
-    fireEvent.click(closeBtn)
+    const drawerDialog = getByRole('dialog', { name: 'Quick Settings' })
+    expect(drawerDialog).toBeDefined()
+    expect(drawerDialog.getAttribute('aria-modal')).toBe('true')
+
+    const modalCloseBtn = getByRole('button', { name: 'Close modal' })
+    fireEvent.click(modalCloseBtn)
     expect(modalClosed).toBe(true)
+
+    const drawerCloseBtn = getByRole('button', { name: 'Close drawer' })
+    fireEvent.click(drawerCloseBtn)
+    expect(drawerClosed).toBe(true)
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

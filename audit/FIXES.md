@@ -411,3 +411,9 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **MOD-02 (Major)**: Added accessible name fallback (`aria-labelledby` or `aria-label="Dialog"`) when `title` is omitted so assistive technologies can always announce the dialog purpose.
   - **MOD-04 (Minor)**: Added `aria-hidden="true"` to the modal backdrop overlay element and close button icon.
   - Added unit test in `tests/smoke/layout.test.tsx` verifying `role="dialog"`, accessible name, and close action.
+
+- **`Drawer`** (`src/components/layout/drawer.tsx`):
+  - **DR-01 (Major)**: Added `title` prop with auto-generated `titleId` wired to `aria-labelledby`, plus `aria-label="Drawer"` fallback so screen readers announce dialog purpose.
+  - **DR-02 (Major)**: Implemented `previousActiveElement` focus tracking and restoration upon drawer close and unmount.
+  - **DR-04 (Minor)**: Added `aria-hidden="true"` to the drawer backdrop overlay element and close button vector icon.
+  - Added unit test in `tests/smoke/layout.test.tsx` verifying `role="dialog"`, `aria-modal="true"`, title linkage, and close button action.
