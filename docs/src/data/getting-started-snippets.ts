@@ -29,14 +29,31 @@ export const tailwindV4Config = `@import "tailwindcss";
 export const cssImport = `// In your root layout or main entry:
 import "${siteConfig.packageName}/styles.css"`
 
-export const usage = `import { Button, Card, Input } from '${siteConfig.packageName}'
+export const usage = `import { 
+  Button, 
+  Card, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription, 
+  CardContent, 
+  Input, 
+  Label 
+} from '${siteConfig.packageName}'
 
 export function LoginCard() {
   return (
-    <Card className="p-6 max-w-sm space-y-4">
-      <h2 className="text-xl font-bold">Sign In</h2>
-      <Input placeholder="name@example.com" type="email" />
-      <Button className="w-full">Continue</Button>
+    <Card className="max-w-sm w-full">
+      <CardHeader>
+        <CardTitle>Sign In</CardTitle>
+        <CardDescription>Enter your corporate credentials to continue</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-1.5">
+          <Label htmlFor="email">Email address</Label>
+          <Input id="email" placeholder="name@example.com" type="email" />
+        </div>
+        <Button className="w-full">Continue</Button>
+      </CardContent>
     </Card>
   )
 }`
