@@ -9,6 +9,8 @@ export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
   scrollbarClassName?: string
   thumbClassName?: string
   scrollbarSize?: 'sm' | 'md' | 'lg'
+  viewportRef?: React.Ref<HTMLDivElement>
+  viewportProps?: React.HTMLAttributes<HTMLDivElement>
 }
 
 export const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
@@ -21,7 +23,10 @@ export const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
       scrollbarClassName,
       thumbClassName,
       scrollbarSize = 'md',
+      viewportRef,
+      viewportProps,
       style,
+      tabIndex,
       ...props
     },
     ref
@@ -33,9 +38,9 @@ export const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
     }
 
     const sizeClasses = {
-      sm: 'scrollbar-w-1 scrollbar-h-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar]:h-1',
-      md: 'scrollbar-w-1.5 scrollbar-h-1.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-1.5',
-      lg: 'scrollbar-w-2.5 scrollbar-h-2.5 [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar]:h-2.5',
+      sm: 'scrollbar-w-1 scrollbar-h-1 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar]:h-1 [scrollbar-width:thin]',
+      md: 'scrollbar-w-1.5 scrollbar-h-1.5 [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar]:h-1.5 [scrollbar-width:thin]',
+      lg: 'scrollbar-w-2.5 scrollbar-h-2.5 [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar]:h-2.5 [scrollbar-width:auto]',
     }
 
     const variantClasses = {
@@ -58,14 +63,18 @@ export const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
         {...props}
       >
         <div
+          ref={viewportRef}
+          tabIndex={viewportProps?.tabIndex ?? tabIndex ?? 0}
           className={cn(
-            'h-full w-full rounded-[inherit] transition-colors',
+            'h-full w-full rounded-[inherit] transition-colors focus:outline-none focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1',
             overflowClasses[orientation],
             sizeClasses[scrollbarSize],
             variantClasses[scrollbarVariant],
             scrollbarClassName,
-            thumbClassName && `[&::-webkit-scrollbar-thumb]:${thumbClassName}`
+            thumbClassName && `[&::-webkit-scrollbar-thumb]:${thumbClassName}`,
+            viewportProps?.className
           )}
+          {...viewportProps}
         >
           {children}
         </div>

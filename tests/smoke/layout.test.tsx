@@ -217,6 +217,8 @@ describe('Layout Domain Smoke & Accessibility Suite', () => {
       </StrictMode>
     )
     expect(getByText('Long scrollable content list')).toBeDefined()
+    const scrollViewport = getByText('Long scrollable content list').parentElement
+    expect(scrollViewport?.getAttribute('tabindex')).toBe('0')
     expect(getByText('Hover trigger')).toBeDefined()
 
     // Assert tooltip role and content is in document
