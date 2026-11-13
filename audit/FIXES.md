@@ -405,3 +405,9 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **NI-01 (Major)**: Strongly typed `timeoutRef` and `intervalRef` as `ReturnType<typeof setTimeout> | null` and `ReturnType<typeof setInterval> | null` to preserve TypeScript type safety.
   - **NI-02 (Major)**: Automatically set `aria-invalid={ariaInvalid}` on the spinbutton `<input>` element whenever `error` or `props["aria-invalid"]` is active.
   - Added unit test in `tests/smoke/forms.test.tsx` verifying error state and `aria-invalid="true"` propagation.
+
+- **`Modal`** (`src/components/layout/modal.tsx`):
+  - **MOD-01 (Major)**: Implemented `previousActiveElement` focus tracking and automatic focus restoration on modal close and unmount to prevent keyboard focus dropping to `document.body`.
+  - **MOD-02 (Major)**: Added accessible name fallback (`aria-labelledby` or `aria-label="Dialog"`) when `title` is omitted so assistive technologies can always announce the dialog purpose.
+  - **MOD-04 (Minor)**: Added `aria-hidden="true"` to the modal backdrop overlay element and close button icon.
+  - Added unit test in `tests/smoke/layout.test.tsx` verifying `role="dialog"`, accessible name, and close action.

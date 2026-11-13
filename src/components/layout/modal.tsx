@@ -76,9 +76,28 @@ export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
     ref
   ) => {
     const contentRef = React.useRef<HTMLDivElement | null>(null)
+    const previousActiveElement = React.useRef<HTMLElement | null>(null)
     const titleId = React.useId()
 
     useFocusTrap(contentRef as React.RefObject<HTMLElement>, isOpen)
+
+    // Focus restoration
+    React.useEffect(() => {
+      if (isOpen) {
+        previousActiveElement.current = document.activeElement as HTMLElement | null
+      } else if (previousActiveElement.current) {
+        previousActiveElement.current.focus?.()
+        previousActiveElement.current = null
+      }
+    }, [isOpen])
+
+    React.useEffect(() => {
+      return () => {
+        if (previousActiveElement.current) {
+          previousActiveElement.current.focus?.()
+        }
+      }
+    }, [])
 
     // Body scroll lock
     React.useEffect(() => {
@@ -104,11 +123,15 @@ export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
       return () => window.removeEventListener("keydown", handleKeyDown)
     }, [isOpen, closeOnEscape, onClose])
 
+    const ariaLabelledby = props["aria-labelledby"] || (title ? titleId : undefined)
+    const ariaLabel = props["aria-label"] || (!ariaLabelledby && !title ? "Dialog" : undefined)
+
     return (
       <Presence present={isOpen}>
         <Portal>
           {/* Overlay */}
           <div
+            aria-hidden="true"
             onClick={() => {
               if (closeOnOverlayClick) onClose()
             }}
@@ -133,7 +156,8 @@ export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
             }}
             role="dialog"
             aria-modal="true"
-            aria-labelledby={title ? titleId : undefined}
+            aria-labelledby={ariaLabelledby}
+            aria-label={ariaLabel}
             data-state={isOpen ? "open" : "closed"}
             className={cn(
               "fixed left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%] w-full rounded-2xl border duration-200",
@@ -173,7 +197,7 @@ export const Modal = React.forwardRef<HTMLDivElement, ModalProps>(
                     onClick={onClose}
                     className="p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring"
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-4 w-4" aria-hidden="true" />
                   </button>
                 )}
               </div>

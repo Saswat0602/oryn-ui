@@ -116,9 +116,10 @@ describe('Layout Domain Smoke & Accessibility Suite', () => {
   })
 
   it('renders Modal and Drawer overlays', async () => {
-    const { container, getByText } = render(
+    let modalClosed = false
+    const { container, getByText, getByRole } = render(
       <StrictMode>
-        <Modal isOpen={true} onClose={() => {}} title="Cluster Details">
+        <Modal isOpen={true} onClose={() => { modalClosed = true }} title="Cluster Details">
           <div>Modal body content</div>
         </Modal>
 
@@ -129,6 +130,14 @@ describe('Layout Domain Smoke & Accessibility Suite', () => {
     )
     expect(getByText('Cluster Details')).toBeDefined()
     expect(getByText('Quick Drawer Content')).toBeDefined()
+
+    const modalDialog = getByRole('dialog', { name: 'Cluster Details' })
+    expect(modalDialog).toBeDefined()
+    expect(modalDialog.getAttribute('aria-modal')).toBe('true')
+
+    const closeBtn = getByRole('button', { name: 'Close modal' })
+    fireEvent.click(closeBtn)
+    expect(modalClosed).toBe(true)
 
     const results = await axe(container)
     expect(results.violations).toEqual([])
