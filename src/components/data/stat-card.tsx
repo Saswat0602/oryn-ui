@@ -12,7 +12,7 @@ export interface StatCardProps extends Omit<React.HTMLAttributes<HTMLDivElement>
   title: React.ReactNode
   value: React.ReactNode
   description?: React.ReactNode
-  icon?: any
+  icon?: React.ReactNode
   trend?: StatCardTrend
   badge?: React.ReactNode
   variant?: "default" | "outline" | "subtle"
@@ -90,17 +90,27 @@ export const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
               className={cn(
                 "inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-semibold shrink-0 select-none",
                 trend.direction === "up" &&
-                  "bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/40",
+                  "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20",
                 trend.direction === "down" &&
-                  "bg-rose-50 text-rose-700 dark:bg-rose-950/40 dark:text-rose-400 border border-rose-200/50 dark:border-rose-800/40",
+                  "bg-destructive/10 text-destructive border border-destructive/20",
                 (!trend.direction || trend.direction === "neutral") &&
-                  "bg-muted text-muted-foreground"
+                  "bg-muted text-muted-foreground border border-border/50"
               )}
             >
-              {trend.direction === "up" && <TrendingUp className="h-3.5 w-3.5 shrink-0" />}
-              {trend.direction === "down" && <TrendingDown className="h-3.5 w-3.5 shrink-0" />}
+              {trend.direction === "up" && (
+                <>
+                  <TrendingUp className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span className="sr-only">Increased by </span>
+                </>
+              )}
+              {trend.direction === "down" && (
+                <>
+                  <TrendingDown className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                  <span className="sr-only">Decreased by </span>
+                </>
+              )}
               {(!trend.direction || trend.direction === "neutral") && (
-                <Minus className="h-3.5 w-3.5 shrink-0" />
+                <Minus className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
               )}
               <span>{trend.value}</span>
             </div>

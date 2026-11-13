@@ -151,6 +151,7 @@ describe('Data Display Domain Smoke & Accessibility Suite', () => {
     expect(getByText('Monthly Recurring Revenue')).toBeDefined()
     expect(getByText('$48,250')).toBeDefined()
     expect(getByText('+14.2%')).toBeDefined()
+    expect(getByText(/increased by/i)).toBeDefined()
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

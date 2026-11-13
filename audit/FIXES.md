@@ -510,3 +510,9 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **SPN-01 (Minor)**: Replaced unrestricted `animate-spin` with `motion-safe:animate-spin motion-reduce:animate-none` to protect users with vestibular disorders per WCAG 2.3.3.
   - **SPN-02 (Nit)**: Standardized `muted` variant to solid token class `text-muted-foreground`.
   - Added unit test assertion in `tests/smoke/feedback.test.tsx` verifying motion reduction classes on SVG element.
+
+- **`StatCard`** (`src/components/data/stat-card.tsx`):
+  - **STC-01 (Minor)**: Added visually hidden screen-reader text (`<span className="sr-only">Increased by </span>` / `<span className="sr-only">Decreased by </span>`) and `aria-hidden="true"` on trend icons so metric trajectories are clearly announced to assistive technology.
+  - **STC-02 (Minor)**: Migrated trend indicators to semantic design tokens (`text-destructive`, `bg-emerald-500/10`, `border-destructive/20`).
+  - **STC-03 (Nit)**: Strongly typed `icon?: React.ReactNode` in `StatCardProps`.
+  - Added unit test assertions in `tests/smoke/data.test.tsx` verifying screen reader trend text.
