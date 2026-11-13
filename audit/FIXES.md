@@ -462,3 +462,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
 - **`Dialog`** (`src/components/overlay/dialog.tsx`):
   - **DG-04 (Minor)**: Added scrollbar width calculation and padding compensation to `document.body` during scroll lock to eliminate horizontal layout shifts on desktop browsers.
   - **DG-05 (Minor)**: Documented standard overlay scrim styling and customizable `className` override support.
+
+- **`EmptyState`** (`src/components/feedback/empty-state.tsx`):
+  - **EMP-01 (Minor)**: Added default `role="status"` and `aria-live="polite"` to proactively announce empty search/filter result states to assistive technology.
+  - **EMP-02 (Nit)**: Strongly typed `icon?: React.ReactNode | React.ComponentType<{ className?: string }>` in `EmptyStateProps` and `EmptyStateIconProps`.
+  - Added unit test assertion in `tests/smoke/feedback.test.tsx` verifying status role and live region.

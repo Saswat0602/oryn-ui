@@ -123,6 +123,9 @@ describe('Feedback Domain Smoke & Accessibility Suite', () => {
     expect(getByText('No projects found')).toBeDefined()
     expect(getByText('Your search did not match any active projects.')).toBeDefined()
     expect(getByText('Create New Project')).toBeDefined()
+    const emptyStateEl = container.querySelector('[role="status"]')!
+    expect(emptyStateEl).toBeDefined()
+    expect(emptyStateEl.getAttribute('aria-live')).toBe('polite')
 
     const ssr = renderToString(
       <EmptyState

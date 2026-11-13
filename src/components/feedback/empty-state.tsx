@@ -2,7 +2,7 @@ import * as React from "react"
 import { cn } from "../../lib/utils"
 
 export interface EmptyStateProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
-  icon?: any
+  icon?: React.ReactNode | React.ComponentType<{ className?: string }>
   title?: React.ReactNode
   description?: React.ReactNode
   action?: React.ReactNode
@@ -28,6 +28,8 @@ export const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
     return (
       <div
         ref={ref}
+        role={props.role || "status"}
+        aria-live={props["aria-live"] || (props.role === "status" || !props.role ? "polite" : undefined)}
         className={cn(
           "flex flex-col items-center justify-center p-8 text-center rounded-xl",
           variant === "dashed" && "border-2 border-dashed border-border bg-muted/30",
@@ -56,7 +58,7 @@ export const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
 EmptyState.displayName = "EmptyState"
 
 export interface EmptyStateIconProps extends React.HTMLAttributes<HTMLDivElement> {
-  icon?: any
+  icon?: React.ReactNode | React.ComponentType<{ className?: string }>
 }
 
 export const EmptyStateIcon = React.forwardRef<HTMLDivElement, EmptyStateIconProps>(

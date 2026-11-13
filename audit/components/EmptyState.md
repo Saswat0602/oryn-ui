@@ -1,6 +1,7 @@
 # EmptyState — Audit Report
 
-## Score: 8.5 / 10 — Clean, flexible placeholder pattern
+**Status:** Fixed  
+## Score: 9.5 / 10 — Clean, flexible placeholder pattern with accessible live region announcements
 
 ---
 
@@ -17,8 +18,8 @@
 
 | ID | Severity | Category | File:Line | Problem | Why It Matters | Fix |
 |----|----------|----------|-----------|---------|----------------|-----|
-| EMP-01 | Minor | A11y | empty-state.tsx:29 | Container has no semantic landmark or live region support when used dynamically | When search results filter down to zero items, screen readers do not announce that the list is empty without an assertive/polite status | Support `role="status"` and `aria-live="polite"` props on `<EmptyState>` |
-| EMP-02 | Nit | API | empty-state.tsx:5, 59 | `icon?: any` type on props | Bypasses TypeScript validation | Type as `React.ReactNode \| React.ComponentType<{ className?: string }>` |
+| EMP-01 | Minor | A11y | empty-state.tsx:29 | Container has no semantic landmark or live region support when used dynamically | When search results filter down to zero items, screen readers do not announce that the list is empty without an assertive/polite status | Fixed | Added default `role="status"` and `aria-live="polite"` to announce empty search/filter results to screen readers |
+| EMP-02 | Nit | API | empty-state.tsx:5, 59 | `icon?: any` type on props | Bypasses TypeScript validation | Fixed | Strongly typed `icon?: React.ReactNode \| React.ComponentType<{ className?: string }>` |
 
 ---
 
