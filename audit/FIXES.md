@@ -458,3 +458,7 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
 - **`Checkbox`** (`src/components/core/checkbox.tsx`):
   - **CB-04 (Minor)**: Standardized conditional cursor class resolution (`disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'`) on both checkbox control and associated label for visual state consistency.
   - **CB-05 (Minor)**: Clarified tri-state indeterminate transition cycle adhering to W3C specification.
+
+- **`Dialog`** (`src/components/overlay/dialog.tsx`):
+  - **DG-04 (Minor)**: Added scrollbar width calculation and padding compensation to `document.body` during scroll lock to eliminate horizontal layout shifts on desktop browsers.
+  - **DG-05 (Minor)**: Documented standard overlay scrim styling and customizable `className` override support.
