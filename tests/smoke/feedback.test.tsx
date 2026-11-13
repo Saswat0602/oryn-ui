@@ -232,12 +232,15 @@ describe('Feedback Domain Smoke & Accessibility Suite', () => {
 
     expect(getByText('What is Mad UI?')).toBeDefined()
     expect(getByText('Mad UI is an enterprise React component library.')).toBeDefined()
-    expect(getAllByRole('button', { name: /copy message/i })[0]).toBeDefined()
+    const copyBtn = getAllByRole('button', { name: /copy message/i })[0]
+    expect(copyBtn).toBeDefined()
+    expect(copyBtn.className).toContain('focus-visible:ring-2')
 
     const ssr = renderToString(
-      <MessageBubble role="assistant" content="Server rendered answer" />
+      <MessageBubble role="assistant" content="Server rendered answer" isStreaming />
     )
     expect(ssr).toContain('Server rendered answer')
+    expect(ssr).toContain('aria-busy="true"')
 
     const results = await axe(container)
     expect(results.violations).toEqual([])

@@ -480,3 +480,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **L-01 (Minor)**: Added `aria-hidden="true"` on the required asterisk `*` and visually-hidden `<span className="sr-only"> (required)</span>` text for clear assistive technology announcements.
   - **L-02 (Minor)**: Added `dark:text-red-400` on the required indicator for WCAG AA compliance (>5:1) in dark mode.
   - Added unit test assertion in `tests/smoke/core.test.tsx` verifying required label sr-only text and aria-hidden indicator.
+
+- **`MessageBubble`** (`src/components/feedback/message-bubble.tsx`):
+  - **MSG-01 (Minor)**: Added `group-focus-within:opacity-100 focus-within:opacity-100` and `focus-visible:ring-2` to message actions so keyboard-only users can see and operate copy buttons.
+  - **MSG-02 (Minor)**: Added `aria-busy={isStreaming ? "true" : undefined}` on container and `aria-hidden="true"` on decorative streaming cursor.
+  - Added unit test assertion in `tests/smoke/feedback.test.tsx` verifying `aria-busy` and copy button focus styles.

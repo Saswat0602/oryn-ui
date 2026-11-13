@@ -87,6 +87,7 @@ export const MessageBubble = React.forwardRef<HTMLDivElement, MessageBubbleProps
       <div
         ref={ref}
         role="article"
+        aria-busy={isStreaming ? "true" : undefined}
         aria-label={`${role === "user" ? "User" : "Assistant"} message`}
         className={cn(
           "group relative flex w-full gap-3 py-3 px-1 transition-colors",
@@ -115,17 +116,17 @@ export const MessageBubble = React.forwardRef<HTMLDivElement, MessageBubbleProps
           >
             {body}
             {isStreaming && (
-              <span className="inline-block ml-1 h-3.5 w-1.5 bg-current animate-pulse align-middle" />
+              <span aria-hidden="true" className="inline-block ml-1 h-3.5 w-1.5 bg-current animate-pulse align-middle" />
             )}
           </div>
 
-          <div className="flex items-center gap-1.5 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-1.5 mt-1 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-within:opacity-100 transition-opacity">
             {copyable && (
               <button
                 type="button"
                 onClick={handleCopy}
                 aria-label="Copy message"
-                className="flex items-center gap-1 rounded-md p-1 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                className="flex items-center gap-1 rounded-md p-1 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 {copied ? (
                   <Check className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />

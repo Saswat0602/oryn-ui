@@ -1,6 +1,7 @@
 # MessageBubble — Audit Report
 
-## Score: 8.5 / 10 — Conversational AI bubble with strong accessibility semantics
+**Status:** Fixed  
+## Score: 10 / 10 — Conversational AI bubble with strong accessibility semantics and keyboard-visible actions
 
 ---
 
@@ -17,9 +18,9 @@
 
 | ID | Severity | Category | File:Line | Problem | Why It Matters | Fix |
 |----|----------|----------|-----------|---------|----------------|-----|
-| MSG-01 | Minor | A11y | message-bubble.tsx:122 | Action/copy buttons hidden behind `opacity-0 group-hover:opacity-100` without focus-within support | Keyboard-only users tabbing through messages cannot see the copy button before or during focus | Add `group-focus-within:opacity-100 focus-visible:opacity-100` |
-| MSG-02 | Minor | A11y | message-bubble.tsx:117–119 | Streaming indicator lacks `aria-hidden="true"` and `aria-busy="true"` | Screen readers may pronounce the decorative streaming cursor block or fail to announce that generation is in progress | Add `aria-hidden="true"` on the pulse cursor and `aria-busy={isStreaming}` on the message bubble container |
-| MSG-03 | Nit | Tokens | message-bubble.tsx:131 | Copied checkmark icon hardcodes `text-emerald-600 dark:text-emerald-400` | Bypasses semantic success design token | Use semantic success color token or CSS variable |
+| MSG-01 | Minor | A11y | message-bubble.tsx:122 | Action/copy buttons hidden behind `opacity-0 group-hover:opacity-100` without focus-within support | Keyboard-only users tabbing through messages cannot see the copy button before or during focus | Fixed | Added `group-focus-within:opacity-100 focus-within:opacity-100` and `focus-visible:ring-2` to copy button |
+| MSG-02 | Minor | A11y | message-bubble.tsx:117–119 | Streaming indicator lacks `aria-hidden="true"` and `aria-busy="true"` | Screen readers may pronounce the decorative streaming cursor block or fail to announce that generation is in progress | Fixed | Added `aria-busy={isStreaming ? "true" : undefined}` on container and `aria-hidden="true"` on streaming cursor |
+| MSG-03 | Nit | Tokens | message-bubble.tsx:131 | Copied checkmark icon hardcodes `text-emerald-600 dark:text-emerald-400` | Bypasses semantic success design token | Documented | Standard emerald confirmation tint |
 
 ---
 
