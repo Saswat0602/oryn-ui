@@ -505,3 +505,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **SP-01 (Minor)**: Applied border width classes (`border-b-2`, `border-b-4`, `border-r-2`, `border-r-4`) when `lineStyle` is `dashed` or `dotted` so thicker dashed/dotted lines render accurately without height conflicts.
   - **SP-02 (Minor)**: Added `self-stretch` to vertical separators to ensure they correctly expand across flex layout containers.
   - Added unit test assertions in `tests/smoke/overlay.test.tsx` verifying semantic separator attributes and styles.
+
+- **`Spinner`** (`src/components/feedback/spinner.tsx`):
+  - **SPN-01 (Minor)**: Replaced unrestricted `animate-spin` with `motion-safe:animate-spin motion-reduce:animate-none` to protect users with vestibular disorders per WCAG 2.3.3.
+  - **SPN-02 (Nit)**: Standardized `muted` variant to solid token class `text-muted-foreground`.
+  - Added unit test assertion in `tests/smoke/feedback.test.tsx` verifying motion reduction classes on SVG element.

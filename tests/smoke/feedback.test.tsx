@@ -148,6 +148,9 @@ describe('Feedback Domain Smoke & Accessibility Suite', () => {
 
     expect(getByRole('status')).toBeDefined()
     expect(getByText('Loading data...')).toBeDefined()
+    const svgEl = container.querySelector('svg')
+    expect(svgEl?.getAttribute('class')).toContain('motion-safe:animate-spin')
+    expect(svgEl?.getAttribute('class')).toContain('motion-reduce:animate-none')
 
     const ssr = renderToString(<Spinner size="lg" />)
     expect(ssr).toContain('role="status"')

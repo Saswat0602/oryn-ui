@@ -11,13 +11,13 @@ export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const spinnerVariants = createVariants({
-  base: "inline-flex items-center justify-center animate-spin text-current",
+  base: "inline-flex items-center justify-center motion-safe:animate-spin motion-reduce:animate-none text-current",
   variants: {
     variant: {
       default: "text-muted-foreground",
       primary: "text-primary",
       secondary: "text-foreground",
-      muted: "text-muted-foreground/60",
+      muted: "text-muted-foreground",
       white: "text-white",
     },
     size: {
