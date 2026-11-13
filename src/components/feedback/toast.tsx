@@ -128,7 +128,7 @@ export function useToast() {
         listeners.splice(index, 1)
       }
     }
-  }, [state])
+  }, [])
 
   return {
     ...state,
@@ -394,11 +394,13 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
       onClose?.(id)
     }
 
+    const isDestructive = variant === "destructive"
+
     return (
       <div
         ref={ref}
-        role="status"
-        aria-live="polite"
+        role={isDestructive ? "alert" : "status"}
+        aria-live={isDestructive ? "assertive" : "polite"}
         className={cn(
           "pointer-events-auto relative flex w-full items-start gap-3 overflow-hidden rounded-xl border p-4 shadow-md transition-all duration-200 animate-in fade-in-0 slide-in-from-bottom-2",
           variantStyles[variant],
@@ -422,7 +424,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
             type="button"
             onClick={handleClose}
             aria-label="Close"
-            className="shrink-0 -mr-1 -mt-1 p-1 text-muted-foreground hover:text-foreground rounded-md transition-colors cursor-pointer"
+            className="shrink-0 -mr-1 -mt-1 p-1 text-muted-foreground hover:text-foreground rounded-md transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           >
             <X className="h-3.5 w-3.5" />
           </button>
@@ -480,7 +482,7 @@ export const ToastClose = React.forwardRef<
     ref={ref}
     aria-label="Close"
     className={cn(
-      "absolute right-2 top-2 rounded-md p-1 text-muted-foreground hover:text-foreground opacity-70 hover:opacity-100 transition-opacity cursor-pointer",
+      "absolute right-2 top-2 rounded-md p-1 text-muted-foreground hover:text-foreground opacity-70 hover:opacity-100 transition-opacity cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
       className
     )}
     {...props}

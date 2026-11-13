@@ -516,3 +516,8 @@ Tracking remediation of all issues identified in `audit/REPORT.md`.
   - **STC-02 (Minor)**: Migrated trend indicators to semantic design tokens (`text-destructive`, `bg-emerald-500/10`, `border-destructive/20`).
   - **STC-03 (Nit)**: Strongly typed `icon?: React.ReactNode` in `StatCardProps`.
   - Added unit test assertions in `tests/smoke/data.test.tsx` verifying screen reader trend text.
+
+- **`Toast`** (`src/components/feedback/toast.tsx`):
+  - **TST-01 (Minor)**: Configured destructive toasts to dynamically render `role="alert"` and `aria-live="assertive"` so critical failure notifications immediately alert assistive technology.
+  - **TST-02 (Minor)**: Fixed subscription lifecycle in `useToast` with `[]` dependency array to eliminate redundant re-subscriptions on toast state updates.
+  - Added unit test assertions in `tests/smoke/feedback.test.tsx` verifying assertive live regions for destructive toasts.

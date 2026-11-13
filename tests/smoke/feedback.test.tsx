@@ -164,12 +164,22 @@ describe('Feedback Domain Smoke & Accessibility Suite', () => {
       <StrictMode>
         <ToastProvider>
           <Toast isVisible={true} title="Saved" message="Changes saved successfully" />
+          <Toast isVisible={true} variant="destructive" title="Error" message="Action failed" />
         </ToastProvider>
       </StrictMode>
     )
 
     expect(getByText('Saved')).toBeDefined()
     expect(getByText('Changes saved successfully')).toBeDefined()
+    expect(getByText('Action failed')).toBeDefined()
+
+    const statusToast = container.querySelector('[role="status"]')
+    expect(statusToast).toBeDefined()
+    expect(statusToast?.getAttribute('aria-live')).toBe('polite')
+
+    const alertToast = container.querySelector('[role="alert"]')
+    expect(alertToast).toBeDefined()
+    expect(alertToast?.getAttribute('aria-live')).toBe('assertive')
 
     const ssr = renderToString(
       <Toast isVisible={true} title="SSR Saved" message="SSR Message" />
