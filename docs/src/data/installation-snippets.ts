@@ -114,6 +114,7 @@ export default function RootLayout({
 }`,
   methodTailwindV4: `/* app/globals.css (Method 2: Tailwind CSS v4) */
 @import "tailwindcss";
+@import "${siteConfig.packageName}/tokens.css";
 @source "../node_modules/${siteConfig.packageName}/dist";`,
   tailwindConfig: `// tailwind.config.js (Method 3: Tailwind v3 Monorepo & Workspaces Safe)
 const path = require("path")

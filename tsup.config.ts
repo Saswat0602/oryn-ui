@@ -2,7 +2,7 @@ import { defineConfig } from 'tsup'
 
 // Shared base options for all bundles
 const sharedOptions = {
-  format: ['esm'] as const,
+  format: ['esm', 'cjs'] as const,
   dts: true,
   splitting: false,
   sourcemap: true,
@@ -19,7 +19,12 @@ const sharedOptions = {
   target: 'es2020' as const,
   platform: 'browser' as const,
   outDir: 'dist',
-  outExtension: () => ({ js: '.mjs' }),
+  outExtension({ format }: { format: string }) {
+    return {
+      js: format === 'cjs' ? '.cjs' : '.mjs',
+      dts: format === 'cjs' ? '.d.cts' : '.d.mts',
+    }
+  },
   // Inject "use client" at the top of every built file so components work
   // in Next.js App Router Server Components
   banner: { js: '"use client";' },

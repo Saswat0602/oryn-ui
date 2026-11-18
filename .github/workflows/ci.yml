@@ -44,6 +44,9 @@ jobs:
       - name: Check component manifest integrity
         run: npm run check:manifest
 
+      - name: Run automated package integration test suite
+        run: npm run test:integration
+
       - name: Install docs dependencies
         run: |
           cd docs

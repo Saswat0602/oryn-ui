@@ -34,7 +34,7 @@ describe('Component & Documentation Parity Test Suite', () => {
   })
 
   it('ensures CLI component distributor maps to real source files on disk', () => {
-    const cliScriptPath = path.resolve(__dirname, '../scripts/copy-component.js')
+    const cliScriptPath = path.resolve(__dirname, '../scripts/copy-component.cjs')
     const cliContent = fs.readFileSync(cliScriptPath, 'utf8')
 
     // Extract all mapped component paths
@@ -66,13 +66,13 @@ describe('Component & Documentation Parity Test Suite', () => {
 
   it('executes CLI list and dry-run copy commands successfully', async () => {
     const { execSync } = await import('child_process')
-    const listOutput = execSync('node scripts/copy-component.js list', { encoding: 'utf8' })
+    const listOutput = execSync('node scripts/copy-component.cjs list', { encoding: 'utf8' })
     expect(listOutput).toContain('ORYN UI Available Components (76 Total)')
     expect(listOutput).toContain('button')
     expect(listOutput).toContain('data-table')
     expect(listOutput).toContain('dialog')
 
-    const dryRunOutput = execSync('node scripts/copy-component.js dialog --dry-run', { encoding: 'utf8' })
+    const dryRunOutput = execSync('node scripts/copy-component.cjs dialog --dry-run', { encoding: 'utf8' })
     expect(dryRunOutput).toContain('[DRY RUN MODE')
     expect(dryRunOutput).toContain('Would create')
     expect(dryRunOutput).toContain('Primitive: primitives/presence.tsx')

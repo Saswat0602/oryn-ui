@@ -8,5 +8,9 @@
 # Audit & report artifacts
 audit/
 audit-*/
+integration-audit/
+integration-audit-*/
 reports/
+*.tgz
+
 

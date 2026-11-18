@@ -498,7 +498,7 @@ export default function InstallationPage() {
               {nextjsMethod === "tailwind-v4" && (
                 <div className="space-y-2">
                   <p className="text-xs text-muted-foreground">
-                    In Tailwind CSS v4, use the modern <code className="text-foreground font-mono">@source</code> directive to scan the distributed component files:
+                    In Tailwind CSS v4, import the design tokens and use the modern <code className="text-foreground font-mono">@source</code> directive to scan the distributed component files:
                   </p>
                   <CodeBlock 
                     filename="app/globals.css" 
