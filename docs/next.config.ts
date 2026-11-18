@@ -5,6 +5,7 @@ import path from "path";
 const nextConfig: NextConfig = {
   experimental: {
     mdxRs: true,
+    agentUpgrade: "security",
   },
   typescript: {
     ignoreBuildErrors: false,
